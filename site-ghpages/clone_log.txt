@@ -1,0 +1,607 @@
+2025-08-27 16:07:35,299 - INFO - Fetching rendered HTML for: https://themckaylawfirm.com/
+2025-08-27 16:07:41,164 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/header-footer-elementor/inc/widgets-css/frontend.css?ver=2.4.9
+2025-08-27 16:07:41,239 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/uploads/premium-addons-elementor/pa-frontend-7fcb377a2.min.css?ver=1756317297
+2025-08-27 16:07:41,306 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/ays-popup-box/public/css/animate.css?ver=5.5.0
+2025-08-27 16:07:41,380 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-includes/css/dist/components/style.min.css?ver=6.8.2
+2025-08-27 16:07:41,466 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/mu-plugins/vendor/wpex/godaddy-launch/includes/Dependencies/GoDaddy/Styles/build/latest.css?ver=2.0.2
+2025-08-27 16:07:41,549 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/eae.min.css?ver=1.14.1
+2025-08-27 16:07:41,549 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-left.svg
+2025-08-27 16:07:41,651 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-left.svg
+2025-08-27 16:07:41,735 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-right.svg
+2025-08-27 16:07:41,809 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-right.svg
+2025-08-27 16:07:41,908 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-right.svg
+2025-08-27 16:07:41,977 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-right.svg
+2025-08-27 16:07:42,054 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-left.svg
+2025-08-27 16:07:42,122 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/css/arrow-left.svg
+2025-08-27 16:07:42,201 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/digit-sep-svg.svg
+2025-08-27 16:07:42,278 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/digits-svg-alpha.svg
+2025-08-27 16:07:42,433 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/peel/peel.css?ver=1.14.1
+2025-08-27 16:07:42,433 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/peel/Screenshot\ 2023-10-30\ at\ 1.55.14\â¯PM.png
+2025-08-27 16:07:42,650 - ERROR - Failed to download resource https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/peel/Screenshot\ 2023-10-30\ at\ 1.55.14\â¯PM.png: 404 Client Error: Not Found for url: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/peel/Screenshot%5C%202023-10-30%5C%20at%5C%201.55.14%5C%C3%A2%C2%80%C2%AFPM.png
+2025-08-27 16:07:42,651 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/peel/Screenshot\ 2023-10-30\ at\ 1.55.14\â¯PM.png
+2025-08-27 16:07:42,748 - ERROR - Failed to download resource https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/peel/Screenshot\ 2023-10-30\ at\ 1.55.14\â¯PM.png: 404 Client Error: Not Found for url: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/peel/Screenshot%5C%202023-10-30%5C%20at%5C%201.55.14%5C%C3%A2%C2%80%C2%AFPM.png
+2025-08-27 16:07:42,816 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/v4-shims.min.css?ver=1.0
+2025-08-27 16:07:42,888 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/all.min.css?ver=4.11.30
+2025-08-27 16:07:42,889 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot
+2025-08-27 16:07:42,987 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot#iefix
+2025-08-27 16:07:43,056 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff2
+2025-08-27 16:07:43,125 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff
+2025-08-27 16:07:43,200 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.ttf
+2025-08-27 16:07:43,280 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.svg#fontawesome
+2025-08-27 16:07:43,404 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-regular-400.eot
+2025-08-27 16:07:43,486 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-regular-400.eot#iefix
+2025-08-27 16:07:43,560 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-regular-400.woff2
+2025-08-27 16:07:43,656 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-regular-400.woff
+2025-08-27 16:07:44,018 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-regular-400.ttf
+2025-08-27 16:07:44,085 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-regular-400.svg#fontawesome
+2025-08-27 16:07:44,470 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot
+2025-08-27 16:07:44,546 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot#iefix
+2025-08-27 16:07:44,648 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff2
+2025-08-27 16:07:44,753 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff
+2025-08-27 16:07:44,847 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.ttf
+2025-08-27 16:07:44,925 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.svg#fontawesome
+2025-08-27 16:07:45,108 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/vegas/vegas.min.css?ver=2.4.0
+2025-08-27 16:07:45,176 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/header-footer-elementor/assets/css/header-footer-elementor.css?ver=2.4.9
+2025-08-27 16:07:45,253 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/css/elementor-icons.min.css?ver=5.43.0
+2025-08-27 16:07:45,253 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.eot?5.43.0
+2025-08-27 16:07:45,344 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.eot?5.43.0#iefix
+2025-08-27 16:07:45,409 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.woff2?5.43.0
+2025-08-27 16:07:46,482 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.woff?5.43.0
+2025-08-27 16:07:46,555 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.ttf?5.43.0
+2025-08-27 16:07:46,638 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.svg?5.43.0#eicon
+2025-08-27 16:07:46,788 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/frontend.min.css?ver=3.31.3
+2025-08-27 16:07:46,855 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/ultimate-elementor/assets/min-css/uael-frontend.min.css?ver=1.40.1
+2025-08-27 16:07:46,931 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-social-icons.min.css?ver=3.24.0
+2025-08-27 16:07:47,014 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/brands.css?ver=5.15.3
+2025-08-27 16:07:47,014 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot
+2025-08-27 16:07:47,087 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot#iefix
+2025-08-27 16:07:47,170 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff2
+2025-08-27 16:07:47,245 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff
+2025-08-27 16:07:47,324 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.ttf
+2025-08-27 16:07:47,412 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.svg#fontawesome
+2025-08-27 16:07:47,616 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/fontawesome.css?ver=5.15.3
+2025-08-27 16:07:47,683 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/solid.css?ver=5.15.3
+2025-08-27 16:07:47,683 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot
+2025-08-27 16:07:47,764 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot#iefix
+2025-08-27 16:07:47,836 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff2
+2025-08-27 16:07:47,910 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff
+2025-08-27 16:07:47,993 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.ttf
+2025-08-27 16:07:48,100 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.svg#fontawesome
+2025-08-27 16:07:48,282 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/premium-addons-for-elementor/assets/frontend/min-css/slick.min.css?ver=4.11.30
+2025-08-27 16:07:48,343 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-heading.min.css?ver=3.31.3
+2025-08-27 16:07:48,418 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-icon-list.min.css?ver=3.31.3
+2025-08-27 16:07:48,507 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-image-box.min.css?ver=3.31.3
+2025-08-27 16:07:48,578 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-icon-box.min.css?ver=3.31.3
+2025-08-27 16:07:48,655 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-image.min.css?ver=3.31.3
+2025-08-27 16:07:48,745 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/themes/hello-elementor/assets/css/reset.css?ver=3.4.4
+2025-08-27 16:07:48,812 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/themes/hello-elementor/assets/css/theme.css?ver=3.4.4
+2025-08-27 16:07:48,878 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/themes/hello-elementor/assets/css/header-footer.css?ver=3.4.4
+2025-08-27 16:07:48,952 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/css/modules/sticky.min.css?ver=3.31.2
+2025-08-27 16:07:49,024 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/css/widget-nav-menu.min.css?ver=3.31.2
+2025-08-27 16:07:49,095 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-social-icons.min.css?ver=3.31.3
+2025-08-27 16:07:49,179 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/conditionals/apple-webkit.min.css?ver=3.31.3
+2025-08-27 16:07:49,249 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/css/elementor-icons.min.css?ver=5.34.0
+2025-08-27 16:07:49,249 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.eot?5.43.0
+2025-08-27 16:07:49,327 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.eot?5.43.0#iefix
+2025-08-27 16:07:49,400 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.woff2?5.43.0
+2025-08-27 16:07:49,469 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.woff?5.43.0
+2025-08-27 16:07:49,544 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.ttf?5.43.0
+2025-08-27 16:07:49,636 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/eicons/fonts/eicons.svg?5.43.0#eicon
+2025-08-27 16:07:49,800 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-icon-list.min.css?ver=3.24.3
+2025-08-27 16:07:49,865 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/css/widget-social-icons.min.css?ver=3.24.0
+2025-08-27 16:07:49,936 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/brands.css?ver=5.15.3
+2025-08-27 16:07:49,937 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot
+2025-08-27 16:07:50,024 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot#iefix
+2025-08-27 16:07:50,100 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff2
+2025-08-27 16:07:50,162 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff
+2025-08-27 16:07:50,251 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.ttf
+2025-08-27 16:07:50,353 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.svg#fontawesome
+2025-08-27 16:07:50,557 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/fontawesome.css?ver=5.15.3
+2025-08-27 16:07:50,634 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/solid.css?ver=5.15.3
+2025-08-27 16:07:50,634 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot
+2025-08-27 16:07:50,727 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot#iefix
+2025-08-27 16:07:50,827 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff2
+2025-08-27 16:07:50,901 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff
+2025-08-27 16:07:50,975 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.ttf
+2025-08-27 16:07:51,051 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.svg#fontawesome
+2025-08-27 16:07:51,232 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/css/widget-blockquote.min.css?ver=3.25.0
+2025-08-27 16:07:51,336 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/css/widget-mega-menu.min.css?ver=3.26.2
+2025-08-27 16:07:51,402 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/css/widget-nav-menu.min.css?ver=3.26.0
+2025-08-27 16:07:51,465 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/themes/hotlava-theme/css/style.min.css?ver=2.0.0
+2025-08-27 16:07:51,536 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/essential-addons-for-elementor-lite/assets/front-end/css/view/general.min.css?ver=6.3.0
+2025-08-27 16:07:51,614 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/ele-custom-skin/assets/css/ecs-style.css?ver=3.1.9
+2025-08-27 16:07:51,680 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/css/roboto.css?ver=1742238246
+2025-08-27 16:07:51,680 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:51,769 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:51,850 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:51,917 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:51,988 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:52,068 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:52,151 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:52,230 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:52,317 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:52,401 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:52,483 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:52,550 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:52,617 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:52,711 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:52,776 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:52,846 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:52,915 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:52,990 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:53,061 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:54,127 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:54,188 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:54,255 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:54,328 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:54,400 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:54,465 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:54,539 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:54,619 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:54,694 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:54,782 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:54,873 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:54,942 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:55,015 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:55,094 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:55,168 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:55,231 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:55,300 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:55,372 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:55,443 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:55,523 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:55,597 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:55,690 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:55,769 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:55,838 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:55,907 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:55,982 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:56,054 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:56,129 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:56,195 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:56,260 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:56,340 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:56,422 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:56,509 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:56,584 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:56,661 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:56,742 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:56,812 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:56,900 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:56,966 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:57,038 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:57,123 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:57,195 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:57,259 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:57,333 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:57,406 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:57,477 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:57,555 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:57,624 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:57,696 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:57,773 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:57,855 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:57,926 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:57,998 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:58,069 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkc3kawzu.woff2
+2025-08-27 16:07:58,145 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkankawzu.woff2
+2025-08-27 16:07:58,217 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcnkawzu.woff2
+2025-08-27 16:07:58,287 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbxkawzu.woff2
+2025-08-27 16:07:58,385 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkenkawzu.woff2
+2025-08-27 16:07:58,466 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkahkawzu.woff2
+2025-08-27 16:07:58,550 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkcxkawzu.woff2
+2025-08-27 16:07:58,627 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkchkawzu.woff2
+2025-08-27 16:07:58,706 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo5cnqeu92fr1mu53zec9_vu3r1gihoszmkbnka.woff2
+2025-08-27 16:07:58,796 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:07:58,872 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:07:58,957 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:07:59,029 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:07:59,099 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:07:59,189 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:07:59,261 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:07:59,339 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:07:59,412 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:07:59,494 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:07:59,590 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:07:59,668 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:07:59,744 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:07:59,809 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:07:59,884 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:07:59,953 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:00,021 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:00,083 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:00,153 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:08:00,220 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:08:00,295 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:08:00,407 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:08:00,489 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:08:00,561 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:08:00,631 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:00,714 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:00,788 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:00,858 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:08:00,936 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:08:01,004 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:08:01,074 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:08:01,137 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:08:01,198 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:08:01,263 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:01,348 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:01,440 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:01,521 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:08:01,594 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:08:01,663 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:08:01,744 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:08:01,815 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:08:01,883 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:08:01,958 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:02,036 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:02,108 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:02,176 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:08:02,242 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:08:02,318 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:08:02,389 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:08:02,459 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:08:02,532 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:08:02,601 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:02,678 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:02,766 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:02,852 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:08:02,944 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:08:03,076 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:08:03,165 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:08:03,264 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:08:03,333 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:08:03,433 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:03,513 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:03,596 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:03,667 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:08:03,743 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:08:03,816 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:08:03,896 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:08:03,964 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:08:04,041 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:08:04,108 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:04,176 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:04,277 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:04,345 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3gubgee.woff2
+2025-08-27 16:08:04,438 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3iubgee.woff2
+2025-08-27 16:08:04,523 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3cubgee.woff2
+2025-08-27 16:08:04,598 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3-ubgee.woff2
+2025-08-27 16:08:04,678 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamawcubgee.woff2
+2025-08-27 16:08:04,767 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluamaxkubgee.woff2
+2025-08-27 16:08:04,855 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3oubgee.woff2
+2025-08-27 16:08:04,932 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3kubgee.woff2
+2025-08-27 16:08:04,999 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/roboto-kfo7cnqeu92fr1me7ksn66agldtyluama3yuba.woff2
+2025-08-27 16:08:05,160 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/css/robotoslab.css?ver=1742238275
+2025-08-27 16:08:05,161 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:05,229 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:05,318 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:05,385 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:05,464 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:05,557 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:05,642 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:05,719 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:05,799 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:06,864 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:06,933 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:07,007 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:07,081 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:07,146 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:07,236 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:07,328 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:07,405 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:07,474 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:07,537 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:07,619 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:07,710 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:07,773 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:07,849 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:07,922 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:07,997 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:08,069 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:08,137 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:08,218 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:08,310 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:08,385 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:08,497 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:08,583 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:08,646 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:08,715 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:08,791 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:08,878 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:08,956 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:09,030 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:09,095 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:09,169 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:09,264 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:09,334 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:09,410 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:09,494 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:09,563 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:09,644 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:09,715 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:09,783 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:09,865 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:09,950 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:10,040 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:10,127 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:10,197 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:10,266 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:10,347 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:10,437 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:10,531 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufa5qw54a.woff2
+2025-08-27 16:08:10,623 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufj5qw54a.woff2
+2025-08-27 16:08:10,710 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufb5qw54a.woff2
+2025-08-27 16:08:10,785 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufo5qw54a.woff2
+2025-08-27 16:08:10,867 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufc5qw54a.woff2
+2025-08-27 16:08:10,941 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufd5qw54a.woff2
+2025-08-27 16:08:11,016 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/robotoslab-bngmuxzytxpivibgjjsb6ufn5qu.woff2
+2025-08-27 16:08:11,164 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/css/opensans.css?ver=1742238261
+2025-08-27 16:08:11,164 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwte6f15m.woff2
+2025-08-27 16:08:11,246 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwvu6f15m.woff2
+2025-08-27 16:08:11,313 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtu6f15m.woff2
+2025-08-27 16:08:11,384 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuk6f15m.woff2
+2025-08-27 16:08:11,451 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwu06f15m.woff2
+2025-08-27 16:08:11,533 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwxu6f15m.woff2
+2025-08-27 16:08:11,615 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqw106f15m.woff2
+2025-08-27 16:08:11,697 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtk6f15m.woff2
+2025-08-27 16:08:11,774 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwt06f15m.woff2
+2025-08-27 16:08:11,858 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuu6f.woff2
+2025-08-27 16:08:11,939 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwte6f15m.woff2
+2025-08-27 16:08:12,004 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwvu6f15m.woff2
+2025-08-27 16:08:12,078 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtu6f15m.woff2
+2025-08-27 16:08:12,157 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuk6f15m.woff2
+2025-08-27 16:08:12,225 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwu06f15m.woff2
+2025-08-27 16:08:12,301 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwxu6f15m.woff2
+2025-08-27 16:08:12,372 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqw106f15m.woff2
+2025-08-27 16:08:12,447 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtk6f15m.woff2
+2025-08-27 16:08:12,530 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwt06f15m.woff2
+2025-08-27 16:08:12,603 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuu6f.woff2
+2025-08-27 16:08:12,710 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwte6f15m.woff2
+2025-08-27 16:08:12,801 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwvu6f15m.woff2
+2025-08-27 16:08:12,878 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtu6f15m.woff2
+2025-08-27 16:08:12,945 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuk6f15m.woff2
+2025-08-27 16:08:13,012 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwu06f15m.woff2
+2025-08-27 16:08:13,077 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwxu6f15m.woff2
+2025-08-27 16:08:13,181 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqw106f15m.woff2
+2025-08-27 16:08:13,256 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtk6f15m.woff2
+2025-08-27 16:08:13,346 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwt06f15m.woff2
+2025-08-27 16:08:13,419 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuu6f.woff2
+2025-08-27 16:08:13,499 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwte6f15m.woff2
+2025-08-27 16:08:13,575 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwvu6f15m.woff2
+2025-08-27 16:08:13,654 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtu6f15m.woff2
+2025-08-27 16:08:13,737 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuk6f15m.woff2
+2025-08-27 16:08:13,809 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwu06f15m.woff2
+2025-08-27 16:08:13,909 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwxu6f15m.woff2
+2025-08-27 16:08:13,993 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqw106f15m.woff2
+2025-08-27 16:08:14,060 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtk6f15m.woff2
+2025-08-27 16:08:14,130 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwt06f15m.woff2
+2025-08-27 16:08:14,210 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuu6f.woff2
+2025-08-27 16:08:14,288 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwte6f15m.woff2
+2025-08-27 16:08:14,367 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwvu6f15m.woff2
+2025-08-27 16:08:14,435 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtu6f15m.woff2
+2025-08-27 16:08:14,513 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuk6f15m.woff2
+2025-08-27 16:08:14,589 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwu06f15m.woff2
+2025-08-27 16:08:14,663 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwxu6f15m.woff2
+2025-08-27 16:08:14,749 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqw106f15m.woff2
+2025-08-27 16:08:14,820 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtk6f15m.woff2
+2025-08-27 16:08:14,904 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwt06f15m.woff2
+2025-08-27 16:08:14,981 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuu6f.woff2
+2025-08-27 16:08:15,056 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwte6f15m.woff2
+2025-08-27 16:08:15,116 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwvu6f15m.woff2
+2025-08-27 16:08:15,192 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtu6f15m.woff2
+2025-08-27 16:08:15,269 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuk6f15m.woff2
+2025-08-27 16:08:15,349 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwu06f15m.woff2
+2025-08-27 16:08:15,473 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwxu6f15m.woff2
+2025-08-27 16:08:15,557 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqw106f15m.woff2
+2025-08-27 16:08:15,619 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwtk6f15m.woff2
+2025-08-27 16:08:15,711 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwt06f15m.woff2
+2025-08-27 16:08:15,789 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memtyags126mizpba-ufuicvxscekx2cmqvxlwqwuu6f.woff2
+2025-08-27 16:08:15,883 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtskmu1ab.woff2
+2025-08-27 16:08:15,956 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsumu1ab.woff2
+2025-08-27 16:08:16,039 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsomu1ab.woff2
+2025-08-27 16:08:16,116 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsymu1ab.woff2
+2025-08-27 16:08:16,186 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts2mu1ab.woff2
+2025-08-27 16:08:16,266 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtvomu1ab.woff2
+2025-08-27 16:08:16,352 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtugmu1ab.woff2
+2025-08-27 16:08:16,431 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtscmu1ab.woff2
+2025-08-27 16:08:16,500 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsgmu1ab.woff2
+2025-08-27 16:08:16,592 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts-muw.woff2
+2025-08-27 16:08:16,663 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtskmu1ab.woff2
+2025-08-27 16:08:16,802 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsumu1ab.woff2
+2025-08-27 16:08:16,878 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsomu1ab.woff2
+2025-08-27 16:08:16,949 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsymu1ab.woff2
+2025-08-27 16:08:17,020 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts2mu1ab.woff2
+2025-08-27 16:08:17,097 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtvomu1ab.woff2
+2025-08-27 16:08:17,168 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtugmu1ab.woff2
+2025-08-27 16:08:17,248 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtscmu1ab.woff2
+2025-08-27 16:08:17,318 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsgmu1ab.woff2
+2025-08-27 16:08:17,387 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts-muw.woff2
+2025-08-27 16:08:17,467 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtskmu1ab.woff2
+2025-08-27 16:08:17,556 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsumu1ab.woff2
+2025-08-27 16:08:17,627 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsomu1ab.woff2
+2025-08-27 16:08:17,710 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsymu1ab.woff2
+2025-08-27 16:08:17,784 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts2mu1ab.woff2
+2025-08-27 16:08:17,858 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtvomu1ab.woff2
+2025-08-27 16:08:17,938 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtugmu1ab.woff2
+2025-08-27 16:08:18,030 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtscmu1ab.woff2
+2025-08-27 16:08:18,090 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsgmu1ab.woff2
+2025-08-27 16:08:18,156 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts-muw.woff2
+2025-08-27 16:08:18,241 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtskmu1ab.woff2
+2025-08-27 16:08:18,310 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsumu1ab.woff2
+2025-08-27 16:08:18,389 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsomu1ab.woff2
+2025-08-27 16:08:18,449 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsymu1ab.woff2
+2025-08-27 16:08:18,539 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts2mu1ab.woff2
+2025-08-27 16:08:18,617 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtvomu1ab.woff2
+2025-08-27 16:08:18,711 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtugmu1ab.woff2
+2025-08-27 16:08:18,779 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtscmu1ab.woff2
+2025-08-27 16:08:18,852 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsgmu1ab.woff2
+2025-08-27 16:08:18,923 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts-muw.woff2
+2025-08-27 16:08:19,002 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtskmu1ab.woff2
+2025-08-27 16:08:19,071 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsumu1ab.woff2
+2025-08-27 16:08:19,158 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsomu1ab.woff2
+2025-08-27 16:08:19,235 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsymu1ab.woff2
+2025-08-27 16:08:19,304 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts2mu1ab.woff2
+2025-08-27 16:08:19,375 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtvomu1ab.woff2
+2025-08-27 16:08:19,461 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtugmu1ab.woff2
+2025-08-27 16:08:19,525 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtscmu1ab.woff2
+2025-08-27 16:08:19,613 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsgmu1ab.woff2
+2025-08-27 16:08:19,685 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts-muw.woff2
+2025-08-27 16:08:19,776 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtskmu1ab.woff2
+2025-08-27 16:08:19,852 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsumu1ab.woff2
+2025-08-27 16:08:19,921 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsomu1ab.woff2
+2025-08-27 16:08:20,041 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsymu1ab.woff2
+2025-08-27 16:08:20,106 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts2mu1ab.woff2
+2025-08-27 16:08:20,181 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtvomu1ab.woff2
+2025-08-27 16:08:20,245 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtugmu1ab.woff2
+2025-08-27 16:08:20,327 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtscmu1ab.woff2
+2025-08-27 16:08:20,398 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovtsgmu1ab.woff2
+2025-08-27 16:08:20,471 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/opensans-memvyags126mizpba-uvwbx2vvnxbbobj2ovts-muw.woff2
+2025-08-27 16:08:20,627 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/css/inriaserif.css?ver=1742238262
+2025-08-27 16:08:20,627 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc16pyxpy3rxxendzjazn3sut4thvlgfb1xn.woff2
+2025-08-27 16:08:20,692 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc16pyxpy3rxxendzjazn3sut4thvl-fbw.woff2
+2025-08-27 16:08:20,771 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc1npyxpy3rxxendzjazn3suryhlq2ck.woff2
+2025-08-27 16:08:20,840 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc1npyxpy3rxxendzjazn3sury_lqw.woff2
+2025-08-27 16:08:20,939 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc16pyxpy3rxxendzjazn3sut5tavlgfb1xn.woff2
+2025-08-27 16:08:21,015 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc16pyxpy3rxxendzjazn3sut5tavl-fbw.woff2
+2025-08-27 16:08:21,089 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc14pyxpy3rxxendzjazn3wavtjmjl2daw.woff2
+2025-08-27 16:08:21,171 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc14pyxpy3rxxendzjazn3wavtjcjl0.woff2
+2025-08-27 16:08:21,238 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc1lpyxpy3rxxendzjazn3sldy39rw.woff2
+2025-08-27 16:08:21,328 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc1lpyxpy3rxxendzjazn3srdy0.woff2
+2025-08-27 16:08:21,395 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc14pyxpy3rxxendzjazn3wqujjmjl2daw.woff2
+2025-08-27 16:08:21,483 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/inriaserif-fc14pyxpy3rxxendzjazn3wqujjcjl0.woff2
+2025-08-27 16:08:21,625 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/css/averiaseriflibre.css?ver=1742238262
+2025-08-27 16:08:21,625 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/averiaseriflibre-neibzd2ms4wxr6gvjed0x88shpyx2xyopzmmw50pxry.woff2
+2025-08-27 16:08:21,695 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/averiaseriflibre-neiuzd2ms4wxr6gvjed0x88shpyx2xyopzun4yg.woff2
+2025-08-27 16:08:21,773 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/averiaseriflibre-neibzd2ms4wxr6gvjed0x88shpyx2xyopzm2xj0pxry.woff2
+2025-08-27 16:08:21,849 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/averiaseriflibre-neivzd2ms4wxr6gvjed0x88shpyx2xygcsmaxq0r.woff2
+2025-08-27 16:08:21,929 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/averiaseriflibre-neiwzd2ms4wxr6gvjed0x88shpyx2xyoogup.woff2
+2025-08-27 16:08:22,013 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/elementor/google-fonts/fonts/averiaseriflibre-neivzd2ms4wxr6gvjed0x88shpyx2xyggs6axq0r.woff2
+2025-08-27 16:08:22,167 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/fontawesome.min.css?ver=5.15.3
+2025-08-27 16:08:22,248 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/solid.min.css?ver=5.15.3
+2025-08-27 16:08:22,249 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot
+2025-08-27 16:08:22,317 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.eot#iefix
+2025-08-27 16:08:22,393 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff2
+2025-08-27 16:08:22,474 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.woff
+2025-08-27 16:08:22,552 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.ttf
+2025-08-27 16:08:22,642 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-solid-900.svg#fontawesome
+2025-08-27 16:08:22,826 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/brands.min.css?ver=5.15.3
+2025-08-27 16:08:22,826 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot
+2025-08-27 16:08:22,912 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.eot#iefix
+2025-08-27 16:08:22,989 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff2
+2025-08-27 16:08:23,066 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.woff
+2025-08-27 16:08:23,148 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.ttf
+2025-08-27 16:08:23,234 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/webfonts/fa-brands-400.svg#fontawesome
+2025-08-27 16:08:23,433 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/animations/styles/e-animation-grow.min.css?ver=3.31.3
+2025-08-27 16:08:23,508 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/gravityforms/assets/css/dist/basic.min.css?ver=2.8.18
+2025-08-27 16:08:23,508 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/fonts/gform-icons-theme.woff2?cocjn
+2025-08-27 16:08:23,587 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/fonts/gform-icons-theme.ttf?cocjn
+2025-08-27 16:08:23,683 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/fonts/gform-icons-theme.woff?cocjn
+2025-08-27 16:08:23,782 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/fonts/gform-icons-theme.svg?cocjn#gform-icons-theme
+2025-08-27 16:08:23,860 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/legacy/css/chosen-sprite.png
+2025-08-27 16:08:23,925 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/legacy/css/chosen-sprite.png
+2025-08-27 16:08:23,992 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/legacy/css/chosen-sprite.png
+2025-08-27 16:08:24,057 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/legacy/css/chosen-sprite.png
+2025-08-27 16:08:24,130 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/legacy/css/chosen-sprite.png
+2025-08-27 16:08:24,194 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/legacy/css/chosen-sprite@2x.png
+2025-08-27 16:08:24,272 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/images/gf-creditcards.svg
+2025-08-27 16:08:24,354 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/images/gf-creditcards-check.svg
+2025-08-27 16:08:24,434 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/images/gf-creditcards.svg
+2025-08-27 16:08:24,506 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/images/list-add.svg
+2025-08-27 16:08:24,575 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/images/list-remove.svg
+2025-08-27 16:08:24,741 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/gravityforms/assets/css/dist/theme-components.min.css?ver=2.8.18
+2025-08-27 16:08:24,824 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/gravityforms/assets/css/dist/theme-ie11.min.css?ver=2.8.18
+2025-08-27 16:08:24,885 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/gravityforms/assets/css/dist/theme.min.css?ver=2.8.18
+2025-08-27 16:08:24,885 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/images/theme/down-arrow.svg
+2025-08-27 16:08:25,039 - INFO - Processing CSS from: https://themckaylawfirm.com/wp-content/plugins/ays-popup-box/public/css/ays-pb-public-min.css?ver=5.5.0
+2025-08-27 16:08:25,039 - INFO - Downloading resource: https://cdn4.iconfinder.com/data/icons/small-n-flat/24/terminal-48.png
+2025-08-27 16:08:25,562 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:25,563 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:25,563 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:25,563 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-parchmentbg.jpg
+2025-08-27 16:08:25,636 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/02/2413508.jpg
+2025-08-27 16:08:25,713 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-parchmentbg.jpg
+2025-08-27 16:08:25,811 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/03/anna-pritchard-7Xk0XlcGe2I-unsplash.jpg
+2025-08-27 16:08:25,933 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/03/takahiro-taguchi-_SKIDRiIEtk-unsplash.jpg
+2025-08-27 16:08:26,035 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2024/10/judge-gavel-and-a-stethoscope-on-a-wooden-desk.jpg
+2025-08-27 16:08:26,139 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/02/lawyers-are-advising-clients-about-real-estate-law_36897-630.jpg
+2025-08-27 16:08:26,208 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-parchmentbg.jpg
+2025-08-27 16:08:26,286 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-parchmentbg.jpg
+2025-08-27 16:08:26,366 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,366 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,366 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,366 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2024/10/budget-mature-happy-couple-hug-with-paperwork-financial-investments-mortgage-good-news-bills-invoice-man-reading-documents-pension-fund-bank-statement-with-woman-smile-home2.jpg
+2025-08-27 16:08:26,473 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,473 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2024/10/budget-mature-happy-couple-hug-with-paperwork-financial-investments-mortgage-good-news-bills-invoice-man-reading-documents-pension-fund-bank-statement-with-woman-smile-home2.jpg
+2025-08-27 16:08:26,572 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,572 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2024/10/happy-family-selfie-or-generations-in-nature-sum-2023-12-01-17-16-50-utc-copy-2.jpg
+2025-08-27 16:08:26,686 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,686 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2024/10/happy-family-selfie-or-generations-in-nature-sum-2023-12-01-17-16-50-utc-copy-2.jpg
+2025-08-27 16:08:26,806 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,807 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-parchmentbg.jpg
+2025-08-27 16:08:26,866 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,866 - INFO - Processing CSS from: https://themckaylawfirm.com/
+2025-08-27 16:08:26,868 - INFO - Downloading resource: https://www.googletagmanager.com/gtag/js?id=AW-11530877911&cx=c&gtm=4e58q0
+2025-08-27 16:08:27,065 - INFO - Downloading resource: https://www.googletagmanager.com/gtag/js?id=G-P6G5RQJ5NB&cx=c&gtm=4e58q0
+2025-08-27 16:08:27,263 - INFO - Downloading resource: https://www.gstatic.com/recaptcha/releases/2sJvksnKlEApLvJt2btz_q7n/recaptcha__en.js
+2025-08-27 16:08:27,422 - INFO - Downloading resource: https://www.gstatic.com/recaptcha/releases/2sJvksnKlEApLvJt2btz_q7n/recaptcha__en.js
+2025-08-27 16:08:27,603 - INFO - Downloading resource: https://themckaylawfirm.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1
+2025-08-27 16:08:27,687 - INFO - Downloading resource: https://themckaylawfirm.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1
+2025-08-27 16:08:27,761 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/ays-popup-box/public/js/ays-pb-public.js?ver=5.5.0
+2025-08-27 16:08:27,834 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/js/iconHelper.js?ver=1.0
+2025-08-27 16:08:27,907 - INFO - Downloading resource: https://www.googletagmanager.com/gtag/js?id=G-P6G5RQJ5NB
+2025-08-27 16:08:28,107 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/ele-custom-skin/assets/js/ecs_ajax_pagination.js?ver=3.1.9
+2025-08-27 16:08:28,169 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/ele-custom-skin/assets/js/ecs.js?ver=3.1.9
+2025-08-27 16:08:28,236 - INFO - Downloading resource: https://www.googletagmanager.com/gtag/js?id=G-579N83Q2R1
+2025-08-27 16:08:28,440 - INFO - Downloading resource: https://www.googletagmanager.com/gtag/js?id=AW-11530877911
+2025-08-27 16:08:28,665 - INFO - Downloading resource: https://googleads.g.doubleclick.net/pagead/viewthroughconversion/11530877911/?random=1756328860228&cv=11&fst=1756328860228&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be58q0h1v9214346588za200zb9199097202zd9199097202xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=101509157~103116026~103200004~103233427~104527906~104528501~104684208~104684211~104948813~105427542~105427544&u_w=1280&u_h=720&url=https%3A%2F%2Fthemckaylawfirm.com%2F&hn=www.googleadservices.com&frm=0&tiba=Estate%20Planning%2C%20Attorney%2C%20Chesterfield%2C%20StL%20Lawyer%2C%20Probate%2C%20Business&did=dZTNiMT&gdid=dZTNiMT&npa=0&pscdl=noapi&auid=1206194622.1756328860&uaa=x86&uab=64&uafvl=Not%253BA%253DBrand%3B99.0.0.0%7CHeadlessChrome%3B139.0.7258.5%7CChromium%3B139.0.7258.5&uamb=0&uam=&uap=macOS&uapv=14.6.1&uaw=0&data=event%3Dgtag.config&rfmt=3&fmt=4
+2025-08-27 16:08:28,765 - INFO - Downloading resource: https://www.google.com/recaptcha/api.js?onload=onloadCallbackv2&render=explicit
+2025-08-27 16:08:28,852 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/premium-addons-elementor/pa-frontend-7fcb377a2.min.js?ver=1756317297
+2025-08-27 16:08:28,922 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/js/eae.min.js?ver=1.14.1
+2025-08-27 16:08:28,995 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/build/index.min.js?ver=1.14.1
+2025-08-27 16:08:29,081 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/lib/font-awesome/js/v4-shims.min.js?ver=1.0
+2025-08-27 16:08:29,161 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/js/animated-main.min.js?ver=1.0
+2025-08-27 16:08:29,229 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/js/particles.min.js?ver=2.0.0
+2025-08-27 16:08:29,304 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/magnific.min.js?ver=1.1.0
+2025-08-27 16:08:29,372 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/addon-elements-for-elementor-page-builder/assets/lib/vegas/vegas.min.js?ver=2.4.0
+2025-08-27 16:08:29,442 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/premium-addons-for-elementor/assets/frontend/min-js/slick.min.js?ver=4.11.30
+2025-08-27 16:08:29,509 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/js/webpack.runtime.min.js?ver=3.31.3
+2025-08-27 16:08:29,588 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/js/frontend-modules.min.js?ver=3.31.3
+2025-08-27 16:08:29,684 - INFO - Downloading resource: https://themckaylawfirm.com/wp-includes/js/jquery/ui/core.min.js?ver=1.13.3
+2025-08-27 16:08:29,752 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor/assets/js/frontend.min.js?ver=3.31.3
+2025-08-27 16:08:29,821 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/themes/hello-elementor/assets/js/hello-frontend.js?ver=3.4.4
+2025-08-27 16:08:29,884 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/lib/sticky/jquery.sticky.min.js?ver=3.31.2
+2025-08-27 16:08:29,955 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/lib/smartmenus/jquery.smartmenus.min.js?ver=1.2.1
+2025-08-27 16:08:30,040 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/ultimate-elementor/assets/min-js/uael-frontend.min.js?ver=1.40.1
+2025-08-27 16:08:30,160 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/ultimate-elementor/assets/js/uael-sticky-header.js?ver=1.40.1
+2025-08-27 16:08:30,244 - INFO - Downloading resource: https://www.google.com/recaptcha/api.js?render=6LdjkXIqAAAAAH_WQZtTw_IBgOjjkB8BcLEHgalE&ver=2.0.0
+2025-08-27 16:08:30,327 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityformsrecaptcha/js/frontend-legacy.min.js?ver=2.0.0
+2025-08-27 16:08:30,403 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/themes/hotlava-theme/js/scripts.min.js?ver=1.0
+2025-08-27 16:08:30,473 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/essential-addons-for-elementor-lite/assets/front-end/js/view/general.min.js?ver=6.3.0
+2025-08-27 16:08:30,551 - INFO - Downloading resource: https://cdn.trustindex.io/loader.js
+2025-08-27 16:08:30,623 - INFO - Downloading resource: https://themckaylawfirm.com/wp-includes/js/dist/dom-ready.min.js?ver=f77871ff7694fffea381
+2025-08-27 16:08:30,693 - INFO - Downloading resource: https://themckaylawfirm.com/wp-includes/js/dist/hooks.min.js?ver=4d63a3d491d11ffd8ac6
+2025-08-27 16:08:30,779 - INFO - Downloading resource: https://themckaylawfirm.com/wp-includes/js/dist/i18n.min.js?ver=5e580eb46a90c2b997e6
+2025-08-27 16:08:30,848 - INFO - Downloading resource: https://themckaylawfirm.com/wp-includes/js/dist/a11y.min.js?ver=3156534cc54473497e14
+2025-08-27 16:08:30,921 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/js/jquery.json.min.js?ver=2.8.18
+2025-08-27 16:08:30,997 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/js/gravityforms.min.js?ver=2.8.18
+2025-08-27 16:08:31,081 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/js/placeholders.jquery.min.js?ver=2.8.18
+2025-08-27 16:08:31,148 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/assets/js/dist/utils.min.js?ver=50c7bea9c2320e16728e44ae9fde5f26
+2025-08-27 16:08:31,218 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/assets/js/dist/vendor-theme.min.js?ver=54e7080aa7a02c83aa61fae430b9d869
+2025-08-27 16:08:31,307 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/gravityforms/assets/js/dist/scripts-theme.min.js?ver=bab19fd84843dabc070e73326d787910
+2025-08-27 16:08:31,389 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/js/webpack-pro.runtime.min.js?ver=3.31.2
+2025-08-27 16:08:31,449 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/js/frontend.min.js?ver=3.31.2
+2025-08-27 16:08:31,540 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/plugins/elementor-pro/assets/js/elements-handlers.min.js?ver=3.31.2
+2025-08-27 16:08:31,624 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-6-fixeda.png
+2025-08-27 16:08:31,694 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-6-fixeda.png
+2025-08-27 16:08:31,779 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/03/shield-1.png
+2025-08-27 16:08:31,857 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/03/agreement-2.png
+2025-08-27 16:08:31,930 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/03/heart.png
+2025-08-27 16:08:31,996 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2024/10/IMG_4801-crop-3-1024x781.jpg
+2025-08-27 16:08:32,065 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2024/10/mckay-6__1_-removebg-whit.png
+2025-08-27 16:08:32,137 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/05/ARAG.png
+2025-08-27 16:08:32,219 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/05/16761010991883283022-1-1024x110.jpg
+2025-08-27 16:08:32,286 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/05/MetLife-Legal-Plan.png
+2025-08-27 16:08:32,366 - INFO - Downloading resource: https://themckaylawfirm.com/wp-content/uploads/2020/07/mckay-6__1_-removebg-preview-1.png
+2025-08-27 16:08:32,464 - INFO - Webpage cloned successfully to cloned_webpage/index.html
