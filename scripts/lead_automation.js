@@ -357,9 +357,9 @@ function checkFollowUps() {
                 var atts = invMsg.getAttachments();
                 for (var ai2 = 0; ai2 < atts.length && !replyFound; ai2++) {
                   var att = atts[ai2];
-                  var name = (att.getName && att.getName()) || '';
+                  var attName = (att.getName && att.getName()) || '';
                   var ctype = (att.getContentType && att.getContentType()) || '';
-                  if (name.toLowerCase().endsWith('.ics') || ctype.indexOf('calendar') !== -1) {
+                  if (attName.toLowerCase().endsWith('.ics') || ctype.indexOf('calendar') !== -1) {
                     var ics = '';
                     try { ics = att.getDataAsString(); } catch (e) { ics = '' + att; }
                     if (ics) {
@@ -386,27 +386,32 @@ function checkFollowUps() {
           }
         }
 
-        if (replyFound) {
-          console.log('Reply found for: ' + email + ' (row ' + (row + 1) + ')');
-          try {
-            sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
-            sheet.getRange(row + 1, REMINDER_AT_COL).setValue(new Date());
-          } catch (e) {
-            console.log('Failed to mark follow-up for ' + email + ': ' + e);
-          }
-          continue;
-        }
-
-        // No reply found -> send reminder to YOUR_EMAIL
-        var reminderSubject = 'Follow-Up Reminder: ' + name + ' (' + email + ')';
-        var reminderBody = 'The lead ' + name + ' (' + email + ') has not responded within 24 hours.\n\nPlease follow up manually.';
+        // No reply found -> send gentle reminder to the lead
+        var reminderSubject = 'Gentle Reminder: Follow Up on Your Inquiry with Guerra Law Firm';
+        var reminderBody = 'Dear ' + name + ',\n\n' +
+                           'This is a gentle reminder about your recent inquiry with Guerra Law Firm.\n\n' +
+                           'To help us prepare for your consultation, please take a moment to answer the questions we sent in our previous email and schedule a convenient time using this link: ' + CALENDLY_LINK + '.\n\n' +
+                           'We\'re here to assist and look forward to hearing from you soon.\n\n' +
+                           'Best regards,\nMario Guerra\nGuerra Law Firm\n' + YOUR_EMAIL;
         try {
-          GmailApp.sendEmail(YOUR_EMAIL, reminderSubject, reminderBody);
+          GmailApp.sendEmail(email, reminderSubject, reminderBody, { from: YOUR_EMAIL });
           sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
           sheet.getRange(row + 1, REMINDER_AT_COL).setValue(new Date());
-          console.log('Reminder sent for: ' + email + ' (row ' + (row + 1) + ')');
+          console.log('Reminder sent to lead: ' + email + ' (row ' + (row + 1) + ')');
         } catch (e) {
-          console.log('Failed to send reminder for: ' + email + ': ' + e);
+          console.log('Failed to send reminder to lead ' + email + ': ' + e);
+          // Fallback: notify the owner
+          try {
+            var fallbackSubject = 'Reminder Failed: ' + name + ' (' + email + ')';
+            var fallbackBody = 'Failed to send reminder to lead ' + name + ' (' + email + '). Error: ' + e;
+            GmailApp.sendEmail(YOUR_EMAIL, fallbackSubject, fallbackBody);
+            console.log('Fallback notification sent to owner for ' + email);
+          } catch (fallbackErr) {
+            console.log('Failed to send fallback notification: ' + fallbackErr);
+          }
+          // Still mark as followed up to avoid retries
+          sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
+          sheet.getRange(row + 1, REMINDER_AT_COL).setValue(new Date());
         }
       } catch (rowErr) {
         console.log('Error processing row ' + (row + 1) + ': ' + rowErr);
