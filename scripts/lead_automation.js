@@ -12,7 +12,8 @@
     - LEAD_TRACKER_SHEET_ID
     - YOUR_EMAIL
     - FOLDER_ID
-    - AI_API_KEY (for Gemini API to generate executive summaries)
+    - AI_API_KEY (for Gemini API to generate executive summaries - optional for premium feature)
+    - ENABLE_AI_SUMMARY (set to 'true' to enable AI summary feature)
 
   Triggers:
   - Call setupTriggers() to create the time-based triggers:
@@ -24,6 +25,7 @@
     Enable the Advanced Calendar service and the Google Calendar API in the linked GCP project
     if you want calendar-based detection.
   - The script writes metadata columns to the Leads sheet (ReminderSentAt, ThreadId, EventId, MatchMethod).
+  - AI Summary feature is controlled by ENABLE_AI_SUMMARY script property (premium feature).
 */
 
 // Configuration: read required values from Apps Script Script Properties
@@ -40,6 +42,7 @@ var LEAD_TRACKER_SHEET_ID = getConfigValue('LEAD_TRACKER_SHEET_ID');
 var YOUR_EMAIL = getConfigValue('YOUR_EMAIL');
 var FOLDER_ID = getConfigValue('FOLDER_ID');
 var AI_API_KEY = getConfigValue('AI_API_KEY');
+var ENABLE_AI_SUMMARY = getConfigValue('ENABLE_AI_SUMMARY') === 'true';
 
 // Validate required properties and exit with a clear error if any are missing.
 (function validateConfig() {
@@ -48,7 +51,7 @@ var AI_API_KEY = getConfigValue('AI_API_KEY');
   if (!LEAD_TRACKER_SHEET_ID) missing.push('LEAD_TRACKER_SHEET_ID');
   if (!YOUR_EMAIL) missing.push('YOUR_EMAIL');
   if (!FOLDER_ID) missing.push('FOLDER_ID');
-  if (!AI_API_KEY) missing.push('AI_API_KEY');
+  if (ENABLE_AI_SUMMARY && !AI_API_KEY) missing.push('AI_API_KEY (required when ENABLE_AI_SUMMARY is true)');
   if (missing.length) {
     var msg = 'Missing required Script Properties: ' + missing.join(', ') + '.\nPlease add them via Project Settings → Script properties.';
     console.error(msg);
@@ -192,6 +195,11 @@ function processLeadEmails() {
 }
 
 function generateExecutiveSummary(emailContent) {
+  if (!ENABLE_AI_SUMMARY) {
+    console.log('AI Summary feature is disabled');
+    return 'AI Summary disabled';
+  }
+  
   console.log('Generating AI summary for email content length: ' + emailContent.length);
   try {
     var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + AI_API_KEY;
@@ -228,6 +236,7 @@ function generateExecutiveSummary(emailContent) {
 
 function checkFollowUps() {
   console.log('Starting follow-up check...');
+  console.log('AI Summary feature: ' + (ENABLE_AI_SUMMARY ? 'ENABLED' : 'DISABLED'));
   var lock = LockService.getScriptLock();
   try {
     // Prevent overlapping executions with retry/backoff
@@ -276,8 +285,10 @@ function checkFollowUps() {
       if (sheet.getLastColumn() < THREAD_ID_COL) sheet.getRange(1, THREAD_ID_COL).setValue('ThreadId');
       if (sheet.getLastColumn() < EVENT_ID_COL) sheet.getRange(1, EVENT_ID_COL).setValue('EventId');
       if (sheet.getLastColumn() < MATCH_METHOD_COL) sheet.getRange(1, MATCH_METHOD_COL).setValue('MatchMethod');
-      if (sheet.getLastColumn() < RESPONSE_RECEIVED_COL) sheet.getRange(1, RESPONSE_RECEIVED_COL).setValue('ResponseReceived');
-      if (sheet.getLastColumn() < EXECUTIVE_SUMMARY_COL) sheet.getRange(1, EXECUTIVE_SUMMARY_COL).setValue('ExecutiveSummary');
+      if (ENABLE_AI_SUMMARY) {
+        if (sheet.getLastColumn() < RESPONSE_RECEIVED_COL) sheet.getRange(1, RESPONSE_RECEIVED_COL).setValue('ResponseReceived');
+        if (sheet.getLastColumn() < EXECUTIVE_SUMMARY_COL) sheet.getRange(1, EXECUTIVE_SUMMARY_COL).setValue('ExecutiveSummary');
+      }
       console.log('Headers ensured.');
     } catch (e) {
       console.log('Could not ensure headers: ' + e);
@@ -290,8 +301,8 @@ function checkFollowUps() {
   var timestampRaw = data[row][7];
   var followedUpRaw = data[row][8];
   var threadIdCell = (data[row][10] || '').toString().trim();
-  var responseReceivedRaw = data[row][13]; // New column
-  var executiveSummaryCell = (data[row][14] || '').toString().trim(); // New column
+  var responseReceivedRaw = ENABLE_AI_SUMMARY && data[row].length > RESPONSE_RECEIVED_COL - 1 ? data[row][13] : false; // New column
+  var executiveSummaryCell = ENABLE_AI_SUMMARY && data[row].length > EXECUTIVE_SUMMARY_COL - 1 ? (data[row][14] || '').toString().trim() : ''; // New column
 
         if (!email) {
           console.log('Row ' + (row + 1) + ': No email found, skipping.');
@@ -501,12 +512,22 @@ function checkFollowUps() {
         // If reply found and not already processed, generate executive summary
         if (replyFound && !responseReceived && replyContent) {
           console.log('Row ' + (row + 1) + ': Generating executive summary...');
-          var summary = generateExecutiveSummary(replyContent);
-          sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
-          sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue(summary);
+          
+          if (ENABLE_AI_SUMMARY) {
+            // Premium feature: Generate AI executive summary
+            var summary = generateExecutiveSummary(replyContent);
+            sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
+            sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue(summary);
+            console.log('Row ' + (row + 1) + ': Executive summary generated for ' + email);
+          } else {
+            // Free tier: Mark as processed without AI summary
+            sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
+            sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue('AI Summary disabled');
+            console.log('Row ' + (row + 1) + ': Response processed (AI disabled) for ' + email);
+          }
+          
           sheet.getRange(row + 1, MATCH_METHOD_COL).setValue(matchedMethod); // Record how reply was detected
           sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true); // Mark as followed up
-          console.log('Row ' + (row + 1) + ': Executive summary generated for ' + email);
 
           // Send thank you email
           var thankYouSubject = 'Thank You for Your Response - Guerra Law Firm';

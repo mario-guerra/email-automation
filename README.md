@@ -6,7 +6,7 @@ Lightweight repository for scraping/cloning web pages and running simple email/l
 
 - `scripts/` - Python and Node helper scripts:
   - `clone_webpage.py` — clone a web page to local files (used to populate `site-ghpages`)
-  - `lead_automation.js` — Google Apps Script file (runs inside Google Apps Script runtime). This script sends a welcome email, logs leads to a Sheet and manages follow-ups.
+  - `lead_automation.js` — Google Apps Script file (runs inside Google Apps Script runtime). This script sends a welcome email, logs leads to a Sheet, manages follow-ups, and generates AI-powered executive summaries (premium feature).
   - `transform_for_ghpages.py` — transform cloned pages for GitHub Pages
   - `update_forms_to_formspark.py` — helper to migrate forms to Formspree/Formspark
   - `requirements.txt` — Python dependencies
@@ -60,6 +60,10 @@ Required Script Properties (set in Apps Script Project Settings → Script prope
 - `YOUR_EMAIL` — sender / notification email used by the script
 - `FOLDER_ID` — Drive folder id containing questionnaire files referenced by the script
 
+Optional Script Properties (for premium features):
+- `ENABLE_AI_SUMMARY` — set to 'true' to enable AI-powered executive summaries (premium feature)
+- `AI_API_KEY` — Gemini API key (required only when ENABLE_AI_SUMMARY is 'true')
+
 Important: `checkFollowUps()` now uses the Google Calendar API to detect scheduled consultations. To enable that behavior you must:
 - In the Apps Script editor enable the Advanced Google Service `Calendar` (Resources → Advanced Google services or Services panel). 
 - In the linked Google Cloud project enable the Google Calendar API (Cloud Console → APIs & Services → Library → "Google Calendar API" → Enable).
@@ -76,7 +80,9 @@ Security note: Do not commit production secrets. Use Script Properties or a secu
 
 - Scripts may expect API keys or credentials. Common patterns:
   - `FORMSPARK_API_KEY`, `SMTP_USER`, `SMTP_PASS`, etc.
+  - For Google Apps Script: `AI_API_KEY` (Gemini API key for premium AI summaries)
 - Do not commit secrets. A `.gitignore` is provided to exclude `.env` files, `.venv`, and `.tmp`.
+- Google Apps Script properties should be set via Project Settings → Script properties, not environment variables.
 
 ## Assumptions & notes
 
@@ -98,6 +104,10 @@ Sheet columns & follow-up behavior
  11. ThreadId (Gmail thread id)
  12. EventId (calendar event id / iCal UID when matched)
  13. MatchMethod (how a follow-up was detected: `calendar-api`, `threadid`, `gmail-search`, `ics-attachment`)
+ 14. ResponseReceived (boolean - whether a response was received and processed)
+ 15. ExecutiveSummary (AI-generated summary of lead responses - premium feature)
+
+Note: Columns 14-15 are only created and used when `ENABLE_AI_SUMMARY` is set to 'true'.
 
 Follow-up detection order (what `checkFollowUps()` does):
 1. Calendar API search for events on `YOUR_EMAIL` with the lead as an attendee (preferred and most reliable).
@@ -105,7 +115,35 @@ Follow-up detection order (what `checkFollowUps()` does):
 3. Conservative Gmail search for replies from the lead.
 4. Scan recent "Invitation" messages for `.ics` attachments and parse for attendee mailto: lines and UID.
 
-The script marks leads as followed up (and records `EventId`/`MatchMethod`) when a match is found and sends a reminder email to `YOUR_EMAIL` if no match exists after 24 hours.
+When a response is detected:
+- The script immediately processes it (no 24-hour wait)
+- If AI is enabled (`ENABLE_AI_SUMMARY = 'true'`), generates an executive summary using Gemini AI
+- Sends a thank you email to the lead acknowledging their response
+- Marks the lead as followed up and records the detection method
+
+The script sends reminder emails only to leads who haven't responded after 24 hours. Leads who respond are processed immediately regardless of timing.
+
+## Premium Features
+
+The script includes optional premium features that can be enabled via script properties:
+
+### AI-Powered Executive Summaries
+- **Configuration**: Set `ENABLE_AI_SUMMARY = 'true'` and provide `AI_API_KEY`
+- **Functionality**: Automatically generates concise summaries of lead questionnaire responses using Google's Gemini AI
+- **Benefits**: Saves time by highlighting key points, concerns, and important details for lawyers
+- **Fallback**: When disabled, responses are still processed but marked as "AI Summary disabled"
+
+### Feature Comparison
+
+| Feature | Free Tier | Premium Tier |
+|---------|-----------|--------------|
+| Welcome emails | ✅ | ✅ |
+| Lead tracking | ✅ | ✅ |
+| Follow-up detection | ✅ | ✅ |
+| Reminder emails | ✅ | ✅ |
+| Thank you emails | ✅ | ✅ |
+| AI summaries | ❌ | ✅ |
+| Response analysis | ❌ | ✅ |
 
 ## Contributing
 
@@ -123,6 +161,7 @@ Recommended follow-ups (concrete)
 - Enable the Advanced Calendar API in the Apps Script project (see instructions above) so calendar-based detection works.
 - Add a short `DEPLOY_APPS_SCRIPT.md` describing how to enable the Calendar API and grant scopes.
 - If you run GitHub Actions to publish `site-ghpages`, ensure the workflow has `pages: write` permission or set a `PAGES_PAT` secret for deployments that require a PAT.
+- Consider adding rate limiting for AI API calls to manage costs in high-volume scenarios.
 
 ## License
 
