@@ -67,6 +67,7 @@ logs/
 *.pem
 *.key
 credentials.json
+scripts/.streamlit/
 
 # SQLite
 *.sqlite3

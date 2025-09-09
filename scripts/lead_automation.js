@@ -77,6 +77,13 @@ function processLeadEmails() {
     console.log('Thread ' + i + ' has ' + messages.length + ' messages.');
     for (var j = 0; j < messages.length; j++) {
       var message = messages[j];
+
+      // Only process unread messages to avoid duplicates from thread grouping
+      if (!message.isUnread()) {
+        console.log('Message ' + j + ' in thread ' + i + ' is already read, skipping.');
+        continue;
+      }
+
       var body = message.getPlainBody();
       console.log('Message body: ' + body);
       
