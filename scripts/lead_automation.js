@@ -301,6 +301,9 @@ function checkFollowUps() {
       console.log('Could not ensure headers: ' + e);
     }
 
+    // Track processed emails to prevent duplicate processing in this run
+    var processedEmails = new Set();
+
     for (var row = 1; row < data.length; row++) {
       try {
         var email = (data[row][0] || '').toString().trim();
@@ -313,6 +316,12 @@ function checkFollowUps() {
 
         if (!email) {
           console.log('Row ' + (row + 1) + ': No email found, skipping.');
+          continue;
+        }
+
+        // Skip if this email was already processed in this run (prevents duplicate processing)
+        if (processedEmails.has(email.toLowerCase())) {
+          console.log('Row ' + (row + 1) + ': Email ' + email + ' already processed in this run, skipping.');
           continue;
         }
 
@@ -372,24 +381,7 @@ function checkFollowUps() {
                       matchedEventId = ev.id || ev.iCalUID || '';
                       matchedMethod = 'calendar-api';
                       console.log('Row ' + (row + 1) + ': Reply found via Calendar API.');
-                      // Try to fetch email content for this event
-                      if (threadIdCell) {
-                        try {
-                          var thread = GmailApp.getThreadById(threadIdCell);
-                          if (thread && thread.getMessageCount > 1) {
-                            var msgs = thread.getMessages();
-                            for (var mi = 0; mi < msgs.length; mi++) {
-                              if (msgs[mi].getDate().getTime() > timestamp.getTime()) {
-                                replyContent = msgs[mi].getPlainBody();
-                                console.log('Row ' + (row + 1) + ': Email content captured from thread.');
-                                break;
-                              }
-                            }
-                          }
-                        } catch (e) {
-                          console.log('Row ' + (row + 1) + ': Could not fetch email content from thread: ' + e.message);
-                        }
-                      }
+                      // Don't fetch content here - we'll do it once at the end
                       break;
                     }
                   }
@@ -416,10 +408,9 @@ function checkFollowUps() {
                 for (var mi = 0; mi < msgs.length; mi++) {
                   if (msgs[mi].getDate().getTime() > timestamp.getTime()) {
                     replyFound = true;
-                    matchedMethod = matchedMethod || 'threadid';
-                    // if available, also record the thread id
-                    matchedEventId = matchedEventId || thread.getId();
-                    replyContent = msgs[mi].getPlainBody();
+                    matchedMethod = 'threadid';
+                    // Don't fetch content here - we'll do it once at the end
+                    matchedEventId = thread.getId();
                     console.log('Row ' + (row + 1) + ': Reply found via thread ID.');
                     break;
                   }
@@ -439,13 +430,9 @@ function checkFollowUps() {
             var threadsFound = GmailApp.search(query, 0, 1);
             if (threadsFound && threadsFound.length > 0) {
               replyFound = true;
-              matchedMethod = matchedMethod || 'gmail-search';
-              // Get the latest message from the thread
-              var foundMsgs = threadsFound[0].getMessages();
-              if (foundMsgs && foundMsgs.length > 0) {
-                replyContent = foundMsgs[foundMsgs.length - 1].getPlainBody();
-                console.log('Row ' + (row + 1) + ': Reply found via Gmail search.');
-              }
+              matchedMethod = 'gmail-search';
+              console.log('Row ' + (row + 1) + ': Reply found via Gmail search.');
+              // Don't fetch content here - we'll do it once at the end
             }
           } catch (e) {
             console.log('Row ' + (row + 1) + ': Gmail search error: ' + e.message);
@@ -482,8 +469,7 @@ function checkFollowUps() {
                           matchedEventId = (uidMatch && uidMatch[1]) ? uidMatch[1].trim() : '';
                           matchedMethod = 'ics-attachment';
                           console.log('Row ' + (row + 1) + ': Reply found via ICS attachment.');
-                          // Try to capture email content from the invitation message
-                          replyContent = invMsg.getPlainBody();
+                          // Don't fetch content here - we'll do it once at the end
                           break;
                         }
                       }
@@ -497,9 +483,9 @@ function checkFollowUps() {
           }
         }
 
-        // If reply found but no content captured, try to fetch it
+        // Fetch email content only once after determining reply was found
         if (replyFound && !replyContent) {
-          console.log('Row ' + (row + 1) + ': Reply found but no content, attempting to fetch...');
+          console.log('Row ' + (row + 1) + ': Fetching email content for method: ' + matchedMethod);
           var afterEpoch = Math.floor(timestamp.getTime() / 1000);
           var query = 'from:"' + email + '" after:' + afterEpoch + ' in:anywhere';
           try {
@@ -508,7 +494,7 @@ function checkFollowUps() {
               var foundMsgs = threadsFound[0].getMessages();
               if (foundMsgs && foundMsgs.length > 0) {
                 replyContent = foundMsgs[foundMsgs.length - 1].getPlainBody();
-                console.log('Row ' + (row + 1) + ': Email content fetched via search.');
+                console.log('Row ' + (row + 1) + ': Email content fetched successfully.');
               }
             }
           } catch (e) {
@@ -518,23 +504,30 @@ function checkFollowUps() {
 
         // If reply found and not already processed, generate executive summary
         if (replyFound && !responseReceived && replyContent) {
-          console.log('Row ' + (row + 1) + ': Generating executive summary...');
+          console.log('Row ' + (row + 1) + ': Generating executive summary for ' + email + ' (method: ' + matchedMethod + ')');
           
           if (ENABLE_AI_SUMMARY) {
             // Premium feature: Generate AI executive summary
             var summary = generateExecutiveSummary(replyContent);
+            console.log('Row ' + (row + 1) + ': AI summary generated, writing to row ' + (row + 1) + ' for email: ' + email);
             sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
             sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue(summary);
-            console.log('Row ' + (row + 1) + ': Executive summary generated for ' + email);
+            console.log('Row ' + (row + 1) + ': Executive summary written to spreadsheet for ' + email);
           } else {
             // Free tier: Mark as processed without AI summary
+            console.log('Row ' + (row + 1) + ': AI disabled, marking as processed for ' + email);
             sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
             sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue('AI Summary disabled');
             console.log('Row ' + (row + 1) + ': Response processed (AI disabled) for ' + email);
           }
           
-          sheet.getRange(row + 1, MATCH_METHOD_COL).setValue(matchedMethod); // Record how reply was detected
-          sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true); // Mark as followed up
+          // Record detection method and mark as followed up
+          sheet.getRange(row + 1, MATCH_METHOD_COL).setValue(matchedMethod);
+          sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
+          console.log('Row ' + (row + 1) + ': Marked as followed up with method: ' + matchedMethod);
+
+          // Mark this email as processed to prevent duplicate processing in this run
+          processedEmails.add(email.toLowerCase());
 
           // Send thank you email
           var thankYouSubject = 'Thank You for Your Response - Guerra Law Firm';
