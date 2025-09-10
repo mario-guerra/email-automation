@@ -6,3 +6,10 @@ google-auth==2.35.0
 google-auth-oauthlib==1.2.1
 google-api-python-client==2.149.0
 pandas==2.2.3
+streamlit-extras==0.3.6
+plotly==5.22.0
+altair==5.1.2
+validators==0.28.1
+watchdog==5.0.1
+streamlit-authenticator==0.4.2
+streamlit-aggrid==1.1.8
