@@ -1047,17 +1047,36 @@
                   </div>
                 </div>
 
-                <!-- Tabbed Content -->
+                <!-- Split design: messages always visible + tabbed content -->
+                <!-- Messages Section - Always Visible -->
+                <div class="card mb-3">
+                  <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-comments"></i> Messages</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <h5><i class="fas fa-envelope-open"></i> Original Message</h5>
+                        <div class="border rounded p-3 bg-light">
+                          <p id="detailMessage" class="mb-0">-</p>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <h5><i class="fas fa-brain"></i> AI Executive Summary</h5>
+                        <div class="border rounded p-3 bg-light">
+                          <p id="detailSummary" class="mb-0">-</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Tabbed Content (for questionnaires and timeline only) -->
                 <div class="card">
                   <div class="card-header p-0">
                     <ul class="nav nav-tabs card-header-tabs">
                       <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#messages" id="messagesTab">
-                          <i class="fas fa-comments"></i> Messages
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#questionnaires" id="questionnairesTab">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#questionnaires" id="questionnairesTab">
                           <i class="fas fa-clipboard-list"></i> Questionnaires
                         </a>
                       </li>
@@ -1070,23 +1089,7 @@
                   </div>
                   <div class="card-body">
                     <div class="tab-content">
-                      <div class="tab-pane fade show active" id="messages">
-                        <div class="row">
-                          <div class="col-lg-6">
-                            <h5><i class="fas fa-envelope-open"></i> Original Message</h5>
-                            <div class="border rounded p-3 bg-light">
-                              <p id="detailMessage" class="mb-0">-</p>
-                            </div>
-                          </div>
-                          <div class="col-lg-6">
-                            <h5><i class="fas fa-brain"></i> AI Executive Summary</h5>
-                            <div class="border rounded p-3 bg-light">
-                              <p id="detailSummary" class="mb-0">-</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="tab-pane fade" id="questionnaires">
+                      <div class="tab-pane fade show active" id="questionnaires">
                         <h5><i class="fas fa-clipboard-list"></i> Relevant Questionnaires</h5>
                         <div id="questionnaireContent" class="mt-3">
                           <!-- Dynamic questionnaire content -->
@@ -1392,6 +1395,7 @@
     let filteredLeadsData = [];
     let charts = {};
     let lastRefresh = null;
+    let currentLeadEmail = null; // Track the currently displayed lead
 
     // Initialize the application
     $(document).ready(function() {
@@ -1415,6 +1419,32 @@
       
       // Now setup and show loading
       setupEventListeners();
+      
+      // Add a more focused observer to monitor just the message field
+      const messageObserver = new MutationObserver(function(mutations) {
+        if (currentLeadEmail && $('#detail').is(':visible')) {
+          const lead = leadsData.find(l => l.email === currentLeadEmail);
+          const currentMessage = $('#detailMessage').text();
+          
+          if (lead && lead.message && (!currentMessage || currentMessage === '-')) {
+            console.log('Message content detected empty when it should have data, refreshing...');
+            // Directly set content without helpers
+            document.getElementById('detailMessage').textContent = lead.message || 'No message';
+            document.getElementById('detailSummary').textContent = lead.executiveSummary || 'No summary available';
+          }
+        }
+      });
+      
+      // Start observing for changes on the detail message field itself
+      const messageEl = document.getElementById('detailMessage');
+      if (messageEl) {
+        messageObserver.observe(messageEl, { 
+          childList: true,
+          characterData: true,
+          subtree: true
+        });
+      }
+      
       showLoading(true);
       
       // Add a shorter safety timeout
@@ -1491,6 +1521,39 @@
         
         // Load page-specific data
         loadPageData(target);
+      });
+      
+      // Simpler tab handling for just questionnaires and timeline
+      $('a[data-bs-toggle="tab"]').on('click', function (e) {
+        console.log('Tab clicked:', $(this).attr('href'));
+        e.preventDefault(); // Prevent Bootstrap's default behavior
+        
+        const targetId = $(this).attr('href');
+        const tabId = $(this).attr('id');
+        
+        // Manual tab switching with direct DOM manipulation
+        $('.nav-tabs .nav-link').removeClass('active');
+        $(this).addClass('active');
+        
+        $('.tab-pane').hide().removeClass('show active');
+        $(targetId).show().addClass('show active');
+        
+        // Handle specific tab content updates
+        if (targetId === '#questionnaires' && currentLeadEmail) {
+          const lead = leadsData.find(l => l.email === currentLeadEmail);
+          if (lead) {
+            // Re-load questionnaire data when tab is clicked
+            loadQuestionnaires(lead.appointmentTypes);
+          }
+        } else if (targetId === '#timeline' && currentLeadEmail) {
+          const lead = leadsData.find(l => l.email === currentLeadEmail);
+          if (lead) {
+            // Re-generate timeline when tab is clicked
+            generateTimeline(lead);
+          }
+        }
+        
+        return false; // Prevent default and stop propagation
       });
 
       // Search and filters
@@ -2334,6 +2397,9 @@
         return;
       }
 
+      // Store current lead email in global variable
+      currentLeadEmail = email;
+      
       // Populate detail view
       $('#detailName').text(lead.name || 'Unknown');
       $('#detailEmail').text(lead.email || '');
@@ -2347,8 +2413,18 @@
       const statusClass = getStatusClass(status);
       $('#detailStatus').html(`<span class="status-badge ${statusClass}">${status}</span>`);
       
-      $('#detailMessage').text(lead.message || 'No message');
-      $('#detailSummary').text(lead.executiveSummary || 'No summary available');
+      // Set message and summary content directly (now always visible, no tabs)
+      const messageContent = lead.message || 'No message';
+      const summaryContent = lead.executiveSummary || 'No summary available';
+      
+      // Use both DOM and jQuery methods to maximize compatibility
+      document.getElementById('detailMessage').textContent = messageContent;
+      document.getElementById('detailSummary').textContent = summaryContent;
+      
+      $('#detailMessage').text(messageContent);
+      $('#detailSummary').text(summaryContent);
+      
+      console.log('Setting message fields directly (no tabs):', messageContent);
 
       // Load questionnaires
       loadQuestionnaires(lead.appointmentTypes);
@@ -2356,10 +2432,24 @@
       // Generate timeline
       generateTimeline(lead);
 
-      // Show detail view
+      // Show detail view and activate questionnaires tab by default
       $('.nav-pills .nav-link').removeClass('active');
       $('.tab-pane').removeClass('show active');
       $('#detail').addClass('show active').show();
+      
+      // Activate questionnaires tab
+      $('#questionnairesTab').addClass('active');
+      $('#questionnaires').addClass('show active');
+      
+      // Add a brief check to ensure message content is visible
+      setTimeout(() => {
+        const currentMessage = $('#detailMessage').text();
+        if (!currentMessage || currentMessage === '-') {
+          console.log('Message still not visible, applying one more time');
+          $('#detailMessage').text(messageContent);
+          $('#detailSummary').text(summaryContent);
+        }
+      }, 100);
     }
 
     function loadQuestionnaires(appointmentTypes) {
@@ -2706,6 +2796,8 @@
       div.textContent = text;
       return div.innerHTML;
     }
+    
+    // No longer needed as we removed the tab for messages
 
     function debounce(func, wait) {
       let timeout;
