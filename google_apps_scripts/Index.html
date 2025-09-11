@@ -1715,8 +1715,19 @@
           matchMethod: 'Manual',
           responseReceived: true,
           executiveSummary: 'Divorce consultation scheduled',
-          questionnaireResponses: 'Marriage length: 5 years, Children: 2',
-          questionnaireParsed: '{"marriageLength": "5 years", "children": 2}'
+          questionnaireResponses: `Family Law Questionnaire Responses:
+          
+1. Marriage length: 5 years
+2. Number of children: 2 (ages 7 and 3)
+3. Joint property: House, two vehicles, retirement accounts
+4. Contested divorce? No, agreement on most issues
+5. Child custody preference: Joint custody, primary residence with mother
+6. Current living situation: Separated for 3 months, living in different residences
+7. Financial concerns: Need assistance with child support calculations
+8. Urgent matters: Would like temporary custody order finalized
+9. Previous legal consultation: No
+10. Questions: How long will the process take? What documentation is needed?`,
+          questionnaireParsed: '{"marriageLength": "5 years", "children": 2, "childrenAges": [7, 3], "jointCustody": true, "contestedDivorce": false}'
         },
         {
           email: 'mike.johnson@example.com',
@@ -1732,10 +1743,21 @@
           threadId: 'demo-thread-3',
           eventId: '',
           matchMethod: 'Auto',
-          responseReceived: false,
-          executiveSummary: 'Criminal defense case - awaiting response',
-          questionnaireResponses: '',
-          questionnaireParsed: ''
+          responseReceived: true,
+          executiveSummary: 'Criminal defense case with traffic violations - client has prior record',
+          questionnaireResponses: `Criminal Defense Questionnaire:
+          
+1. Nature of charges: DUI and driving with suspended license
+2. Date of incident: August 27, 2023
+3. Jurisdiction: Travis County
+4. Prior criminal history: Yes, previous DUI in 2019
+5. Current status: Released on bail
+6. Court date scheduled: October 15, 2023
+7. Police report details: Stopped at checkpoint, field sobriety test administered
+8. Witnesses: Passenger in vehicle
+9. Immediate concerns: License suspension and employment impact
+10. Questions: Possibility of reduced charges? Ignition interlock requirements?`,
+          questionnaireParsed: '{"charges": ["DUI", "driving with suspended license"], "priorHistory": true, "courtDate": "2023-10-15"}'
         }
       ];
     }
@@ -2342,8 +2364,29 @@
 
     function loadQuestionnaires(appointmentTypes) {
       const container = $('#questionnaireContent');
-      container.html('<div class="loading">Loading questionnaires...</div>');
+      container.html('<div class="loading">Loading questionnaire data...</div>');
+      
+      // Get the current lead's data
+      const email = $('#detailEmail').text();
+      const lead = leadsData.find(l => l.email === email);
+      
+      if (!lead) {
+        container.html('<p class="text-muted">Error: Lead data not found.</p>');
+        return;
+      }
 
+      // Check if we have questionnaire responses
+      if (lead.questionnaireResponses && lead.questionnaireResponses.trim()) {
+        // We have questionnaire responses in the spreadsheet
+        renderQuestionnaires([{
+          type: "Client Responses", 
+          content: lead.questionnaireResponses,
+          isParsed: true
+        }]);
+        return;
+      }
+      
+      // Fall back to loading template questionnaires if no responses are available
       if (!appointmentTypes) {
         container.html('<p class="text-muted">No questionnaires available.</p>');
         return;
@@ -2353,17 +2396,19 @@
       let loadedCount = 0;
       const questionnaires = [];
 
+      container.html('<div class="loading">Loading template questionnaires...</div>');
+      
       types.forEach(type => {
         google.script.run
           .withSuccessHandler(function(content) {
-            questionnaires.push({ type, content });
+            questionnaires.push({ type, content, isTemplate: true });
             loadedCount++;
             if (loadedCount === types.length) {
               renderQuestionnaires(questionnaires);
             }
           })
           .withFailureHandler(function(error) {
-            questionnaires.push({ type, content: 'Error loading questionnaire: ' + error });
+            questionnaires.push({ type, content: 'Error loading questionnaire: ' + error, isTemplate: true });
             loadedCount++;
             if (loadedCount === types.length) {
               renderQuestionnaires(questionnaires);
@@ -2377,11 +2422,32 @@
       const container = $('#questionnaireContent');
       container.empty();
 
+      if (!questionnaires || questionnaires.length === 0) {
+        container.html('<p class="text-muted">No questionnaire data available.</p>');
+        return;
+      }
+
       questionnaires.forEach(q => {
+        let title, icon, headerClass;
+        
+        if (q.isParsed) {
+          title = "Client Questionnaire Responses";
+          icon = "fas fa-comment-dots";
+          headerClass = "bg-success text-white";
+        } else if (q.isTemplate) {
+          title = `${q.type} Questionnaire Template`;
+          icon = "fas fa-clipboard-list";
+          headerClass = "bg-light";
+        } else {
+          title = `${q.type} Questionnaire`;
+          icon = "fas fa-clipboard-list";
+          headerClass = "";
+        }
+        
         const html = `
-          <div class="card mb-3">
-            <div class="card-header">
-              <h6 class="mb-0"><i class="fas fa-clipboard-list"></i> ${q.type} Questionnaire</h6>
+          <div class="card mb-3 ${q.isParsed ? 'border-success' : ''}">
+            <div class="card-header ${headerClass}">
+              <h6 class="mb-0"><i class="${icon} me-2"></i>${title}</h6>
             </div>
             <div class="card-body">
               <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;">${escapeHtml(q.content)}</pre>
@@ -2390,6 +2456,16 @@
         `;
         container.append(html);
       });
+      
+      // If we're showing templates but no responses
+      if (questionnaires.length > 0 && !questionnaires.some(q => q.isParsed)) {
+        container.prepend(`
+          <div class="alert alert-info mb-3">
+            <i class="fas fa-info-circle me-2"></i>
+            No client responses received yet. Showing template questionnaires.
+          </div>
+        `);
+      }
     }
 
     function generateTimeline(lead) {
