@@ -214,7 +214,7 @@ function generateExecutiveSummary(emailContent) {
   for (var attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + AI_API_KEY;
-      var prompt = 'Summarize the key points from this lead\'s email response to our questionnaire. Focus on their answers, expressed concerns, overall sentiment, and highlight anything important for the lawyer to know prior to the call. Call out anything that merits a closer read of the email and/or questionnaire answers. Keep it under 200 words. Use "Important points:" for the highlighted section.\n\nEmail Content:\n' + emailContent;
+      var prompt = 'Summarize the key points from this lead\'s email response to our questionnaire. Focus on their answers, expressed concerns, overall sentiment, and highlight anything important to know from a legal standpoint. Call out anything that merits a closer read of the email and/or questionnaire answers. Keep it under 200 words. Use "Important points:" for the highlighted section.\n\nEmail Content:\n' + emailContent;
       var payload = {
         'contents': [{
           'parts': [{ 'text': prompt }]
