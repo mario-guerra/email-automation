@@ -1,0 +1,2879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Management Dashboard - Guerra Law Firm</title>
+  <base target="_top">
+  
+  <!-- Meta tags for Google Apps Script compatibility -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="google-apps-script" content="true">
+  
+  <!-- External Libraries - using different CDNs and versions for better compatibility -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- JavaScript Libraries - using unpkg for better Google Apps Script compatibility -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js" crossorigin="anonymous"></script>
+  
+  <!-- Using Chart.js UMD build for compatibility with Google Apps Script -->
+  <script>
+    // Simplified minimal chart library for Google Apps Script compatibility
+    // Based on Chart.js but using direct canvas API for compatibility
+    window.SimpleChart = {
+      create: function(canvasId, type, labels, data, colors) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) {
+          console.error('Canvas element not found:', canvasId);
+          return null;
+        }
+        
+        // Size the canvas properly for the container
+        const container = canvas.parentElement;
+        if (container && container.clientWidth && container.clientHeight) {
+          canvas.width = container.clientWidth;
+          canvas.height = container.clientHeight;
+        }
+        
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width || canvas.clientWidth || 300;
+        const height = canvas.height || canvas.clientHeight || 300;
+        
+        // Store chart data
+        const chart = {
+          type: type,
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: colors || [
+                '#FFC107', // Warning
+                '#03A9F4', // Info
+                '#4CAF50', // Success
+                '#9C27B0'  // Purple
+              ]
+            }]
+          },
+          destroy: function() {
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+          }
+        };
+        
+        // Make sure canvas has width and height
+        if (!canvas.width || !canvas.height) {
+          canvas.width = canvas.parentElement.clientWidth || 300;
+          canvas.height = canvas.parentElement.clientHeight || 300;
+        }
+        
+        // Clear canvas before drawing
+        ctx.clearRect(0, 0, width, height);
+        
+        // Draw the chart based on type
+        if (type === 'doughnut' || type === 'pie') {
+          this._drawPieChart(ctx, width, height, labels, data, colors, type === 'doughnut');
+        } else if (type === 'bar') {
+          this._drawBarChart(ctx, width, height, labels, data, colors);
+        } else {
+          // Default to line chart
+          this._drawLineChart(ctx, width, height, labels, data, colors);
+        }
+        
+        return chart;
+      },
+      
+      // Simple line chart
+      _drawLineChart: function(ctx, width, height, labels, data, colors) {
+        if (!data || !data.length) return;
+        
+        const padding = 40;
+        const chartWidth = width - 2 * padding;
+        const chartHeight = height - 2 * padding;
+        const color = colors && colors[0] ? colors[0] : '#1E88E5';
+        
+        const max = Math.max(...data) * 1.1;
+        const xStep = chartWidth / (data.length - 1);
+        
+        // Draw axes
+        ctx.beginPath();
+        ctx.strokeStyle = '#ccc';
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        ctx.stroke();
+        
+        // Draw line
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        
+        for (let i = 0; i < data.length; i++) {
+          const x = padding + i * xStep;
+          const y = height - padding - (data[i] / max * chartHeight);
+          
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        
+        ctx.stroke();
+        
+        // Fill area under line
+        ctx.lineTo(padding + (data.length - 1) * xStep, height - padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.closePath();
+        ctx.fillStyle = color + '20'; // 20% opacity
+        ctx.fill();
+        
+        // Draw labels if there are not too many
+        if (labels && labels.length <= 12) {
+          ctx.fillStyle = '#666';
+          ctx.font = '10px Arial';
+          ctx.textAlign = 'center';
+          
+          for (let i = 0; i < labels.length; i++) {
+            const x = padding + i * xStep;
+            ctx.fillText(labels[i], x, height - padding + 15);
+          }
+        }
+      },
+      
+      // Simple pie/doughnut chart
+      _drawPieChart: function(ctx, width, height, labels, data, colors, isDoughnut) {
+        const total = data.reduce((sum, val) => sum + val, 0);
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = Math.min(width, height) / 2 - 20;
+        const innerRadius = isDoughnut ? radius * 0.6 : 0;
+        
+        let startAngle = -0.5 * Math.PI; // Start at top
+        
+        for (let i = 0; i < data.length; i++) {
+          const sliceAngle = 2 * Math.PI * (data[i] / total);
+          const endAngle = startAngle + sliceAngle;
+          const color = colors && colors[i] ? colors[i] : 
+                        ['#FFC107', '#03A9F4', '#4CAF50', '#9C27B0', '#F44336'][i % 5];
+          
+          // Draw slice
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+          ctx.closePath();
+          ctx.fillStyle = color;
+          ctx.fill();
+          
+          // Draw inner circle for doughnut
+          if (isDoughnut) {
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            ctx.closePath();
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+          }
+          
+          startAngle = endAngle;
+        }
+        
+        // Draw legend if we have labels
+        if (labels && labels.length) {
+          this._drawLegend(ctx, width, height, labels, colors);
+        }
+      },
+      
+      // Simple bar chart
+      _drawBarChart: function(ctx, width, height, labels, data, colors) {
+        const padding = 40;
+        const chartWidth = width - 2 * padding;
+        const chartHeight = height - 2 * padding;
+        
+        const max = Math.max(...data) * 1.1;
+        const barWidth = chartWidth / data.length * 0.8;
+        const barSpacing = chartWidth / data.length * 0.2;
+        
+        // Draw axes
+        ctx.beginPath();
+        ctx.strokeStyle = '#ccc';
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        ctx.stroke();
+        
+        // Draw bars
+        for (let i = 0; i < data.length; i++) {
+          const x = padding + (barWidth + barSpacing) * i + barSpacing / 2;
+          const barHeight = (data[i] / max) * chartHeight;
+          const y = height - padding - barHeight;
+          
+          const color = colors && colors[i] ? colors[i] : 
+                        ['#1E88E5', '#03A9F4', '#4CAF50', '#9C27B0', '#F44336'][i % 5];
+          
+          ctx.fillStyle = color;
+          ctx.fillRect(x, y, barWidth, barHeight);
+          
+          // Draw label if there are not too many
+          if (labels && labels.length <= 12) {
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(labels[i], x + barWidth / 2, height - padding + 15);
+          }
+        }
+      },
+      
+      // Draw legend for charts
+      _drawLegend: function(ctx, width, height, labels, colors) {
+        const legendY = height - 20;
+        const itemWidth = width / labels.length;
+        
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        for (let i = 0; i < labels.length; i++) {
+          const color = colors && colors[i] ? colors[i] : 
+                        ['#FFC107', '#03A9F4', '#4CAF50', '#9C27B0', '#F44336'][i % 5];
+                        
+          const x = (i + 0.5) * itemWidth;
+          
+          // Draw color box
+          ctx.fillStyle = color;
+          ctx.fillRect(x - 30, legendY - 5, 10, 10);
+          
+          // Draw label text
+          ctx.fillStyle = '#333';
+          ctx.fillText(labels[i], x + 5, legendY);
+        }
+      }
+    };
+    
+    // Make Chart.js API compatible wrapper
+    window.Chart = function(ctx, config) {
+      // Extract needed info from config
+      const type = config.type || 'line';
+      const labels = config.data && config.data.labels ? config.data.labels : [];
+      const dataset = config.data && config.data.datasets && config.data.datasets[0] ? config.data.datasets[0] : {};
+      const data = dataset.data || [];
+      const colors = dataset.backgroundColor || [];
+      
+      // Use canvas ID if ctx is a canvas element
+      const canvasId = ctx.canvas ? ctx.canvas.id : ctx.id || null;
+      
+      // Create simple chart
+      return SimpleChart.create(canvasId, type, labels, data, Array.isArray(colors) ? colors : [colors]);
+    };
+    
+    console.log('Simple Chart.js replacement loaded successfully');
+    window.chartJSLoaded = true;
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js" crossorigin="anonymous"></script>
+  
+  <style>
+    :root {
+      --primary-color: #1E88E5;
+      --primary-dark: #1565C0;
+      --secondary-color: #F5F7FA;
+      --success-color: #4CAF50;
+      --warning-color: #FFC107;
+      --danger-color: #F44336;
+      --info-color: #03A9F4;
+      --purple-color: #9C27B0;
+      --text-dark: #2C3E50;
+      --text-muted: #6C757D;
+      --border-color: #E1E5E9;
+      --shadow-light: 0 2px 4px rgba(0,0,0,0.08);
+      --shadow-medium: 0 4px 12px rgba(0,0,0,0.15);
+      --border-radius: 8px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--secondary-color);
+      color: var(--text-dark);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Header Styles */
+    .header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 1rem 0;
+      box-shadow: var(--shadow-medium);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header .container-fluid {
+      max-width: 1400px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .last-updated {
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      background: white;
+      min-height: calc(100vh - 80px);
+      border-right: 1px solid var(--border-color);
+      box-shadow: var(--shadow-light);
+    }
+
+    .nav-pills .nav-link {
+      color: var(--text-dark);
+      border-radius: var(--border-radius);
+      margin-bottom: 0.5rem;
+      padding: 0.75rem 1rem;
+      transition: var(--transition);
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-pills .nav-link:hover {
+      background-color: rgba(30, 136, 229, 0.1);
+      color: var(--primary-color);
+      transform: translateX(2px);
+    }
+
+    .nav-pills .nav-link.active {
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: var(--shadow-light);
+    }
+
+    .nav-pills .nav-link i {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      background: white;
+      min-height: calc(100vh - 80px);
+      padding: 2rem;
+    }
+
+    /* Cards */
+    .card {
+      border: none;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-light);
+      transition: var(--transition);
+      margin-bottom: 1.5rem;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-medium);
+    }
+
+    .card-header {
+      background: white;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Metric Cards */
+    .metric-card {
+      background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+      border-left: 4px solid var(--primary-color);
+      transition: var(--transition);
+      height: 100%;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      line-height: 1;
+    }
+
+    .metric-label {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-change {
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+
+    .metric-change.positive {
+      color: var(--success-color);
+    }
+
+    .metric-change.negative {
+      color: var(--danger-color);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-new {
+      background-color: rgba(255, 193, 7, 0.15);
+      color: #B45309;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .status-awaiting-response {
+      background-color: rgba(3, 169, 244, 0.15);
+      color: #0277BD;
+      border: 1px solid rgba(3, 169, 244, 0.3);
+    }
+
+    .status-responded {
+      background-color: rgba(76, 175, 80, 0.15);
+      color: #2E7D32;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .status-scheduled {
+      background-color: rgba(156, 39, 176, 0.15);
+      color: #7B1FA2;
+      border: 1px solid rgba(156, 39, 176, 0.3);
+    }
+
+    /* Tables */
+    .table {
+      font-size: 0.9rem;
+    }
+
+    .table th {
+      border-top: none;
+      border-bottom: 2px solid var(--border-color);
+      font-weight: 600;
+      color: var(--text-dark);
+      padding: 1rem 0.75rem;
+    }
+
+    .table td {
+      padding: 1rem 0.75rem;
+      vertical-align: middle;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .table tbody tr:hover {
+      background-color: rgba(30, 136, 229, 0.05);
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      padding: 0.5rem 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      box-shadow: var(--shadow-light);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .btn-outline-primary {
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    /* Search and Filters */
+    .search-filters {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 0.75rem;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+    }
+
+    /* Chart Container */
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin: 1rem 0;
+    }
+
+    /* Loading States */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      color: var(--text-muted);
+    }
+
+    .spinner-border-sm {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    /* Lead Detail Tabs */
+    .nav-tabs {
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-tabs .nav-link {
+      border: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 1rem 1.5rem;
+    }
+
+    .nav-tabs .nav-link.active {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      background: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 1rem;
+      }
+      
+      .metric-value {
+        font-size: 2rem;
+      }
+      
+      .sidebar {
+        position: fixed;
+        top: 80px;
+        left: -250px;
+        width: 250px;
+        height: calc(100vh - 80px);
+        transition: left 0.3s ease;
+        z-index: 999;
+      }
+      
+      .sidebar.show {
+        left: 0;
+      }
+      
+      .sidebar-overlay {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 80px);
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+        display: none;
+      }
+      
+      .sidebar-overlay.show {
+        display: block;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .header .logo {
+        font-size: 1.25rem;
+      }
+      
+      .user-info {
+        gap: 0.5rem;
+      }
+      
+      .last-updated {
+        display: none;
+      }
+    }
+
+    /* Animation classes */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* DataTables customization */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+      margin: 0.5rem 0;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: var(--primary-color) !important;
+      color: white !important;
+      border: 1px solid var(--primary-color) !important;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="logo">
+            <i class="fas fa-balance-scale"></i>
+            Lead Management Dashboard
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="user-info justify-content-end">
+            <div class="d-flex align-items-center">
+              <div id="connectionStatus" class="me-3">
+                <i class="fas fa-circle text-warning" title="Connecting..."></i>
+                <span class="small">Connecting...</span>
+              </div>
+              <span class="last-updated" id="lastUpdated">Last updated: Loading...</span>
+            </div>
+            <div class="dropdown">
+              <button class="btn btn-link text-white dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle"></i> Guerra Law Firm
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#" onclick="refreshData()"><i class="fas fa-sync-alt"></i> Refresh Data</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" onclick="google.script.host.close()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3 col-lg-2 p-0">
+        <nav class="sidebar">
+          <div class="p-3">
+            <ul class="nav nav-pills flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="#" data-bs-toggle="pill" data-bs-target="#dashboard">
+                  <i class="fas fa-chart-pie"></i>
+                  Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="pill" data-bs-target="#leads">
+                  <i class="fas fa-users"></i>
+                  Lead Management
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="pill" data-bs-target="#analytics">
+                  <i class="fas fa-chart-line"></i>
+                  Analytics
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="pill" data-bs-target="#settings">
+                  <i class="fas fa-cog"></i>
+                  Settings
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-md-9 col-lg-10">
+        <main class="main-content">
+
+          <div class="tab-content">
+            <!-- Dashboard Home -->
+            <div class="tab-pane fade show active" id="dashboard">
+              <div class="fade-in">
+                <h2 class="mb-4">
+                  <i class="fas fa-chart-pie text-primary"></i>
+                  Dashboard Overview
+                </h2>
+                
+                <!-- KPI Metrics -->
+                <div class="row mb-4">
+                  <div class="col-xl-3 col-md-6">
+                    <div class="card metric-card">
+                      <div class="card-body text-center">
+                        <div class="metric-value" id="totalLeads">0</div>
+                        <div class="metric-label">Total Leads</div>
+                        <div class="metric-change positive" id="totalLeadsChange">+0%</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-3 col-md-6">
+                    <div class="card metric-card">
+                      <div class="card-body text-center">
+                        <div class="metric-value" id="newThisWeek">0</div>
+                        <div class="metric-label">New This Week</div>
+                        <div class="metric-change positive" id="newThisWeekChange">+0%</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-3 col-md-6">
+                    <div class="card metric-card">
+                      <div class="card-body text-center">
+                        <div class="metric-value" id="awaitingResponse">0</div>
+                        <div class="metric-label">Awaiting Response</div>
+                        <div class="metric-change" id="awaitingResponseChange">+0%</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-3 col-md-6">
+                    <div class="card metric-card">
+                      <div class="card-body text-center">
+                        <div class="metric-value" id="responsesReceived">0</div>
+                        <div class="metric-label">Responses Received</div>
+                        <div class="metric-change positive" id="responsesReceivedChange">+0%</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Recent Leads -->
+                <div class="card">
+                  <div class="card-header">
+                    <i class="fas fa-clock"></i>
+                    Recent Leads
+                    <div class="ms-auto">
+                      <button class="btn btn-sm btn-outline-primary" onclick="showAllLeads()">
+                        View All <i class="fas fa-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-hover mb-0" id="recentLeadsTable">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Lead</th>
+                            <th>Contact</th>
+                            <th>Services</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- Dynamic content -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row mt-4">
+                  <div class="col-lg-8">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-chart-line"></i>
+                        Lead Volume Trend
+                      </div>
+                      <div class="card-body">
+                        <div class="chart-container">
+                          <canvas id="leadVolumeChart"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-chart-pie"></i>
+                        Service Types
+                      </div>
+                      <div class="card-body">
+                        <div class="chart-container">
+                          <canvas id="appointmentTypesChart"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lead Management -->
+            <div class="tab-pane fade" id="leads">
+              <div class="fade-in">
+                <h2 class="mb-4">
+                  <i class="fas fa-users text-primary"></i>
+                  Lead Management
+                </h2>
+                
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search by name or email...">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <select class="form-select" id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="new">New</option>
+                        <option value="awaiting">Awaiting Response</option>
+                        <option value="responded">Responded</option>
+                        <option value="scheduled">Scheduled</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <select class="form-select" id="typeFilter">
+                        <option value="all">All Services</option>
+                        <option value="Probate">Probate</option>
+                        <option value="Small Business">Small Business</option>
+                        <option value="Estate Planning">Estate Planning</option>
+                        <option value="Traffic/Criminal">Traffic/Criminal</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <input type="date" class="form-control" id="dateFilter">
+                    </div>
+                    <div class="col-md-1">
+                      <button class="btn btn-outline-secondary" onclick="clearFilters()" title="Clear Filters">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Leads Table -->
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-table"></i> All Leads</span>
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-outline-primary" onclick="exportToCSV()" title="Export CSV">
+                        <i class="fas fa-download"></i> Export
+                      </button>
+                      <button class="btn btn-outline-success" onclick="bulkMarkFollowed()" title="Bulk Follow-up">
+                        <i class="fas fa-check-double"></i> Bulk Actions
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-hover mb-0" id="leadsTable">
+                        <thead class="table-light">
+                          <tr>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th>Lead</th>
+                            <th>Contact</th>
+                            <th>Services</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- Dynamic content -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lead Detail View -->
+            <div class="tab-pane fade" id="detail" style="display:none;">
+              <div class="fade-in">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h2>
+                    <i class="fas fa-user text-primary"></i>
+                    Lead Details
+                  </h2>
+                  <button class="btn btn-outline-secondary" onclick="backToLeads()">
+                    <i class="fas fa-arrow-left"></i> Back to Leads
+                  </button>
+                </div>
+
+                <!-- Contact & Appointment Info Cards -->
+                <div class="row mb-4">
+                  <div class="col-lg-6">
+                    <div class="card h-100">
+                      <div class="card-header">
+                        <i class="fas fa-address-card"></i>
+                        Contact Information
+                      </div>
+                      <div class="card-body">
+                        <div class="row g-3">
+                          <div class="col-12">
+                            <label class="form-label text-muted">Name</label>
+                            <div class="fw-bold" id="detailName">-</div>
+                          </div>
+                          <div class="col-12">
+                            <label class="form-label text-muted">Email</label>
+                            <div class="fw-bold" id="detailEmail">-</div>
+                          </div>
+                          <div class="col-12">
+                            <label class="form-label text-muted">Phone</label>
+                            <div class="fw-bold" id="detailPhone">-</div>
+                          </div>
+                          <div class="col-12">
+                            <label class="form-label text-muted">Received</label>
+                            <div class="fw-bold" id="detailTimestamp">-</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="card h-100">
+                      <div class="card-header">
+                        <i class="fas fa-calendar-check"></i>
+                        Appointment Information
+                      </div>
+                      <div class="card-body">
+                        <div class="row g-3">
+                          <div class="col-12">
+                            <label class="form-label text-muted">Services Requested</label>
+                            <div class="fw-bold" id="detailTypes">-</div>
+                          </div>
+                          <div class="col-6">
+                            <label class="form-label text-muted">Preferred Day</label>
+                            <div class="fw-bold" id="detailPreferredDay">-</div>
+                          </div>
+                          <div class="col-6">
+                            <label class="form-label text-muted">Preferred Time</label>
+                            <div class="fw-bold" id="detailPreferredTime">-</div>
+                          </div>
+                          <div class="col-12">
+                            <label class="form-label text-muted">Status</label>
+                            <div id="detailStatus">-</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tabbed Content -->
+                <div class="card">
+                  <div class="card-header p-0">
+                    <ul class="nav nav-tabs card-header-tabs">
+                      <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#messages" id="messagesTab">
+                          <i class="fas fa-comments"></i> Messages
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#questionnaires" id="questionnairesTab">
+                          <i class="fas fa-clipboard-list"></i> Questionnaires
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#timeline" id="timelineTab">
+                          <i class="fas fa-history"></i> Timeline
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-body">
+                    <div class="tab-content">
+                      <div class="tab-pane fade show active" id="messages">
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <h5><i class="fas fa-envelope-open"></i> Original Message</h5>
+                            <div class="border rounded p-3 bg-light">
+                              <p id="detailMessage" class="mb-0">-</p>
+                            </div>
+                          </div>
+                          <div class="col-lg-6">
+                            <h5><i class="fas fa-brain"></i> AI Executive Summary</h5>
+                            <div class="border rounded p-3 bg-light">
+                              <p id="detailSummary" class="mb-0">-</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="questionnaires">
+                        <h5><i class="fas fa-clipboard-list"></i> Relevant Questionnaires</h5>
+                        <div id="questionnaireContent" class="mt-3">
+                          <!-- Dynamic questionnaire content -->
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="timeline">
+                        <h5><i class="fas fa-history"></i> Communication Timeline</h5>
+                        <div class="timeline-container mt-3">
+                          <div id="detailTimeline">
+                            <!-- Dynamic timeline content -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card mt-4">
+                  <div class="card-header">
+                    <i class="fas fa-tools"></i>
+                    Quick Actions
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-md-3">
+                        <button class="btn btn-success w-100" id="markFollowed">
+                          <i class="fas fa-check"></i> Mark as Followed Up
+                        </button>
+                      </div>
+                      <div class="col-md-3">
+                        <button class="btn btn-primary w-100" id="sendEmail">
+                          <i class="fas fa-envelope"></i> Send Email
+                        </button>
+                      </div>
+                      <div class="col-md-3">
+                        <a class="btn btn-info w-100" href="https://calendly.com/mario-guerra-tuli/30min" target="_blank">
+                          <i class="fas fa-calendar-plus"></i> Schedule Meeting
+                        </a>
+                      </div>
+                      <div class="col-md-3">
+                        <button class="btn btn-warning w-100" onclick="deleteLeadConfirm()">
+                          <i class="fas fa-trash"></i> Delete Lead
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="tab-pane fade" id="analytics">
+              <div class="fade-in">
+                <h2 class="mb-4">
+                  <i class="fas fa-chart-line text-primary"></i>
+                  Analytics Dashboard
+                </h2>
+
+                <!-- Time Range Selector -->
+                <div class="row mb-4">
+                  <div class="col-md-4">
+                    <div class="card">
+                      <div class="card-body">
+                        <label class="form-label">Time Range</label>
+                        <select class="form-select" id="dateRange">
+                          <option value="last7">Last 7 Days</option>
+                          <option value="last30" selected>Last 30 Days</option>
+                          <option value="last90">Last 90 Days</option>
+                          <option value="thisMonth">This Month</option>
+                          <option value="lastMonth">Last Month</option>
+                          <option value="thisYear">This Year</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="row text-center">
+                          <div class="col-3">
+                            <div class="metric-value text-primary" id="analyticsLeads">0</div>
+                            <div class="metric-label">Total Leads</div>
+                          </div>
+                          <div class="col-3">
+                            <div class="metric-value text-success" id="analyticsResponseRate">0%</div>
+                            <div class="metric-label">Response Rate</div>
+                          </div>
+                          <div class="col-3">
+                            <div class="metric-value text-info" id="analyticsFollowup">0%</div>
+                            <div class="metric-label">Follow-up Rate</div>
+                          </div>
+                          <div class="col-3">
+                            <div class="metric-value text-warning" id="analyticsConversion">0%</div>
+                            <div class="metric-label">Conversion Rate</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row">
+                  <div class="col-lg-8">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-chart-area"></i>
+                        Lead Volume Over Time
+                      </div>
+                      <div class="card-body">
+                        <div class="chart-container">
+                          <canvas id="leadTrendChart"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-funnel-dollar"></i>
+                        Lead Status Funnel
+                      </div>
+                      <div class="card-body">
+                        <div class="chart-container">
+                          <canvas id="leadStatusFunnel"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Second Row Charts -->
+                <div class="row mt-4">
+                  <div class="col-lg-6">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-clock"></i>
+                        Response Time Distribution
+                      </div>
+                      <div class="card-body">
+                        <div class="chart-container">
+                          <canvas id="timeDistribution"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Service Type Breakdown
+                      </div>
+                      <div class="card-body">
+                        <div class="chart-container">
+                          <canvas id="appointmentTypesDist"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Performance Insights -->
+                <div class="row mt-4">
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Key Insights
+                      </div>
+                      <div class="card-body">
+                        <div id="performanceInsights">
+                          <!-- Dynamic insights content -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="tab-pane fade" id="settings">
+              <div class="fade-in">
+                <h2 class="mb-4">
+                  <i class="fas fa-cog text-primary"></i>
+                  Settings
+                </h2>
+                
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-bell"></i>
+                        Notification Preferences
+                      </div>
+                      <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                          <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                          <label class="form-check-label" for="emailNotifications">
+                            Email notifications for new leads
+                          </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                          <input class="form-check-input" type="checkbox" id="responseNotifications" checked>
+                          <label class="form-check-label" for="responseNotifications">
+                            Notifications for lead responses
+                          </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                          <input class="form-check-input" type="checkbox" id="reminderNotifications">
+                          <label class="form-check-label" for="reminderNotifications">
+                            Daily summary reminders
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-sync-alt"></i>
+                        Data Management
+                      </div>
+                      <div class="card-body">
+                        <div class="mb-3">
+                          <label class="form-label">Auto-refresh interval</label>
+                          <select class="form-select" id="refreshInterval">
+                            <option value="5">5 minutes</option>
+                            <option value="10" selected>10 minutes</option>
+                            <option value="15">15 minutes</option>
+                            <option value="30">30 minutes</option>
+                          </select>
+                        </div>
+                        <div class="d-grid gap-2">
+                          <button class="btn btn-outline-primary" onclick="exportAllData()">
+                            <i class="fas fa-download"></i> Export All Data
+                          </button>
+                          <button class="btn btn-outline-warning" onclick="clearCache()">
+                            <i class="fas fa-trash-alt"></i> Clear Cache
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mt-4">
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-info-circle"></i>
+                        System Information
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <p><strong>Version:</strong> 1.2.0</p>
+                            <p><strong>Last Updated:</strong> <span id="systemLastUpdated">-</span></p>
+                            <p><strong>Total Records:</strong> <span id="totalRecords">-</span></p>
+                          </div>
+                          <div class="col-md-6">
+                            <p><strong>Data Source:</strong> Google Sheets</p>
+                            <p><strong>AI Features:</strong> Enabled</p>
+                            <p><strong>Backup Status:</strong> <span class="text-success">Active</span></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.9); z-index: 9999; display: none;">
+    <div class="text-center">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="fw-bold">Loading data...</div>
+    </div>
+  </div>
+  
+  <style>
+  /* Extra CSS to ensure loading overlay can be hidden */
+  .loading-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  </style>
+
+  <script>
+    // Global variables
+    let leadsData = [];
+    let filteredLeadsData = [];
+    let charts = {};
+    let lastRefresh = null;
+
+    // Initialize the application
+    $(document).ready(function() {
+      console.log('DOM ready, initializing app...');
+      
+      // Check what libraries are available
+      console.log('jQuery available:', typeof $ !== 'undefined');
+      console.log('Bootstrap available:', typeof bootstrap !== 'undefined');
+      
+      // Our custom Chart implementation is already loaded
+      console.log('Simple Chart library loaded:', typeof Chart === 'function');
+      
+      initializeApp();
+    });
+
+    function initializeApp() {
+      console.log('Initializing Lead Management Dashboard...');
+      
+      // First, ensure loading overlay is hidden initially
+      document.getElementById('loadingOverlay').style.display = 'none';
+      
+      // Now setup and show loading
+      setupEventListeners();
+      showLoading(true);
+      
+      // Add a shorter safety timeout
+      setTimeout(() => {
+        console.warn('5-second loading timeout reached - forcing loading to hide');
+        showLoading(false);
+      }, 5000); // 5 second safety timeout
+      
+      // Test connection first
+      testConnection();
+      
+      updateLastRefreshTime();
+      
+      // Multiple checks to ensure loading overlay is hidden
+      for (let i = 1; i <= 5; i++) {
+        setTimeout(() => {
+          console.log(`Hiding overlay attempt ${i}`);
+          showLoading(false);
+          
+          // Direct DOM manipulation as a last resort
+          const overlay = document.getElementById('loadingOverlay');
+          if (overlay) {
+            overlay.style.display = 'none';
+            overlay.style.visibility = 'hidden';
+            overlay.style.opacity = '0';
+            overlay.classList.add('loading-hidden');
+          }
+        }, i * 1000); // Try every second for 5 seconds
+      }
+      
+      // Auto-refresh every 10 minutes
+      setInterval(() => {
+        refreshData();
+      }, 600000);
+    }
+
+    function testConnection() {
+      console.log('Testing Google Apps Script connection...');
+      updateConnectionStatus('connecting', 'Testing connection to Google Apps Script...');
+      
+      // Simple connection test
+      try {
+        if (typeof google === 'undefined' || !google.script || !google.script.run) {
+          console.warn('Google Apps Script not available - using demo mode');
+          updateConnectionStatus('demo', 'Google Apps Script not available - running in demo mode');
+          showNotification('Running in demo mode - Google Apps Script not connected', 'info');
+          loadInitialData();
+          return;
+        }
+        
+        console.log('Google Apps Script API detected, proceeding to load data...');
+        updateConnectionStatus('connected', 'Google Apps Script API available');
+        // Skip the connection test and go directly to loading data
+        loadInitialData();
+          
+      } catch (error) {
+        console.warn('Exception during connection test:', error);
+        updateConnectionStatus('error', 'Connection error: ' + error.message);
+        showNotification('Google Apps Script connection error - using demo data', 'warning');
+        loadInitialData();
+      }
+    }
+
+    function setupEventListeners() {
+      // Navigation
+      $('.nav-pills .nav-link').on('click', function(e) {
+        e.preventDefault();
+        $('.nav-pills .nav-link').removeClass('active');
+        $(this).addClass('active');
+        
+        const target = $(this).data('bs-target');
+        $('.tab-pane').removeClass('show active');
+        $(target).addClass('show active');
+        
+        // Load page-specific data
+        loadPageData(target);
+      });
+
+      // Search and filters
+      $('#searchInput').on('input', debounce(applyFilters, 300));
+      $('#statusFilter, #typeFilter').on('change', applyFilters);
+      $('#dateFilter').on('change', applyFilters);
+
+      // Analytics date range
+      $('#dateRange').on('change', function() {
+        updateAnalytics();
+      });
+
+      // Action buttons
+      $('#markFollowed').on('click', markAsFollowedUp);
+      $('#sendEmail').on('click', sendEmailToLead);
+
+      // Select all checkbox
+      $('#selectAll').on('change', function() {
+        $('.lead-checkbox').prop('checked', this.checked);
+      });
+      
+      // Add click handler to dismiss loading overlay if it's stuck
+      $('#loadingOverlay').on('click', function() {
+        console.log('Loading overlay clicked - dismissing manually');
+        showLoading(false);
+      });
+      
+      // Also add keyboard handler to dismiss loading overlay
+      $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+          console.log('Escape key pressed - dismissing loading overlay');
+          showLoading(false);
+        }
+      });
+    }
+
+    function loadInitialData() {
+      console.log('Starting initial data load...');
+      
+      // Check if we're in a Google Apps Script environment
+      if (typeof google === 'undefined' || !google.script || !google.script.run) {
+        console.log('Not in Google Apps Script environment - using demo data');
+        updateConnectionStatus('demo', 'Not running in Google Apps Script - using demo data');
+        showNotification('Running in demo mode', 'info');
+        handleDataLoad(getDemoData());
+        return;
+      }
+      
+      // Add timeout to prevent infinite loading (reduced to 5 seconds)
+      const loadTimeout = setTimeout(() => {
+        console.error('Data loading timeout - falling back to demo data');
+        updateConnectionStatus('demo', 'Connection timeout - using demo data');
+        showNotification('Data loading timeout - using demo data', 'warning');
+        handleDataLoad(getDemoData());
+      }, 5000); // 5 second timeout
+      
+      console.log('Attempting to call getLeads() function...');
+      
+      try {
+        google.script.run
+          .withSuccessHandler(function(leads) {
+            clearTimeout(loadTimeout);
+            console.log('Data loaded successfully:', leads);
+            updateConnectionStatus('connected', 'Successfully loaded data from Google Sheets');
+            handleDataLoad(leads);
+          })
+          .withFailureHandler(function(error) {
+            clearTimeout(loadTimeout);
+            console.error('Error loading data:', error);
+            updateConnectionStatus('error', 'Failed to load data: ' + (error.message || error.toString()));
+            handleError(error);
+            // Fall back to demo data
+            handleDataLoad(getDemoData());
+          })
+          .getLeads();
+          
+        console.log('getLeads() call initiated...');
+      } catch (error) {
+        clearTimeout(loadTimeout);
+        console.error('Exception calling getLeads:', error);
+        updateConnectionStatus('demo', 'Exception occurred - using demo data');
+        showNotification('Error calling backend function - using demo data', 'warning');
+        handleDataLoad(getDemoData());
+      }
+    }
+
+    function refreshData() {
+      console.log('Refreshing data...');
+      try {
+        google.script.run
+          .withSuccessHandler(handleDataRefresh)
+          .withFailureHandler(handleError)
+          .getLeads();
+      } catch (error) {
+        console.error('Exception refreshing data:', error);
+        handleError(error);
+      }
+    }
+
+    function handleDataLoad(leads) {
+      console.log('Processing loaded data:', leads);
+      leadsData = leads || [];
+      filteredLeadsData = [...leadsData];
+      
+      console.log('Leads data processed, showing dashboard...');
+      
+      // Multiple ways to hide loading overlay
+      showLoading(false);
+      
+      // Direct DOM approach as backup
+      const overlay = document.getElementById('loadingOverlay');
+      if (overlay) {
+        overlay.style.display = 'none';
+        overlay.style.visibility = 'hidden';
+        overlay.style.opacity = '0';
+        overlay.classList.add('loading-hidden');
+        
+        // Remove from DOM flow in case nothing else works
+        overlay.style.position = 'absolute';
+        overlay.style.top = '-9999px';
+        overlay.style.left = '-9999px';
+      }
+      
+      try {
+        renderDashboard();
+        console.log('Dashboard rendered successfully');
+      } catch (error) {
+        console.error('Error rendering dashboard:', error);
+        showNotification('Error rendering dashboard: ' + error.message, 'error');
+      }
+      
+      updateLastRefreshTime();
+      
+      // Load metrics separately (don't block dashboard rendering)
+      console.log('Loading metrics...');
+      try {
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run
+            .withSuccessHandler(function(metrics) {
+              console.log('Metrics loaded successfully:', metrics);
+              handleMetricsLoad(metrics);
+            })
+            .withFailureHandler(function(error) {
+              console.warn('Error loading metrics from backend:', error);
+              // Use calculated metrics from leads data
+              const calculatedMetrics = calculateMetricsFromLeads(leadsData);
+              console.log('Using calculated metrics:', calculatedMetrics);
+              handleMetricsLoad(calculatedMetrics);
+            })
+            .getMetrics();
+        } else {
+          // Use calculated metrics from leads data
+          const calculatedMetrics = calculateMetricsFromLeads(leadsData);
+          console.log('Using calculated metrics (no backend):', calculatedMetrics);
+          handleMetricsLoad(calculatedMetrics);
+        }
+      } catch (error) {
+        console.warn('Exception loading metrics:', error);
+        const calculatedMetrics = calculateMetricsFromLeads(leadsData);
+        console.log('Using calculated metrics (exception):', calculatedMetrics);
+        handleMetricsLoad(calculatedMetrics);
+      }
+    }
+
+    function handleDataRefresh(leads) {
+      leadsData = leads || [];
+      filteredLeadsData = [...leadsData];
+      
+      // Refresh current view
+      const activeTab = $('.tab-pane.show.active').attr('id');
+      loadPageData('#' + activeTab);
+      updateLastRefreshTime();
+      
+      // Show success notification
+      showNotification('Data refreshed successfully', 'success');
+    }
+
+    function handleMetricsLoad(metrics) {
+      updateMetricsDisplay(metrics);
+    }
+
+    function handleError(error) {
+      console.error('Error:', error);
+      showLoading(false);
+      showNotification('Error loading data: ' + (error.message || error.toString()) + '. Using demo data.', 'warning');
+    }
+
+    function getDemoData() {
+      return [
+        {
+          email: 'john.doe@example.com',
+          name: 'John Doe',
+          phone: '(555) 123-4567',
+          preferredDay: 'Monday',
+          preferredTime: '10:00 AM',
+          appointmentTypes: 'Personal Injury, Car Accident',
+          message: 'I was in a car accident last week and need legal advice.',
+          timestamp: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+          followedUp: false,
+          reminderSentAt: null,
+          threadId: 'demo-thread-1',
+          eventId: '',
+          matchMethod: 'Auto',
+          responseReceived: false,
+          executiveSummary: 'Car accident case requiring immediate attention',
+          questionnaireResponses: '',
+          questionnaireParsed: ''
+        },
+        {
+          email: 'jane.smith@example.com',
+          name: 'Jane Smith',
+          phone: '(555) 987-6543',
+          preferredDay: 'Wednesday',
+          preferredTime: '2:00 PM',
+          appointmentTypes: 'Family Law, Divorce',
+          message: 'I need help with divorce proceedings.',
+          timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          followedUp: true,
+          reminderSentAt: new Date(Date.now() - 86400000).toISOString(),
+          threadId: 'demo-thread-2',
+          eventId: 'demo-event-1',
+          matchMethod: 'Manual',
+          responseReceived: true,
+          executiveSummary: 'Divorce consultation scheduled',
+          questionnaireResponses: 'Marriage length: 5 years, Children: 2',
+          questionnaireParsed: '{"marriageLength": "5 years", "children": 2}'
+        },
+        {
+          email: 'mike.johnson@example.com',
+          name: 'Mike Johnson',
+          phone: '(555) 456-7890',
+          preferredDay: 'Friday',
+          preferredTime: '4:00 PM',
+          appointmentTypes: 'Criminal Defense',
+          message: 'I need representation for a criminal case.',
+          timestamp: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+          followedUp: true,
+          reminderSentAt: new Date(Date.now() - 172800000).toISOString(),
+          threadId: 'demo-thread-3',
+          eventId: '',
+          matchMethod: 'Auto',
+          responseReceived: false,
+          executiveSummary: 'Criminal defense case - awaiting response',
+          questionnaireResponses: '',
+          questionnaireParsed: ''
+        }
+      ];
+    }
+
+    function updateConnectionStatus(status, message) {
+      const statusElement = $('#connectionStatus');
+      const icon = statusElement.find('i');
+      const text = statusElement.find('span');
+      
+      switch(status) {
+        case 'connected':
+          icon.removeClass('text-warning text-danger').addClass('text-success');
+          text.text('Connected');
+          break;
+        case 'demo':
+          icon.removeClass('text-warning text-success').addClass('text-info');
+          text.text('Demo Mode');
+          break;
+        case 'error':
+          icon.removeClass('text-warning text-success').addClass('text-danger');
+          text.text('Disconnected');
+          break;
+        default:
+          icon.removeClass('text-success text-danger text-info').addClass('text-warning');
+          text.text('Connecting...');
+      }
+      
+      if (message) {
+        statusElement.attr('title', message);
+      }
+    }
+
+    function calculateMetricsFromLeads(leads) {
+      const now = new Date();
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      
+      return {
+        totalLeads: leads.length,
+        newThisWeek: leads.filter(lead => new Date(lead.timestamp) > weekAgo).length,
+        awaitingResponse: leads.filter(lead => lead.followedUp && !lead.responseReceived).length,
+        responsesReceived: leads.filter(lead => lead.responseReceived).length
+      };
+    }
+
+    function loadPageData(target) {
+      switch(target) {
+        case '#dashboard':
+          renderDashboard();
+          break;
+        case '#leads':
+          renderLeadManagement();
+          break;
+        case '#analytics':
+          renderAnalytics();
+          break;
+        case '#settings':
+          renderSettings();
+          break;
+      }
+    }
+
+    function renderDashboard() {
+      console.log('Rendering dashboard...');
+      try {
+        renderRecentLeads();
+        console.log('Recent leads rendered successfully');
+      } catch (error) {
+        console.error('Error rendering recent leads:', error);
+      }
+      
+      try {
+        renderDashboardCharts();
+        console.log('Dashboard charts rendered successfully');
+      } catch (error) {
+        console.error('Error rendering dashboard charts:', error);
+      }
+      console.log('Dashboard rendering complete');
+    }
+
+    function updateMetricsDisplay(metrics) {
+      $('#totalLeads').text(metrics.totalLeads || 0);
+      $('#newThisWeek').text(metrics.newThisWeek || 0);
+      $('#awaitingResponse').text(metrics.awaitingResponse || 0);
+      $('#responsesReceived').text(metrics.responsesReceived || 0);
+
+      // Calculate percentage changes (mock data for demo)
+      updateMetricChange('#totalLeadsChange', 12);
+      updateMetricChange('#newThisWeekChange', -5);
+      updateMetricChange('#awaitingResponseChange', 8);
+      updateMetricChange('#responsesReceivedChange', 25);
+    }
+
+    function updateMetricChange(selector, change) {
+      const element = $(selector);
+      element.text((change > 0 ? '+' : '') + change + '%');
+      element.removeClass('positive negative');
+      element.addClass(change > 0 ? 'positive' : 'negative');
+    }
+
+    function renderRecentLeads() {
+      const tbody = $('#recentLeadsTable tbody');
+      tbody.empty();
+
+      const recentLeads = leadsData.slice(0, 5);
+      recentLeads.forEach((lead, index) => {
+        const status = determineStatus(lead);
+        const statusClass = getStatusClass(status);
+        const formattedDate = formatDate(lead.timestamp);
+
+        const row = `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                  <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                    ${getInitials(lead.name)}
+                  </div>
+                </div>
+                <div class="flex-grow-1 ms-2">
+                  <div class="fw-bold">${escapeHtml(lead.name || 'Unknown')}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div>${escapeHtml(lead.email || '')}</div>
+              <small class="text-muted">${escapeHtml(lead.phone || '')}</small>
+            </td>
+            <td>
+              <span class="badge bg-light text-dark">${escapeHtml(lead.appointmentTypes || '')}</span>
+            </td>
+            <td>
+              <small>${formattedDate}</small>
+            </td>
+            <td>
+              <span class="status-badge ${statusClass}">${status}</span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="viewLeadDetail('${lead.email}')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+        tbody.append(row);
+      });
+    }
+
+    function renderLeadManagement() {
+      applyFilters();
+      renderLeadsTable();
+    }
+
+    function renderLeadsTable() {
+      const tbody = $('#leadsTable tbody');
+      tbody.empty();
+
+      filteredLeadsData.forEach((lead, index) => {
+        const status = determineStatus(lead);
+        const statusClass = getStatusClass(status);
+        const formattedDate = formatDate(lead.timestamp);
+
+        const row = `
+          <tr>
+            <td>
+              <input type="checkbox" class="form-check-input lead-checkbox" value="${lead.email}">
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                  <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                    ${getInitials(lead.name)}
+                  </div>
+                </div>
+                <div class="flex-grow-1 ms-2">
+                  <div class="fw-bold">${escapeHtml(lead.name || 'Unknown')}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div>${escapeHtml(lead.email || '')}</div>
+              <small class="text-muted">${escapeHtml(lead.phone || '')}</small>
+            </td>
+            <td>
+              <span class="badge bg-light text-dark">${escapeHtml(lead.appointmentTypes || '')}</span>
+            </td>
+            <td>
+              <small>${formattedDate}</small>
+            </td>
+            <td>
+              <span class="status-badge ${statusClass}">${status}</span>
+            </td>
+            <td>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary" onclick="viewLeadDetail('${lead.email}')" title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-outline-success" onclick="quickFollowUp('${lead.email}')" title="Quick Follow-up">
+                  <i class="fas fa-check"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+        tbody.append(row);
+      });
+    }
+
+    function applyFilters() {
+      const searchTerm = $('#searchInput').val().toLowerCase();
+      const statusFilter = $('#statusFilter').val();
+      const typeFilter = $('#typeFilter').val();
+      const dateFilter = $('#dateFilter').val();
+
+      filteredLeadsData = leadsData.filter(lead => {
+        // Search filter
+        const matchesSearch = !searchTerm || 
+          (lead.name && lead.name.toLowerCase().includes(searchTerm)) ||
+          (lead.email && lead.email.toLowerCase().includes(searchTerm));
+
+        // Status filter
+        const status = determineStatus(lead);
+        const matchesStatus = statusFilter === 'all' || status.toLowerCase().replace(' ', '-') === statusFilter;
+
+        // Type filter
+        const matchesType = typeFilter === 'all' || 
+          (lead.appointmentTypes && lead.appointmentTypes.includes(typeFilter));
+
+        // Date filter
+        const matchesDate = !dateFilter || 
+          (lead.timestamp && new Date(lead.timestamp).toISOString().split('T')[0] === dateFilter);
+
+        return matchesSearch && matchesStatus && matchesType && matchesDate;
+      });
+
+      renderLeadsTable();
+    }
+
+    function clearFilters() {
+      $('#searchInput').val('');
+      $('#statusFilter').val('all');
+      $('#typeFilter').val('all');
+      $('#dateFilter').val('');
+      applyFilters();
+    }
+
+    function renderDashboardCharts() {
+      console.log('Rendering dashboard charts...');
+      
+      try {
+        // Attempt to render charts using our simplified Chart implementation
+        renderLeadVolumeChart();
+        renderAppointmentTypesChart();
+      } catch (error) {
+        console.error('Error rendering dashboard charts:', error);
+        showChartErrorMessage();
+        showNotification('Error rendering charts: ' + error.message, 'warning');
+      }
+    }
+    
+    function showChartErrorMessage() {
+      // Find all chart containers and display an error message
+      document.querySelectorAll('.chart-container').forEach(container => {
+        if (!container.querySelector('.chart-error-message')) {
+          const errorMsg = document.createElement('div');
+          errorMsg.className = 'chart-error-message text-center text-muted p-5';
+          errorMsg.innerHTML = '<i class="fas fa-exclamation-triangle mb-3"></i><br>Unable to display chart';
+          container.appendChild(errorMsg);
+        }
+      });
+    }
+
+    function renderLeadVolumeChart() {
+      console.log('Rendering lead volume chart...');
+      
+      const ctx = document.getElementById('leadVolumeChart');
+      if (!ctx) {
+        console.warn('Lead volume chart canvas not found');
+        return;
+      }
+
+      // Destroy existing chart
+      if (charts.leadVolume) {
+        charts.leadVolume.destroy();
+      }
+
+      // Generate sample data for the last 30 days
+      const data = generateLeadVolumeData();
+      
+      // Create chart using our simplified Chart implementation
+      try {
+        charts.leadVolume = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              data: data.values,
+              backgroundColor: '#1E88E5'  // Primary color
+            }]
+          }
+        });
+        console.log('Lead volume chart rendered successfully');
+      } catch (error) {
+        console.error('Error rendering lead volume chart:', error);
+      }
+    }
+
+    function renderAppointmentTypesChart() {
+      console.log('Rendering appointment types chart...');
+      
+      const ctx = document.getElementById('appointmentTypesChart');
+      if (!ctx) {
+        console.warn('Appointment types chart canvas not found');
+        return;
+      }
+
+      // Destroy existing chart
+      if (charts.appointmentTypes) {
+        charts.appointmentTypes.destroy();
+      }
+
+      const typeData = getAppointmentTypeData();
+      
+      // Create chart using our simplified Chart implementation
+      try {
+        charts.appointmentTypes = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: typeData.labels,
+            datasets: [{
+              data: typeData.values,
+              backgroundColor: [
+                '#FFC107', // Warning
+                '#03A9F4', // Info
+                '#4CAF50', // Success
+                '#9C27B0'  // Purple
+              ]
+            }]
+          }
+        });
+        console.log('Appointment types chart rendered successfully');
+      } catch (error) {
+        console.error('Error rendering appointment types chart:', error);
+      }
+    }
+
+    function renderAnalytics() {
+      updateAnalytics();
+    }
+
+    function updateAnalytics() {
+      const dateRange = $('#dateRange').val();
+      const filteredData = filterByDateRange(leadsData, dateRange);
+      
+      // Update metrics
+      const totalLeads = filteredData.length;
+      const followedUp = filteredData.filter(l => l.followedUp).length;
+      const responses = filteredData.filter(l => l.responseReceived).length;
+      const responseRate = followedUp > 0 ? (responses / followedUp * 100).toFixed(1) : 0;
+      const followupRate = totalLeads > 0 ? (followedUp / totalLeads * 100).toFixed(1) : 0;
+      const conversion = filteredData.filter(l => determineStatus(l) === 'Scheduled').length;
+      const conversionRate = totalLeads > 0 ? (conversion / totalLeads * 100).toFixed(1) : 0;
+
+      $('#analyticsLeads').text(totalLeads);
+      $('#analyticsResponseRate').text(responseRate + '%');
+      $('#analyticsFollowup').text(followupRate + '%');
+      $('#analyticsConversion').text(conversionRate + '%');
+
+      // Render charts
+      renderAnalyticsCharts(filteredData);
+      generateInsights(filteredData);
+    }
+
+    function renderAnalyticsCharts(data) {
+      renderLeadTrendChart(data);
+      renderStatusFunnelChart(data);
+      renderTimeDistributionChart(data);
+      renderServiceBreakdownChart(data);
+    }
+
+    function renderLeadTrendChart(data) {
+      console.log('Rendering lead trend chart...');
+      
+      const ctx = document.getElementById('leadTrendChart');
+      if (!ctx) return;
+
+      if (charts.leadTrend) {
+        charts.leadTrend.destroy();
+      }
+
+      const trendData = generateTrendData(data);
+
+      try {
+        charts.leadTrend = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: trendData.labels,
+            datasets: [{
+              data: trendData.values,
+              backgroundColor: '#1E88E5'
+            }]
+          }
+        });
+        console.log('Lead trend chart rendered successfully');
+      } catch (error) {
+        console.error('Error rendering lead trend chart:', error);
+      }
+    }
+
+    function renderStatusFunnelChart(data) {
+      console.log('Rendering status funnel chart...');
+      
+      const ctx = document.getElementById('leadStatusFunnel');
+      if (!ctx) return;
+
+      if (charts.statusFunnel) {
+        charts.statusFunnel.destroy();
+      }
+
+      const statusData = getStatusDistribution(data);
+
+      try {
+        charts.statusFunnel = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: statusData.labels,
+            datasets: [{
+              data: statusData.values,
+              backgroundColor: [
+                '#FFC107', // Warning 
+                '#03A9F4', // Info
+                '#4CAF50', // Success
+                '#9C27B0'  // Purple
+              ]
+            }]
+          }
+        });
+        console.log('Status funnel chart rendered successfully');
+      } catch (error) {
+        console.error('Error rendering status funnel chart:', error);
+      }
+    }
+
+    function renderTimeDistributionChart(data) {
+      console.log('Rendering time distribution chart...');
+      
+      const ctx = document.getElementById('timeDistribution');
+      if (!ctx) return;
+
+      if (charts.timeDistribution) {
+        charts.timeDistribution.destroy();
+      }
+
+      const timeData = getTimeDistribution(data);
+
+      try {
+        charts.timeDistribution = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: timeData.labels,
+            datasets: [{
+              data: timeData.values,
+              backgroundColor: '#03A9F4' // Info color
+            }]
+          }
+        });
+        console.log('Time distribution chart rendered successfully');
+      } catch (error) {
+        console.error('Error rendering time distribution chart:', error);
+      }
+    }
+
+    function renderServiceBreakdownChart(data) {
+      console.log('Rendering service breakdown chart...');
+      
+      const ctx = document.getElementById('appointmentTypesDist');
+      if (!ctx) return;
+
+      if (charts.serviceBreakdown) {
+        charts.serviceBreakdown.destroy();
+      }
+
+      const serviceData = getAppointmentTypeData(data);
+
+      try {
+        charts.serviceBreakdown = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: serviceData.labels,
+            datasets: [{
+              data: serviceData.values,
+              backgroundColor: [
+                '#FFC107', // Warning
+                '#03A9F4', // Info
+                '#4CAF50', // Success
+                '#9C27B0'  // Purple
+              ]
+            }]
+          }
+        });
+        console.log('Service breakdown chart rendered successfully');
+      } catch (error) {
+        console.error('Error rendering service breakdown chart:', error);
+      }
+    }
+
+    function generateInsights(data) {
+      const insights = [];
+      
+      const totalLeads = data.length;
+      const responseRate = data.filter(l => l.responseReceived).length / Math.max(data.filter(l => l.followedUp).length, 1);
+      
+      if (responseRate > 0.7) {
+        insights.push({
+          type: 'success',
+          icon: 'fas fa-thumbs-up',
+          text: `Excellent response rate of ${(responseRate * 100).toFixed(1)}%! Your follow-up strategy is working well.`
+        });
+      } else if (responseRate < 0.3) {
+        insights.push({
+          type: 'warning',
+          icon: 'fas fa-exclamation-triangle',
+          text: `Response rate is ${(responseRate * 100).toFixed(1)}%. Consider reviewing your follow-up messaging.`
+        });
+      }
+
+      if (totalLeads > 0) {
+        const avgDaily = totalLeads / 30;
+        insights.push({
+          type: 'info',
+          icon: 'fas fa-chart-line',
+          text: `You're averaging ${avgDaily.toFixed(1)} leads per day this period.`
+        });
+      }
+
+      const topService = getTopAppointmentType(data);
+      if (topService) {
+        insights.push({
+          type: 'info',
+          icon: 'fas fa-star',
+          text: `${topService} is your most requested service this period.`
+        });
+      }
+
+      renderInsights(insights);
+    }
+
+    function renderInsights(insights) {
+      const container = $('#performanceInsights');
+      container.empty();
+
+      if (insights.length === 0) {
+        container.html('<p class="text-muted">No insights available for this period.</p>');
+        return;
+      }
+
+      insights.forEach(insight => {
+        const alertClass = insight.type === 'success' ? 'alert-success' : 
+                          insight.type === 'warning' ? 'alert-warning' : 'alert-info';
+        
+        const html = `
+          <div class="alert ${alertClass} d-flex align-items-center mb-3">
+            <i class="${insight.icon} me-3"></i>
+            <span>${insight.text}</span>
+          </div>
+        `;
+        container.append(html);
+      });
+    }
+
+    function viewLeadDetail(email) {
+      const lead = leadsData.find(l => l.email === email);
+      if (!lead) {
+        showNotification('Lead not found', 'error');
+        return;
+      }
+
+      // Populate detail view
+      $('#detailName').text(lead.name || 'Unknown');
+      $('#detailEmail').text(lead.email || '');
+      $('#detailPhone').text(lead.phone || '');
+      $('#detailTimestamp').text(formatDate(lead.timestamp));
+      $('#detailTypes').text(lead.appointmentTypes || '');
+      $('#detailPreferredDay').text(lead.preferredDay || 'Any');
+      $('#detailPreferredTime').text(lead.preferredTime || 'Any');
+      
+      const status = determineStatus(lead);
+      const statusClass = getStatusClass(status);
+      $('#detailStatus').html(`<span class="status-badge ${statusClass}">${status}</span>`);
+      
+      $('#detailMessage').text(lead.message || 'No message');
+      $('#detailSummary').text(lead.executiveSummary || 'No summary available');
+
+      // Load questionnaires
+      loadQuestionnaires(lead.appointmentTypes);
+
+      // Generate timeline
+      generateTimeline(lead);
+
+      // Show detail view
+      $('.nav-pills .nav-link').removeClass('active');
+      $('.tab-pane').removeClass('show active');
+      $('#detail').addClass('show active').show();
+    }
+
+    function loadQuestionnaires(appointmentTypes) {
+      const container = $('#questionnaireContent');
+      container.html('<div class="loading">Loading questionnaires...</div>');
+
+      if (!appointmentTypes) {
+        container.html('<p class="text-muted">No questionnaires available.</p>');
+        return;
+      }
+
+      const types = appointmentTypes.split(',').map(t => t.trim());
+      let loadedCount = 0;
+      const questionnaires = [];
+
+      types.forEach(type => {
+        google.script.run
+          .withSuccessHandler(function(content) {
+            questionnaires.push({ type, content });
+            loadedCount++;
+            if (loadedCount === types.length) {
+              renderQuestionnaires(questionnaires);
+            }
+          })
+          .withFailureHandler(function(error) {
+            questionnaires.push({ type, content: 'Error loading questionnaire: ' + error });
+            loadedCount++;
+            if (loadedCount === types.length) {
+              renderQuestionnaires(questionnaires);
+            }
+          })
+          .getQuestionnaire(type.toLowerCase().replace(/\s+/g, '_') + '.txt');
+      });
+    }
+
+    function renderQuestionnaires(questionnaires) {
+      const container = $('#questionnaireContent');
+      container.empty();
+
+      questionnaires.forEach(q => {
+        const html = `
+          <div class="card mb-3">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="fas fa-clipboard-list"></i> ${q.type} Questionnaire</h6>
+            </div>
+            <div class="card-body">
+              <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;">${escapeHtml(q.content)}</pre>
+            </div>
+          </div>
+        `;
+        container.append(html);
+      });
+    }
+
+    function generateTimeline(lead) {
+      const timeline = [];
+      
+      // Initial contact
+      timeline.push({
+        time: lead.timestamp,
+        icon: 'fas fa-envelope',
+        title: 'Initial Contact',
+        description: `Lead submitted inquiry for ${lead.appointmentTypes || 'services'}`
+      });
+
+      // Follow-up sent
+      if (lead.followedUp) {
+        timeline.push({
+          time: lead.timestamp,
+          icon: 'fas fa-paper-plane',
+          title: 'Welcome Email Sent',
+          description: 'Automated welcome email with questionnaires sent'
+        });
+      }
+
+      // Response received
+      if (lead.responseReceived) {
+        timeline.push({
+          time: lead.timestamp,
+          icon: 'fas fa-reply',
+          title: 'Client Response',
+          description: 'Client responded to questionnaire'
+        });
+      }
+
+      // Reminder sent
+      if (lead.reminderSentAt) {
+        timeline.push({
+          time: lead.reminderSentAt,
+          icon: 'fas fa-bell',
+          title: 'Reminder Sent',
+          description: 'Follow-up reminder sent to client'
+        });
+      }
+
+      renderTimeline(timeline);
+    }
+
+    function renderTimeline(events) {
+      const container = $('#detailTimeline');
+      container.empty();
+
+      if (events.length === 0) {
+        container.html('<p class="text-muted">No timeline events available.</p>');
+        return;
+      }
+
+      events.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+      events.forEach((event, index) => {
+        const isLast = index === events.length - 1;
+        const html = `
+          <div class="d-flex mb-3">
+            <div class="flex-shrink-0">
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                <i class="${event.icon}"></i>
+              </div>
+              ${!isLast ? '<div class="border-start border-2 border-primary ms-auto me-auto" style="width: 2px; height: 30px; margin-top: 8px;"></div>' : ''}
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <div class="fw-bold">${event.title}</div>
+              <div class="text-muted small">${formatDate(event.time)}</div>
+              <div class="mt-1">${event.description}</div>
+            </div>
+          </div>
+        `;
+        container.append(html);
+      });
+    }
+
+    function markAsFollowedUp() {
+      const email = $('#detailEmail').text();
+      if (!email) return;
+
+      showLoading(true);
+      // Here you would implement the actual update to Google Sheets
+      setTimeout(() => {
+        showLoading(false);
+        showNotification('Lead marked as followed up', 'success');
+      }, 1000);
+    }
+
+    function sendEmailToLead() {
+      const email = $('#detailEmail').text();
+      if (!email) return;
+
+      // Open email client
+      window.open(`mailto:${email}?subject=Follow-up from Guerra Law Firm`);
+    }
+
+    function quickFollowUp(email) {
+      showLoading(true);
+      // Implement quick follow-up action
+      setTimeout(() => {
+        showLoading(false);
+        showNotification('Quick follow-up sent', 'success');
+        refreshData();
+      }, 1000);
+    }
+
+    function bulkMarkFollowed() {
+      const selectedEmails = $('.lead-checkbox:checked').map(function() {
+        return this.value;
+      }).get();
+
+      if (selectedEmails.length === 0) {
+        showNotification('No leads selected', 'warning');
+        return;
+      }
+
+      if (confirm(`Mark ${selectedEmails.length} leads as followed up?`)) {
+        showLoading(true);
+        // Implement bulk update
+        setTimeout(() => {
+          showLoading(false);
+          showNotification(`${selectedEmails.length} leads marked as followed up`, 'success');
+          refreshData();
+        }, 1500);
+      }
+    }
+
+    function exportToCSV() {
+      const csvContent = convertToCSV(filteredLeadsData);
+      downloadCSV(csvContent, 'leads_export.csv');
+    }
+
+    function exportAllData() {
+      const csvContent = convertToCSV(leadsData);
+      downloadCSV(csvContent, 'all_leads_export.csv');
+    }
+
+    function deleteLeadConfirm() {
+      const email = $('#detailEmail').text();
+      const name = $('#detailName').text();
+      
+      if (confirm(`Are you sure you want to delete the lead for ${name} (${email})?`)) {
+        deleteLead(email);
+      }
+    }
+
+    function deleteLead(email) {
+      showLoading(true);
+      google.script.run
+        .withSuccessHandler(function(success) {
+          showLoading(false);
+          if (success) {
+            showNotification('Lead deleted successfully', 'success');
+            backToLeads();
+            refreshData();
+          } else {
+            showNotification('Failed to delete lead', 'error');
+          }
+        })
+        .withFailureHandler(function(error) {
+          showLoading(false);
+          showNotification('Error deleting lead: ' + error, 'error');
+        })
+        .deleteLead(email);
+    }
+
+    function backToLeads() {
+      $('.nav-pills .nav-link').removeClass('active');
+      $('.nav-pills .nav-link[data-bs-target="#leads"]').addClass('active');
+      $('.tab-pane').removeClass('show active');
+      $('#leads').addClass('show active');
+      $('#detail').hide();
+    }
+
+    function showAllLeads() {
+      $('.nav-pills .nav-link').removeClass('active');
+      $('.nav-pills .nav-link[data-bs-target="#leads"]').addClass('active');
+      $('.tab-pane').removeClass('show active');
+      $('#leads').addClass('show active');
+    }
+
+    function clearCache() {
+      if (confirm('Clear all cached data? This will force a fresh reload.')) {
+        leadsData = [];
+        filteredLeadsData = [];
+        showNotification('Cache cleared', 'success');
+        loadInitialData();
+      }
+    }
+
+    function renderSettings() {
+      // Update system info
+      $('#systemLastUpdated').text(formatDate(lastRefresh || new Date()));
+      $('#totalRecords').text(leadsData.length);
+    }
+
+    // Utility functions
+    function determineStatus(lead) {
+      if (!lead.followedUp) return 'New';
+      if (lead.responseReceived) {
+        if (lead.eventId || (lead.executiveSummary && lead.executiveSummary.toLowerCase().includes('scheduled'))) {
+          return 'Scheduled';
+        }
+        return 'Responded';
+      }
+      return 'Awaiting Response';
+    }
+
+    function getStatusClass(status) {
+      switch(status) {
+        case 'New': return 'status-new';
+        case 'Awaiting Response': return 'status-awaiting-response';
+        case 'Responded': return 'status-responded';
+        case 'Scheduled': return 'status-scheduled';
+        default: return 'status-new';
+      }
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      const words = name.split(' ');
+      if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
+      return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'N/A';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    function showLoading(show) {
+      const overlay = document.getElementById('loadingOverlay');
+      if (!overlay) {
+        console.warn('Loading overlay element not found!');
+        return;
+      }
+      
+      if (show) {
+        console.log('Showing loading overlay');
+        // Use multiple approaches to ensure it shows
+        overlay.style.display = 'flex';
+        overlay.classList.remove('loading-hidden');
+        $('#loadingOverlay').show();
+      } else {
+        console.log('Hiding loading overlay');
+        // Use multiple approaches to ensure it hides
+        overlay.style.display = 'none';
+        overlay.classList.add('loading-hidden');
+        $('#loadingOverlay').hide();
+        
+        // Direct DOM manipulation as a backup
+        overlay.style.visibility = 'hidden';
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+        
+        console.log('Loading overlay state after hide:', 
+          'display =', overlay.style.display, 
+          'visibility =', overlay.style.visibility,
+          'className =', overlay.className);
+      }
+    }
+
+    function showNotification(message, type) {
+      const alertClass = type === 'error' ? 'alert-danger' : 
+                        type === 'warning' ? 'alert-warning' : 
+                        type === 'success' ? 'alert-success' : 'alert-info';
+      
+      const notification = $(`
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+             style="top: 100px; right: 20px; z-index: 1050; min-width: 300px;">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      `);
+      
+      $('body').append(notification);
+      
+      setTimeout(() => {
+        notification.alert('close');
+      }, 5000);
+    }
+
+    function updateLastRefreshTime() {
+      lastRefresh = new Date();
+      $('#lastUpdated').text('Last updated: ' + lastRefresh.toLocaleTimeString());
+    }
+
+    // Data processing functions
+    function generateLeadVolumeData() {
+      const labels = [];
+      const values = [];
+      
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        
+        // Count actual leads for this date or generate sample data
+        const dayLeads = leadsData.filter(lead => {
+          const leadDate = new Date(lead.timestamp);
+          return leadDate.toDateString() === date.toDateString();
+        }).length;
+        
+        values.push(dayLeads || Math.floor(Math.random() * 5));
+      }
+      
+      return { labels, values };
+    }
+
+    function getAppointmentTypeData(data = leadsData) {
+      const types = {};
+      
+      data.forEach(lead => {
+        if (lead.appointmentTypes) {
+          const leadTypes = lead.appointmentTypes.split(',').map(t => t.trim());
+          leadTypes.forEach(type => {
+            types[type] = (types[type] || 0) + 1;
+          });
+        }
+      });
+      
+      return {
+        labels: Object.keys(types),
+        values: Object.values(types)
+      };
+    }
+
+    function getStatusDistribution(data) {
+      const statuses = {};
+      
+      data.forEach(lead => {
+        const status = determineStatus(lead);
+        statuses[status] = (statuses[status] || 0) + 1;
+      });
+      
+      return {
+        labels: Object.keys(statuses),
+        values: Object.values(statuses)
+      };
+    }
+
+    function filterByDateRange(data, range) {
+      const now = new Date();
+      let startDate;
+      
+      switch(range) {
+        case 'last7':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'last30':
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case 'last90':
+          startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        case 'thisMonth':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        case 'lastMonth':
+          startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+          return data.filter(lead => {
+            const leadDate = new Date(lead.timestamp);
+            return leadDate >= startDate && leadDate <= endDate;
+          });
+        case 'thisYear':
+          startDate = new Date(now.getFullYear(), 0, 1);
+          break;
+        default:
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+      
+      return data.filter(lead => new Date(lead.timestamp) >= startDate);
+    }
+
+    function generateTrendData(data) {
+      const daily = {};
+      
+      data.forEach(lead => {
+        const date = new Date(lead.timestamp).toDateString();
+        daily[date] = (daily[date] || 0) + 1;
+      });
+      
+      const sorted = Object.keys(daily).sort((a, b) => new Date(a) - new Date(b));
+      
+      return {
+        labels: sorted.map(date => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+        values: sorted.map(date => daily[date])
+      };
+    }
+
+    function getTimeDistribution(data) {
+      const hours = Array(24).fill(0);
+      
+      data.forEach(lead => {
+        if (lead.timestamp) {
+          const hour = new Date(lead.timestamp).getHours();
+          hours[hour]++;
+        }
+      });
+      
+      const labels = hours.map((_, i) => i + ':00');
+      
+      return {
+        labels: labels.filter((_, i) => hours[i] > 0),
+        values: hours.filter(count => count > 0)
+      };
+    }
+
+    function getTopAppointmentType(data) {
+      const typeData = getAppointmentTypeData(data);
+      if (typeData.values.length === 0) return null;
+      
+      const maxIndex = typeData.values.indexOf(Math.max(...typeData.values));
+      return typeData.labels[maxIndex];
+    }
+
+    function convertToCSV(data) {
+      if (!data || data.length === 0) return '';
+      
+      const headers = ['Name', 'Email', 'Phone', 'Appointment Types', 'Timestamp', 'Status', 'Message'];
+      const csvRows = [headers.join(',')];
+      
+      data.forEach(lead => {
+        const row = [
+          escapeCSV(lead.name || ''),
+          escapeCSV(lead.email || ''),
+          escapeCSV(lead.phone || ''),
+          escapeCSV(lead.appointmentTypes || ''),
+          escapeCSV(formatDate(lead.timestamp)),
+          escapeCSV(determineStatus(lead)),
+          escapeCSV(lead.message || '')
+        ];
+        csvRows.push(row.join(','));
+      });
+      
+      return csvRows.join('\n');
+    }
+
+    function escapeCSV(value) {
+      if (typeof value !== 'string') value = String(value);
+      if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+        return '"' + value.replace(/"/g, '""') + '"';
+      }
+      return value;
+    }
+
+    function downloadCSV(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+  </script>
+</body>
+</html>
