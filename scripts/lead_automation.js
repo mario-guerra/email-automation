@@ -172,7 +172,7 @@ function processLeadEmails() {
         var sheet = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
         // Ensure header includes ReminderSentAt and ThreadId (non-destructive)
         if (sheet.getLastRow() === 0) {
-          sheet.appendRow(['Email', 'Name', 'Phone', 'Preferred Day', 'Preferred Time', 'Appointment Types', 'Message', 'Timestamp', 'Followed Up', 'ReminderSentAt', 'ThreadId']);
+          sheet.appendRow(['Email', 'Name', 'Phone', 'Preferred Day', 'Preferred Time', 'Appointment Types', 'Message', 'Timestamp', 'Followed Up', 'ReminderSentAt', 'ThreadId', 'EventId', 'MatchMethod', 'ResponseReceived', 'ExecutiveSummary', 'QuestionnaireResponses', 'QuestionnaireParsed']);
         } else {
           // If headers exist but are missing the extra columns, ensure they are present
           if (sheet.getLastColumn() < 11) {
@@ -183,7 +183,8 @@ function processLeadEmails() {
         var timestamp = new Date();
         var threadId = '';
         try { threadId = threads[i].getId(); } catch (e) { threadId = ''; }
-        sheet.appendRow([email, name, phone, preferredDay, preferredTime, appointmentTypes.join(', '), userMessage, timestamp, false, '', threadId]);
+        // Append row with placeholders for new metadata columns to keep column alignment
+        sheet.appendRow([email, name, phone, preferredDay, preferredTime, appointmentTypes.join(', '), userMessage, timestamp, false, '', threadId, '', '', false, '', '', '']);
         console.log('Logged to Sheet: ' + email + ' (threadId=' + threadId + ')');
       } catch (e) {
         console.log('Failed to log to Sheet for ' + email + ': ' + e);
@@ -285,6 +286,8 @@ function checkFollowUps() {
     var MATCH_METHOD_COL = 13;
     var RESPONSE_RECEIVED_COL = 14;
     var EXECUTIVE_SUMMARY_COL = 15;
+  var QUESTIONNAIRE_RESPONSES_COL = 16;
+  var QUESTIONNAIRE_PARSED_COL = 17;
 
     // Ensure headers exist (non-destructive)
     try {
@@ -295,6 +298,17 @@ function checkFollowUps() {
       if (ENABLE_AI_SUMMARY) {
         if (sheet.getLastColumn() < RESPONSE_RECEIVED_COL) sheet.getRange(1, RESPONSE_RECEIVED_COL).setValue('ResponseReceived');
         if (sheet.getLastColumn() < EXECUTIVE_SUMMARY_COL) sheet.getRange(1, EXECUTIVE_SUMMARY_COL).setValue('ExecutiveSummary');
+      }
+      // Always ensure a column for raw questionnaire responses (store the full plain-text reply)
+      try {
+        if (sheet.getLastColumn() < QUESTIONNAIRE_RESPONSES_COL) sheet.getRange(1, QUESTIONNAIRE_RESPONSES_COL).setValue('QuestionnaireResponses');
+      } catch (e) {
+        // ignore
+      }
+      try {
+        if (sheet.getLastColumn() < QUESTIONNAIRE_PARSED_COL) sheet.getRange(1, QUESTIONNAIRE_PARSED_COL).setValue('QuestionnaireParsed');
+      } catch (e) {
+        // ignore
       }
       console.log('Headers ensured.');
     } catch (e) {
@@ -313,6 +327,8 @@ function checkFollowUps() {
   var threadIdCell = (data[row][10] || '').toString().trim();
   var responseReceivedRaw = ENABLE_AI_SUMMARY && data[row].length > RESPONSE_RECEIVED_COL - 1 ? data[row][13] : false; // New column
   var executiveSummaryCell = ENABLE_AI_SUMMARY && data[row].length > EXECUTIVE_SUMMARY_COL - 1 ? (data[row][14] || '').toString().trim() : ''; // New column
+  var questionnaireResponsesCell = data[row].length > QUESTIONNAIRE_RESPONSES_COL - 1 ? (data[row][QUESTIONNAIRE_RESPONSES_COL - 1] || '').toString().trim() : '';
+  var appointmentTypesCell = data[row].length > 5 ? (data[row][5] || '').toString().trim() : '';
 
         if (!email) {
           console.log('Row ' + (row + 1) + ': No email found, skipping.');
@@ -356,6 +372,117 @@ function checkFollowUps() {
         var matchedEventId = '';
         var matchedMethod = '';
         var replyContent = '';
+
+        // Helper: simple regex-based parser fallback to extract key:value pairs from reply text
+        function parseReplyWithRegex(text, appointmentTypesList) {
+          var result = {};
+          if (!text) return result;
+          // Remove quoted blocks commonly introduced by email clients
+          text = text.replace(/(^|\n)>.*(\n|$)/g, '\n');
+          text = text.replace(/--\s?[\s\S]*$/m, ''); // signature separator
+          // If appointment types are provided, try to read the questionnaire files and extract question headings
+          var questionCandidates = [];
+          try {
+            if (appointmentTypesList) {
+              var types = (typeof appointmentTypesList === 'string') ? appointmentTypesList.split(',').map(function(s){return s.trim();}) : appointmentTypesList;
+              var folder = DriveApp.getFolderById(FOLDER_ID);
+              for (var ti = 0; ti < types.length; ti++) {
+                var t = types[ti];
+                if (!t) continue;
+                var fileName = QUESTIONNAIRE_FILES[t];
+                if (!fileName) continue;
+                try {
+                  var files = folder.getFilesByName(fileName);
+                  if (files.hasNext()) {
+                    var f = files.next();
+                    var qtext = f.getBlob().getDataAsString();
+                    var qlines = qtext.split(/\r?\n/);
+                    for (var ql = 0; ql < qlines.length; ql++) {
+                      var qltrim = qlines[ql].trim();
+                      if (!qltrim) continue;
+                      // consider lines that end with a question mark or look like numbered questions
+                      if (qltrim.match(/\?\s*$/) || qltrim.match(/^\d+\.|^[A-Z0-9\-]{3,}\:/)) {
+                        questionCandidates.push(qltrim.replace(/\s+$/, ''));
+                      }
+                    }
+                  }
+                } catch (e) {
+                  // ignore file read errors
+                }
+              }
+            }
+          } catch (e) {
+            // ignore Drive errors
+          }
+
+          // Normalize and dedupe question candidates
+          var questions = [];
+          var seen = {};
+          for (var qi = 0; qi < questionCandidates.length; qi++) {
+            var qq = questionCandidates[qi].replace(/^\d+\.\s*/, '').trim();
+            if (!qq) continue;
+            var key = qq.toLowerCase();
+            if (!seen[key]) { seen[key] = true; questions.push(qq); }
+          }
+
+          // For each known question, try to find an answer following the question text in the reply
+          for (var qj = 0; qj < questions.length; qj++) {
+            var qtxt = questions[qj];
+            var idx = text.toLowerCase().indexOf(qtxt.toLowerCase());
+            if (idx !== -1) {
+              var start = idx + qtxt.length;
+              var rest = text.substring(start).trim();
+              // stop at the next blank line or next question marker
+              var stop = rest.search(/\n\s*\n/);
+              var answer = stop === -1 ? rest : rest.substring(0, stop).trim();
+              var key = qtxt.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+              if (answer) result[key] = answer;
+            }
+          }
+
+          // Fallback: split into lines and capture key: value pairs
+          var lines = text.split(/\r?\n/);
+          for (var li2 = 0; li2 < lines.length; li2++) {
+            var line = lines[li2].trim();
+            if (!line) continue;
+            var m2 = line.match(/^([A-Za-z _-]{2,50}):\s*(.+)$/);
+            if (m2) {
+              var k2 = m2[1].trim();
+              var v2 = m2[2].trim();
+              var key2 = k2.toLowerCase().replace(/\s+/g, '_');
+              if (v2.indexOf(',') !== -1) v2 = v2.split(',').map(function(s) { return s.trim(); });
+              result[key2] = v2;
+            }
+          }
+          return result;
+        }
+
+        // Helper: call AI to parse the reply into structured JSON (questions->answers)
+        function parseReplyWithAI(text) {
+          if (!ENABLE_AI_SUMMARY || !AI_API_KEY) return null;
+          try {
+            var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + AI_API_KEY;
+            var prompt = 'You are a strict JSON generator. Parse the following email reply into a single JSON object only. Keys must be the exact questionnaire question titles and values the respondent\'s answers. If an answer contains multiple items, return an array. Do NOT include any explanatory text, markdown, or commentary — return only valid JSON. If you cannot parse, return an empty JSON object {}.\n\nReply:\n' + text;
+            var payload = { 'contents': [{ 'parts': [{ 'text': prompt }] }] };
+            var options = { 'method': 'post', 'contentType': 'application/json', 'payload': JSON.stringify(payload), 'muteHttpExceptions': true };
+            var response = UrlFetchApp.fetch(url, options);
+            var json = JSON.parse(response.getContentText());
+            if (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts && json.candidates[0].content.parts[0]) {
+              var textOut = json.candidates[0].content.parts[0].text.trim();
+              // The model should return only JSON; attempt to parse full text
+              try { return JSON.parse(textOut); } catch (e) {
+                // Fallback: try to extract JSON substring
+                var jsMatch = textOut.match(/(\{[\s\S]*\})/);
+                if (jsMatch) {
+                  try { return JSON.parse(jsMatch[1]); } catch (e2) { return null; }
+                }
+              }
+            }
+          } catch (e) {
+            console.log('AI parse error: ' + e);
+          }
+          return null;
+        }
 
         // Primary: try Calendar API (Advanced service) to find events for YOUR_EMAIL
         console.log('Row ' + (row + 1) + ': Checking Calendar API...');
@@ -506,20 +633,29 @@ function checkFollowUps() {
         if (replyFound && !responseReceived && replyContent) {
           console.log('Row ' + (row + 1) + ': Generating executive summary for ' + email + ' (method: ' + matchedMethod + ')');
           
+          // Parse reply: prefer AI parsing when enabled, fallback to regex parser
+          var parsed = null;
           if (ENABLE_AI_SUMMARY) {
-            // Premium feature: Generate AI executive summary
+            parsed = parseReplyWithAI(replyContent);
+            if (parsed) console.log('Row ' + (row + 1) + ': AI parsed reply successfully.');
+            else console.log('Row ' + (row + 1) + ': AI parsing failed or returned no JSON, falling back to regex parser.');
+          }
+          if (!parsed) {
+            parsed = parseReplyWithRegex(replyContent, appointmentTypesCell);
+            console.log('Row ' + (row + 1) + ': Regex parser produced ' + Object.keys(parsed).length + ' fields.');
+          }
+          // Write results: executive summary (AI) and raw + parsed responses
+          if (ENABLE_AI_SUMMARY) {
             var summary = generateExecutiveSummary(replyContent);
-            console.log('Row ' + (row + 1) + ': AI summary generated, writing to row ' + (row + 1) + ' for email: ' + email);
             sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
             sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue(summary);
-            console.log('Row ' + (row + 1) + ': Executive summary written to spreadsheet for ' + email);
           } else {
-            // Free tier: Mark as processed without AI summary
-            console.log('Row ' + (row + 1) + ': AI disabled, marking as processed for ' + email);
             sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
             sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue('AI Summary disabled');
-            console.log('Row ' + (row + 1) + ': Response processed (AI disabled) for ' + email);
           }
+          try { sheet.getRange(row + 1, QUESTIONNAIRE_RESPONSES_COL).setValue(replyContent); } catch (e) { /* ignore */ }
+          try { sheet.getRange(row + 1, QUESTIONNAIRE_PARSED_COL).setValue(JSON.stringify(parsed)); } catch (e) { /* ignore */ }
+          console.log('Row ' + (row + 1) + ': Parsed and raw responses written to spreadsheet for ' + email);
           
           // Record detection method and mark as followed up
           sheet.getRange(row + 1, MATCH_METHOD_COL).setValue(matchedMethod);
