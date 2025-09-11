@@ -202,7 +202,7 @@ function processLeadEmails() {
   }
 }
 
-function generateExecutiveSummary(emailContent) {
+function generateExecutiveSummary(emailContent, clientName) {
   if (!ENABLE_AI_SUMMARY) {
     console.log('AI Summary feature is disabled');
     return 'AI Summary disabled';
@@ -214,7 +214,8 @@ function generateExecutiveSummary(emailContent) {
   for (var attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + AI_API_KEY;
-      var prompt = 'Summarize the key points from this lead\'s email response to our questionnaire. Focus on their answers, expressed concerns, overall sentiment, and highlight anything important to know from a legal standpoint. Call out anything that merits a closer read of the email and/or questionnaire answers. Keep it under 200 words. Use "Important points:" for the highlighted section.\n\nEmail Content:\n' + emailContent;
+  var clientHint = clientName ? ('Client name (preferred): ' + clientName + '\n\n') : '';
+  var prompt = 'Summarize the key points from this lead\'s email response to our questionnaire. If a preferred client name is provided, use that name when referring to the client in the summary. Focus on their answers, expressed concerns, overall sentiment, and highlight anything important to know from a legal standpoint. Call out anything that merits a closer read of the email and/or questionnaire answers. Keep it under 200 words. Use "Important points:" for the highlighted section.\n\n' + clientHint + 'Email Content:\n' + emailContent;
       var payload = {
         'contents': [{
           'parts': [{ 'text': prompt }]
@@ -252,6 +253,57 @@ function generateExecutiveSummary(emailContent) {
       return 'Summary unavailable - manual review needed.';
     }
   }
+}
+
+// Heuristic: determine the client's preferred name using parsed fields, sheet name, reply content, or email address
+function extractClientName(parsed, sheetName, replyContent, emailAddr) {
+  try {
+    // 1) Check parsed object for likely name keys (case-insensitive)
+    if (parsed && typeof parsed === 'object') {
+      var nameKeys = ['name', 'full_name', 'full name', 'your_name', 'your name', 'client_name', 'client'];
+      var pk = Object.keys(parsed || {});
+      for (var i = 0; i < nameKeys.length; i++) {
+        var target = nameKeys[i].toLowerCase();
+        for (var j = 0; j < pk.length; j++) {
+          if ((pk[j] || '').toString().toLowerCase() === target) {
+            var val = parsed[pk[j]];
+            if (val) return Array.isArray(val) ? val.join(' ').trim() : ('' + val).trim();
+          }
+        }
+      }
+    }
+
+    // 2) Use sheet-provided name if it looks valid
+    if (sheetName && sheetName.toString().trim() && sheetName.toString().toLowerCase() !== 'unknown') {
+      return sheetName.toString().trim();
+    }
+
+    // 3) Try to extract name from common signature lines near the end of the reply
+    if (replyContent && replyContent.length) {
+      // look for 'Regards, John Doe' or 'Thanks, John'
+      var sigRe = /(?:Regards|Best|Thanks|Sincerely|Kind regards|Warm regards)\s*,?\s*\n?\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})/im;
+      var m = replyContent.match(sigRe);
+      if (m && m[1]) return m[1].trim();
+
+      // look for greeting at top: 'Hi John,' or 'Hello Jane'
+      var greetRe = /^(?:\s*)(?:Hi|Hello|Hey|Dear)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})[\s,!\n]/im;
+      var mg = replyContent.match(greetRe);
+      if (mg && mg[1]) return mg[1].trim();
+    }
+
+    // 4) Fallback: use email local-part (before @), transform dots/underscores to spaces and capitalize
+    if (emailAddr && emailAddr.indexOf('@') !== -1) {
+      var local = emailAddr.split('@')[0].replace(/[._\-]+/g, ' ').trim();
+      if (local) {
+        var parts = local.split(/\s+/);
+        for (var p = 0; p < parts.length; p++) parts[p] = parts[p].charAt(0).toUpperCase() + parts[p].slice(1);
+        return parts.join(' ');
+      }
+    }
+  } catch (e) {
+    // ignore and fallback
+  }
+  return '';
 }
 
 // Optional helper: build a simple summary from parsed questionnaire fields when AI is unavailable
@@ -770,7 +822,9 @@ function checkFollowUps() {
           }
           // Write results: executive summary (AI) and raw + parsed responses
           if (ENABLE_AI_SUMMARY) {
-            var summary = generateExecutiveSummary(replyContent);
+            // attempt to extract client name from parsed fields / sheet-provided name / reply heuristics
+            var clientName = extractClientName(parsed || {}, name, replyContent, email);
+            var summary = generateExecutiveSummary(replyContent, clientName);
             // If AI summary failed or returned the unavailable sentinel, build a fallback from parsed fields
             if (!summary || summary.indexOf('Summary unavailable') === 0) {
               var fallback = buildSummaryFromParsed(parsed || {});
