@@ -88,18 +88,53 @@
         return chart;
       },
       
-      // Simple line chart
+      // Simple line chart (robust color handling, defaults to green)
       _drawLineChart: function(ctx, width, height, labels, data, colors) {
         if (!data || !data.length) return;
-        
+
         const padding = 40;
         const chartWidth = width - 2 * padding;
         const chartHeight = height - 2 * padding;
-        const color = colors && colors[0] ? colors[0] : '#1E88E5';
-        
-        const max = Math.max(...data) * 1.1;
+
+        // Determine base color (use provided color or CSS --success-color)
+        let color = (colors && colors[0]) ? colors[0] : (getComputedStyle(document.documentElement).getPropertyValue('--success-color') || '#4CAF50');
+
+        // Helper: convert hex or rgb to rgba string with given alpha
+        function toRgba(input, alpha) {
+          if (!input) return `rgba(76,175,80,${alpha})`;
+          input = input.trim();
+          if (input.startsWith('rgba')) {
+            try {
+              // Replace existing alpha
+              return input.replace(/rgba\(([^)]+)\)/, function(_, inside) {
+                const parts = inside.split(',').map(p => p.trim());
+                // Ensure we have at least r,g,b
+                while (parts.length < 3) parts.push('0');
+                return 'rgba(' + parts[0] + ',' + parts[1] + ',' + parts[2] + ',' + alpha + ')';
+              });
+            } catch (e) { return input; }
+          }
+          if (input.startsWith('rgb(')) {
+            return input.replace('rgb(', 'rgba(').replace(')', ',' + alpha + ')');
+          }
+          if (input.startsWith('#')) {
+            let hex = input.slice(1);
+            if (hex.length === 3) hex = hex.split('').map(h => h + h).join('');
+            const r = parseInt(hex.slice(0,2), 16);
+            const g = parseInt(hex.slice(2,4), 16);
+            const b = parseInt(hex.slice(4,6), 16);
+            return `rgba(${r},${g},${b},${alpha})`;
+          }
+          // Fallback: return input as-is (may be color name)
+          return input;
+        }
+
+        const strokeColor = color;
+        const fillColor = toRgba(color, 0.15);
+
+        const max = Math.max(...data) * 1.1 || 1;
         const xStep = chartWidth / (data.length - 1);
-        
+
         // Draw axes
         ctx.beginPath();
         ctx.strokeStyle = '#ccc';
@@ -107,38 +142,38 @@
         ctx.lineTo(padding, height - padding);
         ctx.lineTo(width - padding, height - padding);
         ctx.stroke();
-        
+
         // Draw line
         ctx.beginPath();
-        ctx.strokeStyle = color;
+        ctx.strokeStyle = strokeColor;
         ctx.lineWidth = 2;
-        
+
         for (let i = 0; i < data.length; i++) {
           const x = padding + i * xStep;
           const y = height - padding - (data[i] / max * chartHeight);
-          
+
           if (i === 0) {
             ctx.moveTo(x, y);
           } else {
             ctx.lineTo(x, y);
           }
         }
-        
+
         ctx.stroke();
-        
+
         // Fill area under line
         ctx.lineTo(padding + (data.length - 1) * xStep, height - padding);
         ctx.lineTo(padding, height - padding);
         ctx.closePath();
-        ctx.fillStyle = color + '20'; // 20% opacity
+        ctx.fillStyle = fillColor;
         ctx.fill();
-        
+
         // Draw labels if there are not too many
         if (labels && labels.length <= 12) {
           ctx.fillStyle = '#666';
           ctx.font = '10px Arial';
           ctx.textAlign = 'center';
-          
+
           for (let i = 0; i < labels.length; i++) {
             const x = padding + i * xStep;
             ctx.fillText(labels[i], x, height - padding + 15);
@@ -658,6 +693,21 @@
       }
     }
 
+    /* Chart Controls and Insights */
+    .chart-controls {
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 15px;
+    }
+    
+    .chart-insights {
+      background-color: #f8f9fa;
+      border-radius: 0.25rem;
+      padding: 10px;
+      margin-top: 15px;
+      font-size: 0.85rem;
+    }
+    
     /* Animation classes */
     .fade-in {
       animation: fadeIn 0.5s ease-in;
@@ -715,6 +765,9 @@
         <div class="col-md-6">
           <div class="user-info justify-content-end">
             <div class="d-flex align-items-center">
+              <button id="refreshButton" class="btn btn-sm btn-primary me-3" onclick="refreshData(); return false;">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+              </button>
               <div id="connectionStatus" class="me-3">
                 <i class="fas fa-circle text-warning" title="Connecting..."></i>
                 <span class="small">Connecting...</span>
@@ -868,7 +921,7 @@
                         Lead Volume Trend
                       </div>
                       <div class="card-body">
-                        <div class="chart-container">
+                        <div id="leadVolumeContainer" class="chart-container">
                           <canvas id="leadVolumeChart"></canvas>
                         </div>
                       </div>
@@ -1642,6 +1695,18 @@
 
     function refreshData() {
       console.log('Refreshing data...');
+      
+      // Show visual feedback for refresh
+      const refreshBtn = document.getElementById('refreshButton');
+      if (refreshBtn) {
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Refreshing...';
+        refreshBtn.disabled = true;
+      }
+      
+      // Update status indicator
+      updateConnectionStatus('loading', 'Refreshing data...');
+      showNotification('Refreshing data...', 'info');
+      
       try {
         google.script.run
           .withSuccessHandler(handleDataRefresh)
@@ -1650,6 +1715,12 @@
       } catch (error) {
         console.error('Exception refreshing data:', error);
         handleError(error);
+        
+        // Reset button state if error occurs
+        if (refreshBtn) {
+          refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+          refreshBtn.disabled = false;
+        }
       }
     }
 
@@ -1727,6 +1798,16 @@
       loadPageData('#' + activeTab);
       updateLastRefreshTime();
       
+      // Reset refresh button state
+      const refreshBtn = document.getElementById('refreshButton');
+      if (refreshBtn) {
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+        refreshBtn.disabled = false;
+      }
+      
+      // Update connection status
+      updateConnectionStatus('connected', 'Connected to Google Sheets');
+      
       // Show success notification
       showNotification('Data refreshed successfully', 'success');
     }
@@ -1738,6 +1819,17 @@
     function handleError(error) {
       console.error('Error:', error);
       showLoading(false);
+      
+      // Reset refresh button state
+      const refreshBtn = document.getElementById('refreshButton');
+      if (refreshBtn) {
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+        refreshBtn.disabled = false;
+      }
+      
+      // Update connection status
+      updateConnectionStatus('error', 'Connection error');
+      
       showNotification('Error loading data: ' + (error.message || error.toString()) + '. Using demo data.', 'warning');
     }
 
@@ -2105,9 +2197,62 @@
       if (charts.leadVolume) {
         charts.leadVolume.destroy();
       }
-
-      // Generate sample data for the last 30 days
-      const data = generateLeadVolumeData();
+      
+      // Get current filters from UI
+      const dateRange = $('#volumeDateRange').val() || '30days';
+      const aggregation = $('#volumeAggregation').val() || 'day';
+      
+      // Generate data based on current filters
+      const data = generateLeadVolumeData(dateRange, aggregation);
+      
+      // Create chart container if it doesn't exist
+      const container = $('#leadVolumeContainer');
+      
+      // Add filters if they don't exist
+      if ($('#volumeDateRange').length === 0) {
+        const filterHtml = `
+          <div class="chart-controls mb-3">
+            <div class="row">
+              <div class="col-md-6">
+                <label for="volumeDateRange" class="form-label small mb-0">Time Range:</label>
+                <select class="form-select form-select-sm" id="volumeDateRange">
+                  <option value="7days">Last 7 Days</option>
+                  <option value="30days" selected>Last 30 Days</option>
+                  <option value="90days">Last 90 Days</option>
+                  <option value="180days">Last 6 Months</option>
+                  <option value="365days">Last Year</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="volumeAggregation" class="form-label small mb-0">View By:</label>
+                <select class="form-select form-select-sm" id="volumeAggregation">
+                  <option value="day" selected>Daily</option>
+                  <option value="week">Weekly</option>
+                  <option value="month">Monthly</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        `;
+        container.prepend(filterHtml);
+        
+        // Add event listeners to filters
+        $('#volumeDateRange, #volumeAggregation').on('change', function() {
+          renderLeadVolumeChart();
+        });
+      }
+      
+      // Add comparative data section if it doesn't exist
+      if ($('#volumeComparison').length === 0) {
+        const comparisonHtml = `
+          <div id="volumeComparison" class="chart-insights mt-3">
+          </div>
+        `;
+        container.append(comparisonHtml);
+      }
+      
+      // Update comparative data
+      updateLeadVolumeComparison(data);
       
       // Create chart using our simplified Chart implementation
       try {
@@ -2116,15 +2261,75 @@
           data: {
             labels: data.labels,
             datasets: [{
+              label: 'Lead Volume',
               data: data.values,
-              backgroundColor: '#1E88E5'  // Primary color
+              backgroundColor: 'rgba(75, 192, 75, 0.2)',
+              borderColor: '#4CAF50',
+              borderWidth: 2,
+              pointRadius: 3,
+              pointBackgroundColor: '#4CAF50',
+              fill: true
             }]
+          },
+          options: {
+            showLegend: false
           }
         });
         console.log('Lead volume chart rendered successfully');
       } catch (error) {
         console.error('Error rendering lead volume chart:', error);
       }
+    }
+    
+    function updateLeadVolumeComparison(data) {
+      const container = $('#volumeComparison');
+      container.empty();
+      
+      // Calculate overall totals
+      const currentTotal = data.values.reduce((sum, val) => sum + val, 0);
+      const previousTotal = data.previousValues.reduce((sum, val) => sum + val, 0);
+      
+      // Calculate overall change
+      let overallChange = 0;
+      let changeClass = '';
+      let changeIcon = '';
+      
+      if (previousTotal > 0) {
+        overallChange = ((currentTotal - previousTotal) / previousTotal) * 100;
+        changeClass = overallChange >= 0 ? 'text-success' : 'text-danger';
+        changeIcon = overallChange >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+      }
+      
+      // Prepare the comparison HTML
+      const html = `
+        <div class="row">
+          <div class="col-md-6">
+            <div class="small mb-1">Total Leads: <strong>${currentTotal}</strong></div>
+            <div class="small">
+              ${previousTotal > 0 ? 
+                `<span class="${changeClass}">
+                  <i class="fas ${changeIcon}"></i> 
+                  ${Math.abs(overallChange).toFixed(1)}% from previous period
+                </span>` : 
+                'No comparison data available'
+              }
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="small mb-1">
+              Average: <strong>${(currentTotal / data.values.length).toFixed(1)}</strong> leads per ${$('#volumeAggregation').val() || 'day'}
+            </div>
+            <div class="small">
+              Peak: <strong>${Math.max(...data.values)}</strong> leads
+              ${data.values.indexOf(Math.max(...data.values)) !== -1 ? 
+                ` on ${data.labels[data.values.indexOf(Math.max(...data.values))]}` : 
+                ''}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      container.html(html);
     }
 
     function renderAppointmentTypesChart() {
@@ -2476,36 +2681,20 @@
         return;
       }
       
-      // Fall back to loading template questionnaires if no responses are available
+      // When there are no responses, just show a message instead of template questionnaires
       if (!appointmentTypes) {
         container.html('<p class="text-muted">No questionnaires available.</p>');
         return;
       }
-
-      const types = appointmentTypes.split(',').map(t => t.trim());
-      let loadedCount = 0;
-      const questionnaires = [];
-
-      container.html('<div class="loading">Loading template questionnaires...</div>');
       
-      types.forEach(type => {
-        google.script.run
-          .withSuccessHandler(function(content) {
-            questionnaires.push({ type, content, isTemplate: true });
-            loadedCount++;
-            if (loadedCount === types.length) {
-              renderQuestionnaires(questionnaires);
-            }
-          })
-          .withFailureHandler(function(error) {
-            questionnaires.push({ type, content: 'Error loading questionnaire: ' + error, isTemplate: true });
-            loadedCount++;
-            if (loadedCount === types.length) {
-              renderQuestionnaires(questionnaires);
-            }
-          })
-          .getQuestionnaire(type.toLowerCase().replace(/\s+/g, '_') + '.txt');
-      });
+      // Display message when no responses received yet
+      container.html(`
+        <div class="alert alert-info mb-3">
+          <i class="fas fa-info-circle me-2"></i>
+          No client responses received yet.
+        </div>
+      `);
+      return;
     }
 
     function renderQuestionnaires(questionnaires) {
@@ -2547,15 +2736,15 @@
         container.append(html);
       });
       
-      // If we're showing templates but no responses
-      if (questionnaires.length > 0 && !questionnaires.some(q => q.isParsed)) {
-        container.prepend(`
-          <div class="alert alert-info mb-3">
-            <i class="fas fa-info-circle me-2"></i>
-            No client responses received yet. Showing template questionnaires.
-          </div>
-        `);
-      }
+      // We no longer need to show this message since we don't show templates anymore
+      // if (questionnaires.length > 0 && !questionnaires.some(q => q.isParsed)) {
+      //   container.prepend(`
+      //     <div class="alert alert-info mb-3">
+      //       <i class="fas fa-info-circle me-2"></i>
+      //       No client responses received yet. Showing template questionnaires.
+      //     </div>
+      //   `);
+      // }
     }
 
     function generateTimeline(lead) {
@@ -2733,10 +2922,14 @@
     }
 
     function showAllLeads() {
+      // Update the active tab UI
       $('.nav-pills .nav-link').removeClass('active');
       $('.nav-pills .nav-link[data-bs-target="#leads"]').addClass('active');
       $('.tab-pane').removeClass('show active');
       $('#leads').addClass('show active');
+      
+      // Load the leads data
+      loadPageData('#leads');
     }
 
     function clearCache() {
@@ -2869,25 +3062,170 @@
     }
 
     // Data processing functions
-    function generateLeadVolumeData() {
+    function generateLeadVolumeData(dateRange = '30days', aggregation = 'day') {
       const labels = [];
       const values = [];
+      const currentValues = [];
+      const previousValues = [];
+      let dateFormat;
       
-      for (let i = 29; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-        
-        // Count actual leads for this date or generate sample data
-        const dayLeads = leadsData.filter(lead => {
-          const leadDate = new Date(lead.timestamp);
-          return leadDate.toDateString() === date.toDateString();
-        }).length;
-        
-        values.push(dayLeads || Math.floor(Math.random() * 5));
+      // Determine date format based on aggregation
+      switch(aggregation) {
+        case 'week':
+          dateFormat = { week: 'numeric', year: 'numeric' };
+          break;
+        case 'month':
+          dateFormat = { month: 'short', year: 'numeric' };
+          break;
+        case 'day':
+        default:
+          dateFormat = { month: 'short', day: 'numeric' };
+          break;
       }
       
-      return { labels, values };
+      // Determine date range
+      let daysToShow = 30;
+      switch(dateRange) {
+        case '7days':
+          daysToShow = 7;
+          break;
+        case '90days':
+          daysToShow = 90;
+          break;
+        case '180days':
+          daysToShow = 180;
+          break;
+        case '365days':
+          daysToShow = 365;
+          break;
+        case '30days':
+        default:
+          daysToShow = 30;
+          break;
+      }
+      
+      // Generate date buckets based on aggregation
+      const dateBuckets = {};
+      const now = new Date();
+      
+      // For previous period comparison
+      const previousPeriodBuckets = {};
+      
+      // Initialize date buckets
+      for (let i = daysToShow - 1; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        
+        let bucketKey;
+        if (aggregation === 'week') {
+          // Get ISO week number
+          const weekNumber = getWeekNumber(date);
+          bucketKey = `${date.getFullYear()}-W${weekNumber}`;
+          labels.push(`Week ${weekNumber}`);
+        } else if (aggregation === 'month') {
+          bucketKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+          if (!dateBuckets[bucketKey]) {
+            labels.push(date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }));
+          }
+        } else {
+          bucketKey = date.toDateString();
+          labels.push(date.toLocaleDateString('en-US', dateFormat));
+        }
+        
+        if (!dateBuckets[bucketKey]) {
+          dateBuckets[bucketKey] = 0;
+        }
+      }
+      
+      // Initialize previous period buckets
+      for (let i = daysToShow * 2 - 1; i >= daysToShow; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        
+        let bucketKey;
+        if (aggregation === 'week') {
+          const weekNumber = getWeekNumber(date);
+          bucketKey = `${date.getFullYear()}-W${weekNumber}`;
+        } else if (aggregation === 'month') {
+          bucketKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+        } else {
+          bucketKey = date.toDateString();
+        }
+        
+        if (!previousPeriodBuckets[bucketKey]) {
+          previousPeriodBuckets[bucketKey] = 0;
+        }
+      }
+      
+      // Count leads for current period
+      leadsData.forEach(lead => {
+        if (!lead.timestamp) return;
+        
+        const leadDate = new Date(lead.timestamp);
+        const daysDiff = Math.floor((now - leadDate) / (1000 * 60 * 60 * 24));
+        
+        if (daysDiff <= daysToShow) {
+          let bucketKey;
+          if (aggregation === 'week') {
+            const weekNumber = getWeekNumber(leadDate);
+            bucketKey = `${leadDate.getFullYear()}-W${weekNumber}`;
+          } else if (aggregation === 'month') {
+            bucketKey = `${leadDate.getFullYear()}-${leadDate.getMonth() + 1}`;
+          } else {
+            bucketKey = leadDate.toDateString();
+          }
+          
+          if (bucketKey in dateBuckets) {
+            dateBuckets[bucketKey]++;
+          }
+        } else if (daysDiff <= daysToShow * 2) {
+          // For previous period
+          let bucketKey;
+          if (aggregation === 'week') {
+            const weekNumber = getWeekNumber(leadDate);
+            bucketKey = `${leadDate.getFullYear()}-W${weekNumber}`;
+          } else if (aggregation === 'month') {
+            bucketKey = `${leadDate.getFullYear()}-${leadDate.getMonth() + 1}`;
+          } else {
+            bucketKey = leadDate.toDateString();
+          }
+          
+          if (bucketKey in previousPeriodBuckets) {
+            previousPeriodBuckets[bucketKey]++;
+          }
+        }
+      });
+      
+      // Helper function to get week number
+      function getWeekNumber(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+      }
+      
+      // Convert buckets to arrays
+      for (const key in dateBuckets) {
+        currentValues.push(dateBuckets[key]);
+      }
+      
+      for (const key in previousPeriodBuckets) {
+        previousValues.push(previousPeriodBuckets[key]);
+      }
+      
+      // Calculate percentage changes
+      const changes = currentValues.map((current, i) => {
+        const previous = previousValues[i] || 0;
+        if (previous === 0) return null; // Avoid division by zero
+        return ((current - previous) / previous) * 100;
+      });
+      
+      return { 
+        labels, 
+        values: currentValues,
+        previousValues,
+        changes
+      };
     }
 
     function getAppointmentTypeData(data = leadsData) {
