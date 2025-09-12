@@ -474,18 +474,7 @@
       letter-spacing: 0.5px;
     }
 
-    .metric-change {
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-    }
-
-    .metric-change.positive {
-      color: var(--success-color);
-    }
-
-    .metric-change.negative {
-      color: var(--danger-color);
-    }
+    
 
     /* Status Badges */
     .status-badge {
@@ -847,7 +836,7 @@
                       <div class="card-body text-center">
                         <div class="metric-value" id="totalLeads">0</div>
                         <div class="metric-label">Total Leads</div>
-                        <div class="metric-change positive" id="totalLeadsChange">+0%</div>
+
                       </div>
                     </div>
                   </div>
@@ -856,7 +845,7 @@
                       <div class="card-body text-center">
                         <div class="metric-value" id="newThisWeek">0</div>
                         <div class="metric-label">New This Week</div>
-                        <div class="metric-change positive" id="newThisWeekChange">+0%</div>
+
                       </div>
                     </div>
                   </div>
@@ -865,7 +854,7 @@
                       <div class="card-body text-center">
                         <div class="metric-value" id="awaitingResponse">0</div>
                         <div class="metric-label">Awaiting Response</div>
-                        <div class="metric-change" id="awaitingResponseChange">+0%</div>
+
                       </div>
                     </div>
                   </div>
@@ -874,7 +863,7 @@
                       <div class="card-body text-center">
                         <div class="metric-value" id="responsesReceived">0</div>
                         <div class="metric-label">Responses Received</div>
-                        <div class="metric-change positive" id="responsesReceivedChange">+0%</div>
+
                       </div>
                     </div>
                   </div>
@@ -1576,37 +1565,35 @@
         loadPageData(target);
       });
       
-      // Simpler tab handling for just questionnaires and timeline
-      $('a[data-bs-toggle="tab"]').on('click', function (e) {
-        console.log('Tab clicked:', $(this).attr('href'));
-        e.preventDefault(); // Prevent Bootstrap's default behavior
-        
+      // Tab handling for the detail view (questionnaires & timeline) - scope locally
+      $('.nav-tabs a[data-bs-toggle="tab"]').on('click', function (e) {
+        e.preventDefault(); // we handle local tab switching manually
+
         const targetId = $(this).attr('href');
-        const tabId = $(this).attr('id');
-        
-        // Manual tab switching with direct DOM manipulation
-        $('.nav-tabs .nav-link').removeClass('active');
+
+        // Only operate within the same card/tab container so we don't hide top-level panes
+        const tabCard = $(this).closest('.card');
+        const tabContent = tabCard.length ? tabCard.find('.tab-content') : $('.tab-content');
+
+        // Activate the clicked tab link within this nav
+        tabCard.find('.nav-tabs .nav-link').removeClass('active');
         $(this).addClass('active');
-        
-        $('.tab-pane').hide().removeClass('show active');
+
+        // Hide only the sibling panes inside this tabContent and show the target
+        tabContent.children('.tab-pane').hide().removeClass('show active');
+        // show the requested pane
         $(targetId).show().addClass('show active');
-        
-        // Handle specific tab content updates
+
+        // Handle specific tab content updates for the detail view
         if (targetId === '#questionnaires' && currentLeadEmail) {
           const lead = leadsData.find(l => l.email === currentLeadEmail);
-          if (lead) {
-            // Re-load questionnaire data when tab is clicked
-            loadQuestionnaires(lead.appointmentTypes);
-          }
+          if (lead) loadQuestionnaires(lead.appointmentTypes);
         } else if (targetId === '#timeline' && currentLeadEmail) {
           const lead = leadsData.find(l => l.email === currentLeadEmail);
-          if (lead) {
-            // Re-generate timeline when tab is clicked
-            generateTimeline(lead);
-          }
+          if (lead) generateTimeline(lead);
         }
-        
-        return false; // Prevent default and stop propagation
+
+        return false;
       });
 
       // Search and filters
@@ -1790,25 +1777,64 @@
     }
 
     function handleDataRefresh(leads) {
+      // Update in-memory data
       leadsData = leads || [];
       filteredLeadsData = [...leadsData];
-      
-      // Refresh current view
-      const activeTab = $('.tab-pane.show.active').attr('id');
-      loadPageData('#' + activeTab);
+
+      // Immediately update metric cards from the new data
+      try {
+        const metrics = calculateMetricsFromLeads(leadsData);
+        handleMetricsLoad(metrics);
+      } catch (err) {
+        console.warn('Error updating metrics after refresh:', err);
+      }
+
+      // Update settings / system info which shows totals and last updated
+      try {
+        renderSettings();
+      } catch (err) {
+        console.warn('Error updating settings panel after refresh:', err);
+      }
+
+      // Determine which view is currently visible and refresh it appropriately
+      try {
+        const activeTabId = $('.tab-pane.show.active').attr('id') || '';
+
+        if (activeTabId === 'detail' && currentLeadEmail) {
+          // If the detail view is open, refresh the detail panel for the same lead
+          // This will re-populate messages, timeline and questionnaires
+          viewLeadDetail(currentLeadEmail);
+        } else if (['dashboard','leads','analytics','settings'].includes(activeTabId)) {
+          // For known pages, call the page loader which will re-render tables/charts
+          loadPageData('#' + activeTabId);
+        } else {
+          // Fallback: refresh dashboard basics
+          renderDashboard();
+        }
+
+        // Ensure charts are up-to-date even if some containers remained visible
+        if ($('#dashboard').hasClass('show') || $('#dashboard').hasClass('active')) {
+          try { renderDashboardCharts(); } catch (e) { /* ignore */ }
+        }
+        if ($('#analytics').hasClass('show') || $('#analytics').hasClass('active')) {
+          try { renderAnalytics(); } catch (e) { /* ignore */ }
+        }
+      } catch (err) {
+        console.warn('Error while refreshing visible pages:', err);
+      }
+
+      // Update the last refresh timestamp
       updateLastRefreshTime();
-      
+
       // Reset refresh button state
       const refreshBtn = document.getElementById('refreshButton');
       if (refreshBtn) {
         refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
         refreshBtn.disabled = false;
       }
-      
-      // Update connection status
+
+      // Update connection status and inform the user
       updateConnectionStatus('connected', 'Connected to Google Sheets');
-      
-      // Show success notification
       showNotification('Data refreshed successfully', 'success');
     }
 
@@ -1998,19 +2024,7 @@
       $('#awaitingResponse').text(metrics.awaitingResponse || 0);
       $('#responsesReceived').text(metrics.responsesReceived || 0);
 
-      // Calculate percentage changes (mock data for demo)
-      updateMetricChange('#totalLeadsChange', 12);
-      updateMetricChange('#newThisWeekChange', -5);
-      updateMetricChange('#awaitingResponseChange', 8);
-      updateMetricChange('#responsesReceivedChange', 25);
-    }
-
-    function updateMetricChange(selector, change) {
-      const element = $(selector);
-      element.text((change > 0 ? '+' : '') + change + '%');
-      element.removeClass('positive negative');
-      element.addClass(change > 0 ? 'positive' : 'negative');
-    }
+  }
 
     function renderRecentLeads() {
       const tbody = $('#recentLeadsTable tbody');
@@ -2052,6 +2066,9 @@
             <td>
               <button class="btn btn-sm btn-outline-primary" onclick="viewLeadDetail('${lead.email}')">
                 <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteLeadConfirm('${lead.email}')" title="Delete Lead">
+                <i class="fas fa-trash"></i>
               </button>
             </td>
           </tr>
@@ -2111,6 +2128,9 @@
                 </button>
                 <button class="btn btn-outline-success" onclick="quickFollowUp('${lead.email}')" title="Quick Follow-up">
                   <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-outline-danger" onclick="deleteLeadConfirm('${lead.email}')" title="Delete Lead">
+                  <i class="fas fa-trash"></i>
                 </button>
               </div>
             </td>
@@ -2346,22 +2366,39 @@
         charts.appointmentTypes.destroy();
       }
 
+      // Build data and colors dynamically so slice sizes are proportional to counts
       const typeData = getAppointmentTypeData();
-      
+
+      // If there's no data, show a friendly placeholder in the chart container
+      if (!typeData || !typeData.labels || typeData.labels.length === 0) {
+        const container = document.getElementById('appointmentTypesChart').parentElement;
+        if (container && !container.querySelector('.chart-error-message')) {
+          const msg = document.createElement('div');
+          msg.className = 'chart-error-message text-center text-muted p-4';
+          msg.innerHTML = '<i class="fas fa-info-circle mb-2"></i><br>No service type data available';
+          container.appendChild(msg);
+        }
+        return;
+      }
+
+      // Sort by count descending so chart highlights top services
+      const pairs = typeData.labels.map((label, i) => ({ label, value: typeData.values[i] }));
+      pairs.sort((a, b) => b.value - a.value);
+      const sortedLabels = pairs.map(p => p.label);
+      const sortedValues = pairs.map(p => p.value);
+
+      // Generate a deterministic color palette sized to number of services
+      const colors = generateColorPalette(sortedLabels.length);
+
       // Create chart using our simplified Chart implementation
       try {
         charts.appointmentTypes = new Chart(ctx, {
           type: 'doughnut',
           data: {
-            labels: typeData.labels,
+            labels: sortedLabels,
             datasets: [{
-              data: typeData.values,
-              backgroundColor: [
-                '#FFC107', // Warning
-                '#03A9F4', // Info
-                '#4CAF50', // Success
-                '#9C27B0'  // Purple
-              ]
+              data: sortedValues,
+              backgroundColor: colors
             }]
           }
         });
@@ -2509,19 +2546,33 @@
 
       const serviceData = getAppointmentTypeData(data);
 
+      if (!serviceData || !serviceData.labels || serviceData.labels.length === 0) {
+        const container = document.getElementById('appointmentTypesDist').parentElement;
+        if (container && !container.querySelector('.chart-error-message')) {
+          const msg = document.createElement('div');
+          msg.className = 'chart-error-message text-center text-muted p-4';
+          msg.innerHTML = '<i class="fas fa-info-circle mb-2"></i><br>No service type data available';
+          container.appendChild(msg);
+        }
+        return;
+      }
+
+      // Sort by count descending
+      const pairs = serviceData.labels.map((label, i) => ({ label, value: serviceData.values[i] }));
+      pairs.sort((a, b) => b.value - a.value);
+      const sortedLabels = pairs.map(p => p.label);
+      const sortedValues = pairs.map(p => p.value);
+
+      const colors = generateColorPalette(sortedLabels.length);
+
       try {
         charts.serviceBreakdown = new Chart(ctx, {
           type: 'pie',
           data: {
-            labels: serviceData.labels,
+            labels: sortedLabels,
             datasets: [{
-              data: serviceData.values,
-              backgroundColor: [
-                '#FFC107', // Warning
-                '#03A9F4', // Info
-                '#4CAF50', // Success
-                '#9C27B0'  // Purple
-              ]
+              data: sortedValues,
+              backgroundColor: colors
             }]
           }
         });
@@ -2885,9 +2936,17 @@
     }
 
     function deleteLeadConfirm() {
-      const email = $('#detailEmail').text();
-      const name = $('#detailName').text();
-      
+      // Backwards compatible: if called without args, use the currently shown detail email
+      const email = arguments[0] || $('#detailEmail').text();
+      // Try to find name from leadsData if available
+      const lead = leadsData.find(l => l.email === email) || {};
+      const name = lead.name || $('#detailName').text() || email;
+
+      if (!email) {
+        showNotification('No lead selected for deletion', 'warning');
+        return;
+      }
+
       if (confirm(`Are you sure you want to delete the lead for ${name} (${email})?`)) {
         deleteLead(email);
       }
@@ -2899,9 +2958,27 @@
         .withSuccessHandler(function(success) {
           showLoading(false);
           if (success) {
+            // Remove lead from local cache if present for immediate UI responsiveness
+            leadsData = leadsData.filter(l => l.email !== email);
+            filteredLeadsData = filteredLeadsData.filter(l => l.email !== email);
+
+            // Attempt to refresh full dashboard from backend to ensure consistency
+            try {
+              refreshData();
+            } catch (e) {
+              // Fallback: re-render key parts if refresh fails
+              try { renderRecentLeads(); } catch (err) { /* ignore */ }
+              try { renderLeadsTable(); } catch (err) { /* ignore */ }
+              try { renderDashboardCharts(); } catch (err) { /* ignore */ }
+              try { renderAnalytics(); } catch (err) { /* ignore */ }
+            }
+
+            // If the deleted lead was currently open in detail, navigate back to leads
+            if (currentLeadEmail === email) {
+              backToLeads();
+            }
+
             showNotification('Lead deleted successfully', 'success');
-            backToLeads();
-            refreshData();
           } else {
             showNotification('Failed to delete lead', 'error');
           }
@@ -3244,6 +3321,20 @@
         labels: Object.keys(types),
         values: Object.values(types)
       };
+    }
+
+    // Generate a simple color palette of `n` distinct colors (deterministic)
+    function generateColorPalette(n) {
+      const palette = [];
+      const baseColors = [
+        '#FFC107', '#03A9F4', '#4CAF50', '#9C27B0', '#F44336', '#FF7043', '#26A69A', '#7E57C2', '#29B6F6', '#8D6E63'
+      ];
+
+      for (let i = 0; i < n; i++) {
+        palette.push(baseColors[i % baseColors.length]);
+      }
+
+      return palette;
     }
 
     function getStatusDistribution(data) {
