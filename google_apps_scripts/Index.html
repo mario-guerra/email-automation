@@ -460,7 +460,7 @@
     }
 
     .metric-value {
-      font-size: 2.5rem;
+      font-size: 2.1rem; /* slightly smaller to tighten layout */
       font-weight: 700;
       color: var(--primary-color);
       line-height: 1;
@@ -591,8 +591,22 @@
     /* Chart Container */
     .chart-container {
       position: relative;
-      height: 300px;
-      margin: 1rem 0;
+      height: 240px; /* reduced height to fit more content on screen */
+      margin: 0.75rem 0;
+    }
+
+    /* Recent Leads: constrain height to show ~5 rows and enable scrolling for overflow */
+    .recent-leads-wrapper {
+      max-height: calc(5 * 56px); /* approx 5 rows at ~56px each; adjust if your row height differs */
+      overflow-y: auto;
+    }
+
+    /* Make sure the table header stays visible when body scrolls */
+    .recent-leads-wrapper table thead th {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 5;
     }
 
     /* Loading States */
@@ -881,7 +895,7 @@
                     </div>
                   </div>
                   <div class="card-body p-0">
-                    <div class="table-responsive">
+                    <div class="table-responsive recent-leads-wrapper">
                       <table class="table table-hover mb-0" id="recentLeadsTable">
                         <thead class="table-light">
                           <tr>
