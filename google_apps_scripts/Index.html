@@ -1465,6 +1465,17 @@
       console.log('Simple Chart library loaded:', typeof Chart === 'function');
       
       initializeApp();
+
+      // Ensure Recent Leads area is sized to show up to 5 rows without pushing other content off-screen
+      // and re-fit on window resize (debounced).
+      try {
+        // Initial fit after a short delay to allow the first render to complete
+        setTimeout(() => { try { fitRecentLeads(); } catch (e) { /* ignore */ } }, 150);
+        // Bind resize handler
+        $(window).on('resize', debounce(function() { try { fitRecentLeads(); } catch (e) { /* ignore */ } }, 150));
+      } catch (e) {
+        console.warn('Could not attach recent leads fitter:', e);
+      }
     });
 
     function initializeApp() {
@@ -2089,6 +2100,32 @@
         `;
         tbody.append(row);
       });
+      // After rendering, ensure the recent leads area fits the intended number of rows
+      try { fitRecentLeads(); } catch (e) { console.warn('fitRecentLeads failed:', e); }
+    }
+
+    /**
+     * Adjust the Recent Leads wrapper height to fit approximately 5 rows exactly.
+     * We measure the first row height and set the container max-height = rowHeight * 5.
+     */
+    function fitRecentLeads() {
+      const wrapper = document.querySelector('.recent-leads-wrapper');
+      const table = document.getElementById('recentLeadsTable');
+      if (!wrapper || !table) return;
+
+      const firstRow = table.querySelector('tbody tr');
+      // If there are no rows, set a small default height so layout remains consistent
+      if (!firstRow) {
+        wrapper.style.maxHeight = 'calc(5 * 56px)';
+        return;
+      }
+
+      // Use getBoundingClientRect to get actual rendered height including padding/border
+      const rowHeight = Math.max(40, Math.round(firstRow.getBoundingClientRect().height));
+      const targetRows = 5;
+      const computedMax = (rowHeight * targetRows) + 'px';
+      wrapper.style.maxHeight = computedMax;
+      wrapper.style.overflowY = 'auto';
     }
 
     function renderLeadManagement() {
