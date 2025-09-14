@@ -25,10 +25,32 @@ function getLeads() {
     
     const leads = [];
     const headers = data[0];
-    
+
+    // find dynamic column indices by header name where possible
+    const idxOf = (name, fallback) => {
+      const idx = headers.indexOf(name);
+      return idx !== -1 ? idx : (typeof fallback === 'number' ? fallback : -1);
+    };
+    const CAL_SCHED_IDX = idxOf('CalendarScheduledAt', 17);
+    const CAL_EVENT_ID_IDX = idxOf('CalendarEventId', 18);
+    const RESPONSE_RECEIVED_IDX = idxOf('ResponseReceived', 13);
+    const REMINDER_SENT_IDX = idxOf('ReminderSentAt', 9);
+
     // Process each row (skip header)
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
+      // normalize calendar scheduled value to ISO timestamp with time when present
+      let calendarScheduledAt = null;
+      try {
+        const rawCal = (CAL_SCHED_IDX !== -1) ? row[CAL_SCHED_IDX] : (row[17] || null);
+        if (rawCal) {
+          const dt = new Date(rawCal);
+          if (!isNaN(dt.getTime())) calendarScheduledAt = dt.toISOString();
+        }
+      } catch (e) {
+        calendarScheduledAt = null;
+      }
+
       const lead = {
         email: row[0] || '',
         name: row[1] || '',
@@ -38,17 +60,20 @@ function getLeads() {
         appointmentTypes: row[5] || '',
         message: row[6] || '',
         timestamp: row[7] ? new Date(row[7]).toISOString() : new Date().toISOString(),
-        followedUp: Boolean(row[8]),
-        reminderSentAt: row[9] ? new Date(row[9]).toISOString() : null,
+        reminderSentAt: (REMINDER_SENT_IDX !== -1 && row[REMINDER_SENT_IDX]) ? new Date(row[REMINDER_SENT_IDX]).toISOString() : null,
         threadId: row[10] || '',
-        eventId: row[11] || '',
+        eventId: (CAL_EVENT_ID_IDX !== -1 && row[CAL_EVENT_ID_IDX]) ? row[CAL_EVENT_ID_IDX] : (row[11] || ''),
         matchMethod: row[12] || '',
-        responseReceived: Boolean(row[13]),
+        responseReceived: Boolean((RESPONSE_RECEIVED_IDX !== -1) ? row[RESPONSE_RECEIVED_IDX] : row[13]),
         executiveSummary: row[14] || '',
         questionnaireResponses: row[15] || '',
-        questionnaireParsed: row[16] || ''
+        questionnaireParsed: row[16] || '',
+        calendarScheduledAt: calendarScheduledAt,
+        calendarEventId: (CAL_EVENT_ID_IDX !== -1) ? (row[CAL_EVENT_ID_IDX] || '') : (row[18] || ''),
+        // followedUp true when either we recorded a response or a scheduled calendar time exists
+        followedUp: Boolean((RESPONSE_RECEIVED_IDX !== -1) ? row[RESPONSE_RECEIVED_IDX] : row[13]) || Boolean(calendarScheduledAt)
       };
-      
+
       leads.push(lead);
     }
     

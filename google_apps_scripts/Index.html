@@ -510,6 +510,18 @@
       border: 1px solid rgba(156, 39, 176, 0.3);
     }
 
+    .status-scheduled-only {
+      background-color: rgba(255, 152, 0, 0.15);
+      color: #E65100;
+      border: 1px solid rgba(255, 152, 0, 0.3);
+    }
+
+    .status-responded-and-scheduled {
+      background-color: rgba(76, 175, 80, 0.15);
+      color: #2E7D32;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
     /* Tables */
     .table {
       font-size: 0.9rem;
@@ -968,9 +980,10 @@
                       <select class="form-select" id="statusFilter">
                         <option value="all">All Status</option>
                         <option value="new">New</option>
-                        <option value="awaiting">Awaiting Response</option>
+                        <option value="awaiting-response">Awaiting Response</option>
                         <option value="responded">Responded</option>
-                        <option value="scheduled">Scheduled</option>
+                        <option value="scheduled-not-responded">Scheduled (Not Responded)</option>
+                        <option value="responded-and-scheduled">Responded & Scheduled</option>
                       </select>
                     </div>
                     <div class="col-md-3">
@@ -1092,6 +1105,10 @@
                           <div class="col-6">
                             <label class="form-label text-muted">Preferred Time</label>
                             <div class="fw-bold" id="detailPreferredTime">-</div>
+                          </div>
+                          <div class="col-12" id="scheduledAppointmentSection" style="display: none;">
+                            <label class="form-label text-muted">Scheduled Appointment</label>
+                            <div class="fw-bold text-success" id="detailScheduledAppointment">-</div>
                           </div>
                           <div class="col-12">
                             <label class="form-label text-muted">Status</label>
@@ -2473,7 +2490,7 @@
       const responses = filteredData.filter(l => l.responseReceived).length;
       const responseRate = followedUp > 0 ? (responses / followedUp * 100).toFixed(1) : 0;
       const followupRate = totalLeads > 0 ? (followedUp / totalLeads * 100).toFixed(1) : 0;
-      const conversion = filteredData.filter(l => determineStatus(l) === 'Scheduled').length;
+      const conversion = filteredData.filter(l => determineStatus(l) === 'Responded & Scheduled').length;
       const conversionRate = totalLeads > 0 ? (conversion / totalLeads * 100).toFixed(1) : 0;
 
       $('#analyticsLeads').text(totalLeads);
@@ -2719,6 +2736,20 @@
       const status = determineStatus(lead);
       const statusClass = getStatusClass(status);
       $('#detailStatus').html(`<span class="status-badge ${statusClass}">${status}</span>`);
+      
+      // Handle scheduled appointment display
+      if (lead.calendarScheduledAt) {
+        const scheduledDate = new Date(lead.calendarScheduledAt);
+        if (!isNaN(scheduledDate.getTime())) {
+          const formattedScheduledDate = scheduledDate.toLocaleDateString() + ' ' + scheduledDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          $('#detailScheduledAppointment').html(`<i class="fas fa-calendar-check me-2"></i>${formattedScheduledDate}`);
+          $('#scheduledAppointmentSection').show();
+        } else {
+          $('#scheduledAppointmentSection').hide();
+        }
+      } else {
+        $('#scheduledAppointmentSection').hide();
+      }
       
       // Set message and summary content directly (now always visible, no tabs)
       const messageContent = lead.message || 'No message';
@@ -3080,9 +3111,12 @@
       if (!lead.followedUp) return 'New';
       if (lead.responseReceived) {
         if (lead.eventId || (lead.executiveSummary && lead.executiveSummary.toLowerCase().includes('scheduled'))) {
-          return 'Scheduled';
+          return 'Responded & Scheduled';
         }
         return 'Responded';
+      }
+      if (lead.eventId || (lead.executiveSummary && lead.executiveSummary.toLowerCase().includes('scheduled'))) {
+        return 'Scheduled (Not Responded)';
       }
       return 'Awaiting Response';
     }
@@ -3092,7 +3126,8 @@
         case 'New': return 'status-new';
         case 'Awaiting Response': return 'status-awaiting-response';
         case 'Responded': return 'status-responded';
-        case 'Scheduled': return 'status-scheduled';
+        case 'Scheduled (Not Responded)': return 'status-scheduled-only';
+        case 'Responded & Scheduled': return 'status-responded-and-scheduled';
         default: return 'status-new';
       }
     }

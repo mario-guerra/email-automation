@@ -439,7 +439,8 @@ function checkFollowUps() {
         else if (!isNaN(Number(responseReceivedRaw)) && Number(responseReceivedRaw) === 1) responseReceived = true;
 
         if (followedUp) {
-          console.log('Row ' + (row + 1) + ': Already followed up, skipping.');
+          console.log('Row ' + (row + 1) + ': Already followed up — will still check for calendar events and responseReceived status.');
+          // Skip reminder logic since already followed up
           continue;
         }
 
@@ -453,10 +454,12 @@ function checkFollowUps() {
           continue;
         }
 
-        var replyFound = false;
-        var matchedEventId = '';
-        var matchedMethod = '';
-        var replyContent = '';
+  var replyFound = false;
+  var matchedEventId = '';
+  var matchedMethod = '';
+  var matchedEvent = null; // Calendar API event object when available
+  var matchedEventStart = null; // Date extracted from ICS or event.start
+  var replyContent = '';
 
         // Helper: simple regex-based parser fallback to extract key:value pairs from reply text
         function parseReplyWithRegex(text, appointmentTypesList) {
@@ -655,8 +658,16 @@ function checkFollowUps() {
                     var att = ev.attendees[ai];
                     if (att && att.email && att.email.toLowerCase() === email.toLowerCase()) {
                       replyFound = true;
+                      matchedEvent = ev;
                       matchedEventId = ev.id || ev.iCalUID || '';
                       matchedMethod = 'calendar-api';
+                      // try to extract event start
+                      try {
+                        if (ev.start) {
+                          if (ev.start.dateTime) matchedEventStart = new Date(ev.start.dateTime);
+                          else if (ev.start.date) matchedEventStart = new Date(ev.start.date);
+                        }
+                      } catch (e) { /* ignore */ }
                       console.log('Row ' + (row + 1) + ': Reply found via Calendar API.');
                       // Don't fetch content here - we'll do it once at the end
                       break;
@@ -726,6 +737,38 @@ function checkFollowUps() {
               var invMsgs = inviteThreads[it].getMessages();
               for (var im = 0; im < invMsgs.length && !replyFound; im++) {
                 var invMsg = invMsgs[im];
+                  // Try to detect calendar invitation details directly in the subject line
+                  try {
+                    var subj = (invMsg.getSubject && invMsg.getSubject()) || '';
+                    if (subj && subj.toLowerCase().indexOf('invitation:') === 0) {
+                      // look for a trailing email in parentheses
+                      var subjEmailMatch = subj.match(/\(([^)@\s]+@[^)]+)\)\s*$/);
+                      if (subjEmailMatch && subjEmailMatch[1] && subjEmailMatch[1].toLowerCase() === email.toLowerCase()) {
+                        // mark as a reply found via invitation subject
+                        replyFound = true;
+                        matchedMethod = 'invite-subject';
+                        matchedEventId = subjEmailMatch[1].toLowerCase();
+                        // attempt to extract the date/time portion after the '@' and before the final parenthesis groups
+                        var atIdx = subj.indexOf('@');
+                        if (atIdx !== -1) {
+                          var datePortion = subj.substring(atIdx + 1).trim();
+                          // remove trailing parenthesized groups (e.g., (CDT) (email))
+                          datePortion = datePortion.replace(/\([^)]*\)\s*$/g, '').trim();
+                          // remove any remaining parenthesis tokens
+                          datePortion = datePortion.replace(/\([^)]*\)/g, '').trim();
+                          try {
+                            var parsedDate = new Date(datePortion);
+                            if (!isNaN(parsedDate.getTime())) matchedEventStart = parsedDate;
+                          } catch (pe) { /* ignore parse errors */ }
+                        }
+                        console.log('Row ' + (row + 1) + ': Invitation subject matched; email=' + matchedEventId + ', parsedStart=' + (matchedEventStart ? matchedEventStart.toISOString() : 'none'));
+                        // skip attachments processing for this message since we've already matched
+                        break;
+                      }
+                    }
+                  } catch (subjErr) {
+                    /* ignore subject parse errors */
+                  }
                 var atts = invMsg.getAttachments();
                 for (var ai2 = 0; ai2 < atts.length && !replyFound; ai2++) {
                   var att = atts[ai2];
@@ -745,6 +788,19 @@ function checkFollowUps() {
                           var uidMatch = ics.match(/^UID:(.+)$/m);
                           matchedEventId = (uidMatch && uidMatch[1]) ? uidMatch[1].trim() : '';
                           matchedMethod = 'ics-attachment';
+                          // Try to extract DTSTART from the ICS so we can record scheduled time
+                          var dtMatch = ics.match(/DTSTART(?:;[^:]*)?:([0-9TzZ+-]+)/i);
+                          if (dtMatch && dtMatch[1]) {
+                            try {
+                              var dtRaw = dtMatch[1].trim();
+                              var isoGuess = null;
+                              var mdt = dtRaw.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+                              if (mdt) isoGuess = mdt[1] + '-' + mdt[2] + '-' + mdt[3] + 'T' + mdt[4] + ':' + mdt[5] + ':' + mdt[6] + 'Z';
+                              else isoGuess = dtRaw.replace(/(\d{4})(\d{2})(\d{2})T/, '$1-$2-$3T').replace(/Z$/, 'Z');
+                              var parsedDt = new Date(isoGuess);
+                              if (!isNaN(parsedDt.getTime())) matchedEventStart = parsedDt;
+                            } catch (e) { /* ignore parse errors */ }
+                          }
                           console.log('Row ' + (row + 1) + ': Reply found via ICS attachment.');
                           // Don't fetch content here - we'll do it once at the end
                           break;
@@ -776,6 +832,109 @@ function checkFollowUps() {
             }
           } catch (e) {
             console.log('Row ' + (row + 1) + ': Failed to fetch email content: ' + e.message);
+          }
+        }
+
+        // Option B: Additional Gmail/body parsing for Calendly confirmations and links
+        // Search for Calendly links or confirmation text in recent messages from this sender.
+        try {
+          var calendlyDetected = false;
+          var calendlyUrlRe = /https?:\/\/(?:www\.)?calendly\.com\/[\w\-\/%?=&.#]+/i;
+          var calendlyIdRe = /calendly\.com\/[\w\-]+\/([0-9a-fA-F\-]{8,})/i; // try to capture possible UUID-like part
+          var datePatterns = [
+            /([A-Z][a-z]+ \d{1,2},? \d{4})\s+at\s+(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))(?:\s+([A-Z]{2,4}))?/, // "September 12, 2025 at 3:00 PM PDT"
+            /(on|when):?\s*([A-Z][a-z]+ \d{1,2},? \d{4})\s+at\s+(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))/i,
+            /(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:?\d{0,2}Z?)/ // ISO-ish
+          ];
+
+          // First, look specifically for Calendly-containing messages from this sender after the timestamp
+          var calAfter = Math.floor(timestamp.getTime() / 1000);
+          var calQuery = 'from:"' + email + '" after:' + calAfter + ' in:anywhere calendly.com';
+          var calThreads = GmailApp.search(calQuery, 0, 5);
+          if (calThreads && calThreads.length) {
+            for (var cti = 0; cti < calThreads.length && !calendlyDetected; cti++) {
+              var cmsgs = calThreads[cti].getMessages();
+              for (var cm = 0; cm < cmsgs.length && !calendlyDetected; cm++) {
+                try {
+                  var body = cmsgs[cm].getPlainBody ? cmsgs[cm].getPlainBody() : '';
+                  if (!body || !body.length) body = (cmsgs[cm].getBody && cmsgs[cm].getBody()) || '';
+                  var uMatch = body.match(calendlyUrlRe) || (cmsgs[cm].getSubject && cmsgs[cm].getSubject().match(calendlyUrlRe));
+                  if (uMatch && uMatch[0]) {
+                    replyFound = true;
+                    calendlyDetected = true;
+                    matchedMethod = 'calendly-email';
+                    matchedEventId = (uMatch[0] || '').trim();
+                    // try to extract an id-like token from the url for a stable identifier
+                    var idm = matchedEventId.match(calendlyIdRe);
+                    if (idm && idm[1]) matchedEventId = idm[1];
+
+                    // attempt to find a datetime in the message body
+                    for (var dp = 0; dp < datePatterns.length; dp++) {
+                      var dmatch = body.match(datePatterns[dp]);
+                      if (dmatch) {
+                        try {
+                          // heal common formats into something Date can parse
+                          var dateStr = dmatch[1] && dmatch[2] ? (dmatch[1] + ' ' + dmatch[2]) : dmatch[1] || dmatch[2] || dmatch[0];
+                          var parsed = new Date(dateStr);
+                          if (!isNaN(parsed.getTime())) matchedEventStart = parsed;
+                          break;
+                        } catch (pp) { /* ignore */ }
+                      }
+                    }
+                    console.log('Row ' + (row + 1) + ': Calendly email detected via calendly.com search. URL/id=' + matchedEventId + ', parsedStart=' + (matchedEventStart ? matchedEventStart.toISOString() : 'none'));
+                    break;
+                  }
+                } catch (ce) { /* ignore per-message errors */ }
+              }
+            }
+          }
+
+          // If not found via calendly.com special search, also scan previously fetched replyContent (if any)
+          if (!calendlyDetected && replyContent && replyContent.length) {
+            var rcMatch = replyContent.match(calendlyUrlRe);
+            if (rcMatch && rcMatch[0]) {
+              replyFound = true;
+              matchedMethod = 'calendly-email';
+              matchedEventId = rcMatch[0];
+              var idm2 = matchedEventId.match(calendlyIdRe);
+              if (idm2 && idm2[1]) matchedEventId = idm2[1];
+              // try to extract date from the reply
+              for (var dp2 = 0; dp2 < datePatterns.length; dp2++) {
+                var dmatch2 = replyContent.match(datePatterns[dp2]);
+                if (dmatch2) {
+                  try { var p2 = new Date((dmatch2[1] && dmatch2[2]) ? (dmatch2[1] + ' ' + dmatch2[2]) : dmatch2[0]); if (!isNaN(p2.getTime())) matchedEventStart = p2; } catch (ee) {}
+                  break;
+                }
+              }
+              console.log('Row ' + (row + 1) + ': Calendly link found in reply content. URL/id=' + matchedEventId + ', parsedStart=' + (matchedEventStart ? matchedEventStart.toISOString() : 'none'));
+            }
+          }
+        } catch (calErr) {
+          console.log('Row ' + (row + 1) + ': Calendly detection error: ' + calErr);
+        }
+
+  // If we detected a calendar booking via Calendar API, ICS, Calendly email/link, or invitation subject, persist it immediately
+  if (replyFound && (matchedMethod === 'calendar-api' || matchedMethod === 'ics-attachment' || matchedMethod === 'calendly-email' || matchedMethod === 'invite-subject')) {
+          try {
+            var schedIso = null;
+            if (matchedEventStart) schedIso = matchedEventStart.toISOString();
+            else if (matchedEvent && matchedEvent.start) {
+              if (matchedEvent.start.dateTime) schedIso = new Date(matchedEvent.start.dateTime).toISOString();
+              else if (matchedEvent.start.date) schedIso = new Date(matchedEvent.start.date).toISOString();
+            }
+            var rc = recordCalendarInvite(email, schedIso, matchedEventId || (matchedEvent && (matchedEvent.id || matchedEvent.iCalUID)));
+            console.log('Row ' + (row + 1) + ': recordCalendarInvite result: ' + JSON.stringify(rc));
+            // If we recorded a calendar booking, mark as followed up to prevent duplicate reminders
+            if (rc && rc.success) {
+              processedEmails.add(email.toLowerCase());
+              if (!followedUp) {
+                sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
+                sheet.getRange(row + 1, MATCH_METHOD_COL).setValue(matchedMethod); // Record match method
+                console.log('Row ' + (row + 1) + ': Marked as followed up due to calendar appointment detection');
+              }
+            }
+          } catch (e) {
+            console.log('Row ' + (row + 1) + ': Failed to call recordCalendarInvite: ' + e);
           }
         }
 
@@ -820,36 +979,28 @@ function checkFollowUps() {
             cleanedForSheet = cleanedForSheet || (regexOut.cleaned || '');
             console.log('Row ' + (row + 1) + ': Regex parser produced ' + Object.keys(parsed).length + ' fields.');
           }
-          // Write results: executive summary (AI) and raw + parsed responses
-          if (ENABLE_AI_SUMMARY) {
+          // Write results via helper so we record questionnaire response atomically and idempotently
+          try {
             // attempt to extract client name from parsed fields / sheet-provided name / reply heuristics
             var clientName = extractClientName(parsed || {}, name, replyContent, email);
-            var summary = generateExecutiveSummary(replyContent, clientName);
-            // If AI summary failed or returned the unavailable sentinel, build a fallback from parsed fields
-            if (!summary || summary.indexOf('Summary unavailable') === 0) {
+            var summary = ENABLE_AI_SUMMARY ? generateExecutiveSummary(replyContent, clientName) : 'AI Summary disabled';
+            if (ENABLE_AI_SUMMARY && (!summary || summary.indexOf('Summary unavailable') === 0)) {
               var fallback = buildSummaryFromParsed(parsed || {});
-              if (fallback) {
-                summary = 'Auto-summary: ' + fallback;
+              if (fallback) summary = 'Auto-summary: ' + fallback;
+            }
+            var markRc = markQuestionnaireResponse(email, new Date().toISOString(), parsed || {}, cleanedForSheet || replyContent.trim(), summary, matchedMethod);
+            console.log('Row ' + (row + 1) + ': markQuestionnaireResponse result: ' + JSON.stringify(markRc));
+            if (markRc && markRc.success) {
+              processedEmails.add(email.toLowerCase());
+              // Mark as followed up to prevent duplicate reminders
+              if (!followedUp) {
+                sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
+                console.log('Row ' + (row + 1) + ': Marked as followed up due to questionnaire response processing');
               }
             }
-            sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
-            sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue(summary);
-          } else {
-            sheet.getRange(row + 1, RESPONSE_RECEIVED_COL).setValue(true);
-            sheet.getRange(row + 1, EXECUTIVE_SUMMARY_COL).setValue('AI Summary disabled');
+          } catch (mqe) {
+            console.log('Row ' + (row + 1) + ': markQuestionnaireResponse failed: ' + mqe);
           }
-          // Write cleaned questionnaire responses (prefer cleanedForSheet; fallback to trimmed replyContent)
-          try { sheet.getRange(row + 1, QUESTIONNAIRE_RESPONSES_COL).setValue(cleanedForSheet || replyContent.trim()); } catch (e) { /* ignore */ }
-          try { sheet.getRange(row + 1, QUESTIONNAIRE_PARSED_COL).setValue(JSON.stringify(parsed)); } catch (e) { /* ignore */ }
-          console.log('Row ' + (row + 1) + ': Parsed and cleaned responses written to spreadsheet for ' + email);
-          
-          // Record detection method and mark as followed up
-          sheet.getRange(row + 1, MATCH_METHOD_COL).setValue(matchedMethod);
-          sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
-          console.log('Row ' + (row + 1) + ': Marked as followed up with method: ' + matchedMethod);
-
-          // Mark this email as processed to prevent duplicate processing in this run
-          processedEmails.add(email.toLowerCase());
 
           // Send thank you email
           var thankYouSubject = 'Thank You for Your Response - Guerra Law Firm';
@@ -1174,5 +1325,171 @@ function createArchiveIfMissing() {
   } catch (e) {
     console.log('createArchiveIfMissing: error: ' + e);
     return { error: e.toString() };
+  }
+}
+
+/**
+ * Record a questionnaire response for a lead identified by email.
+ * Writes QuestionnaireResponses, QuestionnaireParsed, ResponseReceived, ExecutiveSummary, MatchMethod.
+ * Returns { success: true, row: <sheetRow> } or { success: false, error }
+ */
+function markQuestionnaireResponse(email, parsedAtIso, parsedObj, cleanedText, executiveSummary, matchMethod) {
+  if (!email) return { success: false, error: 'missing email' };
+  try {
+    var ss = SpreadsheetApp.openById(LEAD_TRACKER_SHEET_ID);
+    var sheet = ss.getSheetByName('Leads');
+    if (!sheet) return { success: false, error: 'Leads sheet not found' };
+
+    var lock = LockService.getScriptLock();
+    try { lock.waitLock(5000); } catch (e) { /* continue without lock */ }
+
+    var data = sheet.getDataRange().getValues();
+    if (!data || data.length < 1) { try { lock.releaseLock(); } catch (e){}; return { success: false, error: 'Leads sheet empty' }; }
+    var header = data[0] || [];
+
+    // identify column indices (safely extend header if missing)
+    var Q_RESP_COL = 'QuestionnaireResponses';
+    var Q_PARSED_COL = 'QuestionnaireParsed';
+    var RESP_RCVD_COL = 'ResponseReceived';
+    var EXEC_SUM_COL = 'ExecutiveSummary';
+    var MATCH_METHOD_COL_NAME = 'MatchMethod';
+
+    var qRespIdx = header.indexOf(Q_RESP_COL);
+    var qParsedIdx = header.indexOf(Q_PARSED_COL);
+    var respRcvIdx = header.indexOf(RESP_RCVD_COL);
+    var execIdx = header.indexOf(EXEC_SUM_COL);
+    var matchIdx = header.indexOf(MATCH_METHOD_COL_NAME);
+    var headerChanged = false;
+    var newHeader = header.slice();
+    if (qRespIdx === -1) { newHeader.push(Q_RESP_COL); qRespIdx = newHeader.length - 1; headerChanged = true; }
+    if (qParsedIdx === -1) { newHeader.push(Q_PARSED_COL); qParsedIdx = newHeader.length - 1; headerChanged = true; }
+    if (respRcvIdx === -1) { newHeader.push(RESP_RCVD_COL); respRcvIdx = newHeader.length - 1; headerChanged = true; }
+    if (execIdx === -1) { newHeader.push(EXEC_SUM_COL); execIdx = newHeader.length - 1; headerChanged = true; }
+    if (matchIdx === -1) { newHeader.push(MATCH_METHOD_COL_NAME); matchIdx = newHeader.length - 1; headerChanged = true; }
+    if (headerChanged) { sheet.getRange(1, 1, 1, newHeader.length).setValues([newHeader]); header = newHeader; }
+
+    // find row
+    var targetRowIndex = -1;
+    var lookupEmail = email.toString().trim().toLowerCase();
+    for (var r = 1; r < data.length; r++) {
+      if ((data[r][0] || '').toString().trim().toLowerCase() === lookupEmail) { targetRowIndex = r; break; }
+    }
+    if (targetRowIndex === -1) { try { lock.releaseLock(); } catch (e){}; return { success: false, error: 'lead not found' }; }
+
+    var sheetRow = targetRowIndex + 1;
+    try {
+      if (cleanedText !== undefined && cleanedText !== null) sheet.getRange(sheetRow, qRespIdx + 1).setValue(cleanedText);
+      try { sheet.getRange(sheetRow, qParsedIdx + 1).setValue(JSON.stringify(parsedObj || {})); } catch (e) { /* ignore parse write */ }
+      sheet.getRange(sheetRow, respRcvIdx + 1).setValue(true);
+      if (executiveSummary !== undefined && executiveSummary !== null) sheet.getRange(sheetRow, execIdx + 1).setValue(executiveSummary);
+      if (matchMethod) sheet.getRange(sheetRow, matchIdx + 1).setValue(matchMethod);
+    } catch (writeErr) {
+      try { lock.releaseLock(); } catch (e){}
+      return { success: false, error: writeErr.toString() };
+    }
+
+    try { lock.releaseLock(); } catch (e) {}
+    return { success: true, row: sheetRow };
+  } catch (e) {
+    try { LockService.getScriptLock().releaseLock(); } catch (ee) {}
+    return { success: false, error: e.toString() };
+  }
+}
+
+/**
+ * Record a calendar invite for a lead identified by email.
+ * Writes a timestamp to a `CalendarScheduledAt` column and optionally a `CalendarEventId` column.
+ * scheduledAtIso may be an ISO string, timestamp (ms) or null to use current time.
+ * Returns an object { success: true, row: <sheetRow> } on success or { success: false, error: '...' } on failure.
+ */
+function recordCalendarInvite(email, scheduledAtIso, calendarEventId) {
+  if (!email) {
+    console.log('recordCalendarInvite called without email');
+    return { success: false, error: 'missing email' };
+  }
+
+  try {
+    var ss = SpreadsheetApp.openById(LEAD_TRACKER_SHEET_ID);
+    console.log('recordCalendarInvite: spreadsheet=' + ss.getUrl());
+    var sheet = ss.getSheetByName('Leads');
+    if (!sheet) {
+      console.log('recordCalendarInvite: Leads sheet not found');
+      return { success: false, error: 'Leads sheet not found' };
+    }
+
+    var lock = LockService.getScriptLock();
+    try { lock.waitLock(5000); } catch (e) { console.log('recordCalendarInvite: could not obtain lock: ' + e); }
+
+    var data = sheet.getDataRange().getValues();
+    if (!data || data.length < 1) {
+      try { lock.releaseLock(); } catch (e) {}
+      return { success: false, error: 'Leads sheet appears empty' };
+    }
+
+    var header = data[0] || [];
+
+    // Find the row by email (column A)
+    var targetRowIndex = -1;
+    var lookupEmail = email.toString().trim().toLowerCase();
+    for (var r = 1; r < data.length; r++) {
+      var cellEmail = (data[r][0] || '').toString().trim().toLowerCase();
+      if (cellEmail === lookupEmail) { targetRowIndex = r; break; }
+    }
+
+    if (targetRowIndex === -1) {
+      console.log('recordCalendarInvite: lead not found for email=' + email);
+      try { lock.releaseLock(); } catch (e) {}
+      return { success: false, error: 'lead not found' };
+    }
+
+    // Ensure header columns exist: CalendarScheduledAt, CalendarEventId
+    var CAL_COL = 'CalendarScheduledAt';
+    var EVT_COL = 'CalendarEventId';
+    var calIdx = header.indexOf(CAL_COL);
+    var evtIdx = header.indexOf(EVT_COL);
+
+    // If header missing, append columns to the header row
+    if (calIdx === -1 || evtIdx === -1) {
+      var newHeader = header.slice();
+      if (calIdx === -1) { newHeader.push(CAL_COL); calIdx = newHeader.length - 1; }
+      if (evtIdx === -1) { newHeader.push(EVT_COL); evtIdx = newHeader.length - 1; }
+      sheet.getRange(1, 1, 1, newHeader.length).setValues([newHeader]);
+      header = newHeader;
+      console.log('recordCalendarInvite: updated header with calendar columns');
+    }
+
+    // Parse scheduledAtIso to Date if provided
+    var scheduledDate = null;
+    if (scheduledAtIso) {
+      if (typeof scheduledAtIso === 'number') {
+        scheduledDate = new Date(scheduledAtIso);
+      } else {
+        scheduledDate = new Date(scheduledAtIso);
+      }
+      if (isNaN(scheduledDate.getTime())) {
+        scheduledDate = new Date();
+      }
+    } else {
+      scheduledDate = new Date();
+    }
+
+    // Write values to the found row (sheet rows are 1-based; data array is 0-based)
+    var sheetRow = targetRowIndex + 1;
+    try {
+      sheet.getRange(sheetRow, calIdx + 1).setValue(scheduledDate);
+      if (calendarEventId) sheet.getRange(sheetRow, evtIdx + 1).setValue(calendarEventId);
+      console.log('recordCalendarInvite: wrote scheduled date to row ' + sheetRow);
+    } catch (writeErr) {
+      console.log('recordCalendarInvite: write error: ' + writeErr);
+      try { lock.releaseLock(); } catch (e) {}
+      return { success: false, error: writeErr.toString() };
+    }
+
+    try { lock.releaseLock(); } catch (e) {}
+    return { success: true, row: sheetRow };
+  } catch (e) {
+    console.log('recordCalendarInvite: exception: ' + e);
+    try { LockService.getScriptLock().releaseLock(); } catch (releaseErr) { /* ignore */ }
+    return { success: false, error: e.toString() };
   }
 }
