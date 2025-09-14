@@ -492,6 +492,12 @@
       border: 1px solid rgba(255, 193, 7, 0.3);
     }
 
+    .status-new-lead {
+      background-color: rgba(255, 193, 7, 0.15);
+      color: #B45309;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
     .status-awaiting-response {
       background-color: rgba(3, 169, 244, 0.15);
       color: #0277BD;
@@ -517,6 +523,24 @@
     }
 
     .status-responded-and-scheduled {
+      background-color: rgba(76, 175, 80, 0.15);
+      color: #2E7D32;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .status-needs-questionnaire {
+      background-color: rgba(244, 67, 54, 0.15);
+      color: #C62828;
+      border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .status-needs-scheduling {
+      background-color: rgba(255, 152, 0, 0.15);
+      color: #E65100;
+      border: 1px solid rgba(255, 152, 0, 0.3);
+    }
+
+    .status-complete {
       background-color: rgba(76, 175, 80, 0.15);
       color: #2E7D32;
       border: 1px solid rgba(76, 175, 80, 0.3);
@@ -979,7 +1003,10 @@
                     <div class="col-md-2">
                       <select class="form-select" id="statusFilter">
                         <option value="all">All Status</option>
-                        <option value="new">New</option>
+                        <option value="new-lead">New Lead</option>
+                        <option value="needs-questionnaire">Needs Questionnaire</option>
+                        <option value="needs-scheduling">Needs Scheduling</option>
+                        <option value="complete">Complete</option>
                         <option value="awaiting-response">Awaiting Response</option>
                         <option value="responded">Responded</option>
                         <option value="scheduled-not-responded">Scheduled (Not Responded)</option>
@@ -1920,7 +1947,11 @@
           responseReceived: false,
           executiveSummary: 'Car accident case requiring immediate attention',
           questionnaireResponses: '',
-          questionnaireParsed: ''
+          questionnaireParsed: '',
+          calendarScheduledAt: null,
+          calendarEventId: '',
+          calendarScheduled: false,
+          completionStatus: 'Not Started'
         },
         {
           email: 'jane.smith@example.com',
@@ -1950,7 +1981,11 @@
 8. Urgent matters: Would like temporary custody order finalized
 9. Previous legal consultation: No
 10. Questions: How long will the process take? What documentation is needed?`,
-          questionnaireParsed: '{"marriageLength": "5 years", "children": 2, "childrenAges": [7, 3], "jointCustody": true, "contestedDivorce": false}'
+          questionnaireParsed: '{"marriageLength": "5 years", "children": 2, "childrenAges": [7, 3], "jointCustody": true, "contestedDivorce": false}',
+          calendarScheduledAt: new Date(Date.now() - 86400000).toISOString(),
+          calendarEventId: 'demo-event-1',
+          calendarScheduled: true,
+          completionStatus: 'Fully Complete'
         },
         {
           email: 'mike.johnson@example.com',
@@ -1980,7 +2015,11 @@
 8. Witnesses: Passenger in vehicle
 9. Immediate concerns: License suspension and employment impact
 10. Questions: Possibility of reduced charges? Ignition interlock requirements?`,
-          questionnaireParsed: '{"charges": ["DUI", "driving with suspended license"], "priorHistory": true, "courtDate": "2023-10-15"}'
+          questionnaireParsed: '{"charges": ["DUI", "driving with suspended license"], "priorHistory": true, "courtDate": "2023-10-15"}',
+          calendarScheduledAt: null,
+          calendarEventId: '',
+          calendarScheduled: false,
+          completionStatus: 'Questionnaire Complete - Needs Scheduling'
         }
       ];
     }
@@ -2066,7 +2105,19 @@
       $('#awaitingResponse').text(metrics.awaitingResponse || 0);
       $('#responsesReceived').text(metrics.responsesReceived || 0);
 
-  }
+      // Update partial completion metrics if available
+      if (metrics.questionnaireOnly !== undefined) {
+        // If we have new metrics, update additional display elements
+        // These would need corresponding HTML elements to be added to the dashboard
+        console.log('Partial completion metrics:', {
+          questionnaireOnly: metrics.questionnaireOnly,
+          scheduledOnly: metrics.scheduledOnly,
+          fullyComplete: metrics.fullyComplete,
+          notStarted: metrics.notStarted,
+          completionRate: metrics.completionRate
+        });
+      }
+    }
 
     function renderRecentLeads() {
       const tbody = $('#recentLeadsTable tbody');
@@ -2222,7 +2273,13 @@
 
         // Status filter
         const status = determineStatus(lead);
-        const matchesStatus = statusFilter === 'all' || status.toLowerCase().replace(' ', '-') === statusFilter;
+        const matchesStatus = statusFilter === 'all' || 
+          status.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '') === statusFilter ||
+          (statusFilter === 'new' && status === 'New Lead') ||
+          (statusFilter === 'new-lead' && status === 'New Lead') ||
+          (statusFilter === 'needs-questionnaire' && status === 'Needs Questionnaire') ||
+          (statusFilter === 'needs-scheduling' && status === 'Needs Scheduling') ||
+          (statusFilter === 'complete' && status === 'Complete');
 
         // Type filter
         const matchesType = typeFilter === 'all' || 
@@ -2490,7 +2547,7 @@
       const responses = filteredData.filter(l => l.responseReceived).length;
       const responseRate = followedUp > 0 ? (responses / followedUp * 100).toFixed(1) : 0;
       const followupRate = totalLeads > 0 ? (followedUp / totalLeads * 100).toFixed(1) : 0;
-      const conversion = filteredData.filter(l => determineStatus(l) === 'Responded & Scheduled').length;
+      const conversion = filteredData.filter(l => determineStatus(l) === 'Complete' || determineStatus(l) === 'Responded & Scheduled').length;
       const conversionRate = totalLeads > 0 ? (conversion / totalLeads * 100).toFixed(1) : 0;
 
       $('#analyticsLeads').text(totalLeads);
@@ -2668,6 +2725,24 @@
           icon: 'fas fa-exclamation-triangle',
           text: `Response rate is ${(responseRate * 100).toFixed(1)}%. Consider reviewing your follow-up messaging.`
         });
+      }
+
+      // Add insights about completion rates
+      if (totalLeads > 0) {
+        const completionRate = filteredData.filter(l => determineStatus(l) === 'Complete').length / totalLeads;
+        if (completionRate > 0.8) {
+          insights.push({
+            type: 'success',
+            icon: 'fas fa-trophy',
+            text: `Outstanding completion rate of ${(completionRate * 100).toFixed(1)}%! Most leads complete both steps.`
+          });
+        } else if (completionRate < 0.5) {
+          insights.push({
+            type: 'info',
+            icon: 'fas fa-chart-line',
+            text: `Completion rate is ${(completionRate * 100).toFixed(1)}%. Consider targeted reminders for partial completions.`
+          });
+        }
       }
 
       if (totalLeads > 0) {
@@ -3108,6 +3183,18 @@
 
     // Utility functions
     function determineStatus(lead) {
+      // Use the detailed completion status for more accurate reporting
+      if (lead.completionStatus === 'Fully Complete') {
+        return 'Complete';
+      } else if (lead.completionStatus === 'Questionnaire Complete - Needs Scheduling') {
+        return 'Needs Scheduling';
+      } else if (lead.completionStatus === 'Appointment Scheduled - Needs Questionnaire') {
+        return 'Needs Questionnaire';
+      } else if (lead.completionStatus === 'Not Started') {
+        return 'New Lead';
+      }
+      
+      // Fallback to original logic if completionStatus is not available
       if (!lead.followedUp) return 'New';
       if (lead.responseReceived) {
         if (lead.eventId || (lead.executiveSummary && lead.executiveSummary.toLowerCase().includes('scheduled'))) {
@@ -3124,10 +3211,14 @@
     function getStatusClass(status) {
       switch(status) {
         case 'New': return 'status-new';
+        case 'New Lead': return 'status-new-lead';
         case 'Awaiting Response': return 'status-awaiting-response';
         case 'Responded': return 'status-responded';
         case 'Scheduled (Not Responded)': return 'status-scheduled-only';
         case 'Responded & Scheduled': return 'status-responded-and-scheduled';
+        case 'Needs Questionnaire': return 'status-needs-questionnaire';
+        case 'Needs Scheduling': return 'status-needs-scheduling';
+        case 'Complete': return 'status-complete';
         default: return 'status-new';
       }
     }
