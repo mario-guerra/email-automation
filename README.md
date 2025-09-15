@@ -6,10 +6,26 @@ Lightweight repository for scraping/cloning web pages and running simple email/l
 
 - `scripts/` - Python and Node helper scripts:
   - `clone_webpage.py` — clone a web page to local files (used to populate `site-ghpages`)
-  - `lead_automation.js` — Google Apps Script file (runs inside Google Apps Script runtime). This script sends a welcome email, logs leads to a Sheet, manages follow-ups, and generates AI-powered executive summaries (premium feature).
   - `transform_for_ghpages.py` — transform cloned pages for GitHub Pages
   - `update_forms_to_formspark.py` — helper to migrate forms to Formspree/Formspark
   - `requirements.txt` — Python dependencies
+- `google_apps_scripts/` - Google Apps Script files (organized by functionality):
+  - `email-processing/` - Email automation modules:
+    - `emailProcessor.gs` — Main email processing and welcome emails
+    - `followUpChecker.gs` — Follow-up detection and reminders
+    - `aiParser.gs` — AI-powered text parsing and summaries
+    - `sheetManager.gs` — Spreadsheet operations for leads
+    - `archiveManager.gs` — Lead archiving and cleanup
+    - `utils.gs` — Shared utilities and configuration
+  - `dashboard/` - Web dashboard modules:
+    - `webInterface.gs` — Web app serving and HTML templates
+    - `dataService.gs` — Data retrieval and metrics calculation
+    - `crudOperations.gs` — Lead CRUD operations
+    - `exportService.gs` — Data export functionality
+    - `utils.gs` — Dashboard utilities
+  - `tests.gs` — Test framework and automated testing
+  - `Code.gs` — Legacy monolithic file (deprecated)
+  - `dashboard.gs` — Legacy monolithic file (deprecated)
 - `site-ghpages/` - Static snapshot of a website (images, CSS, JS and cloned pages)
 - `.gitignore` - repository ignore rules (includes `.venv` and `.tmp`)
 
@@ -52,7 +68,28 @@ python3 scripts/update_forms_to_formspark.py --help
 
 4) Apps Script configuration and runtime notes
 
-`lead_automation.js` is intended to run inside Google Apps Script (not a local Node process). It reads configuration from Script Properties (PropertiesService) and requires re-authorization when new scopes (for example Calendar access) are added.
+The Google Apps Scripts have been refactored from monolithic files into modular components for better maintainability:
+
+**Email Processing Modules** (`google_apps_scripts/email-processing/`):
+- `emailProcessor.gs` - Main email processing and welcome emails
+- `followUpChecker.gs` - Follow-up detection and reminders  
+- `aiParser.gs` - AI-powered text parsing and summaries
+- `sheetManager.gs` - Spreadsheet operations for leads
+- `archiveManager.gs` - Lead archiving and cleanup
+- `utils.gs` - Shared utilities and configuration
+
+**Dashboard Modules** (`google_apps_scripts/dashboard/`):
+- `webInterface.gs` - Web app serving and HTML templates
+- `dataService.gs` - Data retrieval and metrics calculation
+- `crudOperations.gs` - Lead CRUD operations
+- `exportService.gs` - Data export functionality
+- `utils.gs` - Dashboard utilities
+
+**Legacy Files** (deprecated):
+- `Code.gs` - Original monolithic email processing script
+- `dashboard.gs` - Original monolithic dashboard script
+
+The scripts run inside Google Apps Script (not a local Node process). They read configuration from Script Properties (PropertiesService) and require re-authorization when new scopes are added.
 
 Required Script Properties (set in Apps Script Project Settings → Script properties):
 - `CALENDLY_LINK` — public scheduling URL used in welcome emails
@@ -150,32 +187,51 @@ The script includes optional premium features that can be enabled via script pro
 - Add a `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` if you plan to accept external contributions.
 - If you add Node dependencies, include a `package.json` and commit a lockfile (or intentionally ignore it and document why).
 
-## Recommended follow-ups
+## Development and Testing
 
-- Add short README headers at the top of each script describing usage and required env vars.
-- Add `package.json` if `lead_automation.js` needs npm packages.
-- Add minimal automated tests for the Python utilities (pytest) and a GitHub Actions workflow to run them.
+### Google Apps Script Development
 
-Recommended follow-ups (concrete)
-- Update `scripts/lead_automation.js` header with a short usage block and the required Script Properties list.
-- Enable the Advanced Calendar API in the Apps Script project (see instructions above) so calendar-based detection works.
-- Add a short `DEPLOY_APPS_SCRIPT.md` describing how to enable the Calendar API and grant scopes.
-- If you run GitHub Actions to publish `site-ghpages`, ensure the workflow has `pages: write` permission or set a `PAGES_PAT` secret for deployments that require a PAT.
-- Consider adding rate limiting for AI API calls to manage costs in high-volume scenarios.
+This project uses `clasp` (Command Line Apps Script Projects) for local development and deployment:
+
+1. Install clasp globally: `npm install -g @google/clasp`
+2. Login: `clasp login`
+3. Configure `.clasp.json` with your script ID and project ID
+4. Pull existing code: `clasp pull`
+5. Push changes: `clasp push`
+6. Open in browser: `clasp open`
+
+### Testing
+
+Run automated tests from the Apps Script editor or via clasp:
+
+```javascript
+// In Apps Script editor, run:
+runAllTests()
+
+// Or test individual modules:
+testEmailProcessor()
+testDashboard()
+```
+
+Manual testing checklist:
+- [ ] Email processing works correctly
+- [ ] Welcome emails are sent
+- [ ] Leads are logged to spreadsheet
+- [ ] Follow-up detection functions
+- [ ] Dashboard loads and displays data
+- [ ] CRUD operations work
+- [ ] Export functionality works
+- [ ] AI summaries generate (if enabled)
+
+### Best Practices
+
+- **Modular Design**: Keep related functionality in separate modules
+- **Configuration**: Use Script Properties for all configuration values
+- **Error Handling**: Implement proper try-catch blocks and logging
+- **Testing**: Test each module independently before integration
+- **Documentation**: Update this README when adding new features
+- **Version Control**: Commit frequently and use descriptive commit messages
 
 ## License
 
 No license file detected in the repository snapshot. If this is your personal project, consider adding a `LICENSE` file (for example, `MIT`) to clarify reuse rules.
-
----
-
-If you want, I can:
-- open each script and extract/auto-generate a short usage section from its docstring/header;
-- add a `package.json` skeleton for `lead_automation.js` if you tell me which npm packages it requires; or
-- create a `CONTRIBUTING.md` and `LICENSE` (MIT) file.
-If you want, I can:
-- add a `DEPLOY_APPS_SCRIPT.md` that walks through enabling the Advanced Calendar API and required OAuth scopes;
-- add the recommended OAuth scope(s) to `appsscript.json` and commit it so the project manifest is explicit;
-- add a short usage header to `scripts/lead_automation.js` that lists the exact Script Properties.
-
-Tell me which next step you want and I will apply it.

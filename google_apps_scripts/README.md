@@ -1,119 +1,114 @@
 # Lead Management Dashboard - Google Apps Script
 
-## 🚀 Professional Dashboard Transformation
+## 🚀 Enterprise-Grade Email Automation & Lead Management System
 
-This Google Apps Script project provides a professional, intuitive lead management dashboard for law firms. It has been completely rebuilt from the ground up to provide a world-class user experience.
+This comprehensive Google Apps Script project provides a professional, AI-powered lead management dashboard with automated email processing, intelligent follow-up systems, and advanced analytics for law firms. Built with a modular architecture for scalability and maintainability.
 
 ## ✨ Key Features
 
-### 🎨 Modern Professional UI
-- **Material Design**: Clean, modern interface with Google's Material Design principles
-- **Responsive Layout**: Works beautifully on desktop, tablet, and mobile devices
-- **Professional Color Scheme**: Primary blue (#1E88E5) with status-based color coding
-- **Smooth Animations**: Subtle transitions and loading states for better UX
+### 🤖 AI-Powered Email Processing
+- **Intelligent Lead Parsing**: AI-driven extraction of client information from emails
+- **Automated Questionnaire Handling**: Smart processing of intake forms and responses
+- **Context-Aware Summarization**: AI-generated executive summaries of client inquiries
+- **Multi-Format Support**: Handles various email formats and structures
 
-### 📊 Comprehensive Dashboard
-- **Real-time Metrics**: Live KPI cards with percentage changes
-- **Interactive Charts**: Lead volume trends, service type distribution, response funnels
-- **Recent Leads Preview**: Quick overview of the latest inquiries
-- **Visual Status Indicators**: Color-coded badges for lead status tracking
+### 📊 Professional Dashboard
+- **Real-time Metrics**: Live KPI cards with conversion tracking and performance indicators
+- **Interactive Analytics**: Comprehensive charts for lead volume, service distribution, and response analysis
+- **Advanced Filtering**: Multi-criteria search and filtering with real-time updates
+- **Bulk Operations**: Select and manage multiple leads simultaneously
 
-### 👥 Advanced Lead Management
-- **Smart Search & Filtering**: Real-time search with multiple filter options
-- **Bulk Actions**: Select multiple leads for bulk operations
-- **Lead Detail View**: Comprehensive lead information with tabbed interface
-- **Quick Actions**: One-click follow-up, email, and scheduling
+### 📧 Automated Workflow Management
+- **Smart Follow-up System**: Automated email sequences based on lead status and engagement
+- **Calendar Integration**: Automatic appointment scheduling with Calendly integration
+- **Response Tracking**: Intelligent detection of client responses and engagement
+- **Archive Management**: Automated archiving of completed leads
 
-### 📈 Powerful Analytics
-- **Time Range Analysis**: Flexible date range selection (7 days to 1 year)
-- **Performance Metrics**: Response rates, conversion rates, follow-up effectiveness
-- **Visual Charts**: Trend analysis, status funnels, time distributions
-- **AI-Powered Insights**: Automatic performance recommendations
+### 🔧 Enterprise Testing Framework
+- **Comprehensive Test Suite**: 25+ automated tests covering all system components
+- **Configuration Validation**: Automated checking of all required settings
+- **Performance Benchmarking**: Built-in performance testing and optimization
+- **Debug Tools**: Advanced debugging utilities for troubleshooting
 
-### 🔧 Professional Features
-- **Data Export**: CSV export functionality for reports
-- **Auto-refresh**: Configurable automatic data updates
-- **Error Handling**: Robust error management with user notifications
-- **Loading States**: Professional loading indicators
-- **Notification System**: Toast notifications for user feedback
+### 📈 Advanced Analytics & Reporting
+- **Conversion Funnel Analysis**: Track leads from inquiry to appointment
+- **Service Type Breakdown**: Analyze demand by practice area
+- **Response Time Metrics**: Monitor team performance and efficiency
+- **Custom Date Ranges**: Flexible reporting periods (7 days to 1 year)
 
-## 🏗️ Architecture
+## 🏗️ Modular Architecture
 
-### Frontend (Index.html)
-- **Modern HTML5**: Semantic markup with accessibility features
-- **Bootstrap 5**: Latest responsive framework
-- **Chart.js**: Professional data visualizations
-- **FontAwesome**: Comprehensive icon library
-- **Inter Font**: Professional typography
+### Core Modules
 
-### Backend (dashboard.js)
-- **Enhanced Google Sheets Integration**: Robust data handling
-- **Error Management**: Comprehensive error handling and logging
-- **Data Processing**: Advanced filtering and sorting capabilities
-- **CSV Export**: Professional data export functionality
-- **Metrics Calculation**: Real-time analytics processing
+#### 📧 Email Processing (`email-processing/`)
+- `emailProcessor.gs` - Main email processing logic
+- `aiParser.gs` - AI-powered content analysis and parsing
+- `followUpManager.gs` - Automated follow-up sequence management
+- `archiveManager.gs` - Lead archiving and cleanup
 
-## 📋 Setup Instructions
+#### 📊 Dashboard (`dashboard/`)
+- `webInterface.gs` - Web app entry point and routing
+- `dataService.gs` - Data retrieval, processing, and metrics calculation
+- `analyticsService.gs` - Advanced analytics and reporting functions
 
-### 1. Google Apps Script Setup
-1. Open [Google Apps Script](https://script.google.com)
-2. Create a new project
-3. Replace `Code.gs` content with `dashboard.js`
-4. Add HTML file named `Index` with content from `Index.html`
+#### 🔧 Core System
+- `quickTestRunner.gs` - Comprehensive testing framework
+- `tests.gs` - QUnit-based testing infrastructure
+- `config.gs` - Configuration management and validation
+- `utils.gs` - Utility functions and helpers
 
-### 2. Configuration
-Update the spreadsheet ID in `dashboard.js`:
-```javascript
-const SHEET_ID = 'your-spreadsheet-id-here';
-const FOLDER_ID = 'your-drive-folder-id-here';
+### Frontend Components
+- `Index.html` - Professional web interface with Bootstrap 5
+- `dashboard.html` - Dashboard-specific templates
+- `analytics.html` - Analytics visualization components
+
+## 📋 Setup & Deployment
+
+### Prerequisites
+- Google Workspace account with Apps Script access
+- Google Sheets for data storage
+- Google Drive for file storage
+- Node.js and clasp for development
+
+### 1. Local Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/mario-guerra/email-automation.git
+cd email-automation/google_apps_scripts
+
+# Install clasp globally
+npm install -g @google/clasp
+
+# Login to Google
+clasp login
+
+# Create new Apps Script project
+clasp create "Lead Management Dashboard"
+
+# Push code to Apps Script
+clasp push
 ```
 
-### 3. Deployment
-1. Click "Deploy" → "New deployment"
-2. Choose "Web app" as type
-3. Set execute as "Me"
-4. Set access to "Anyone"
-5. Click "Deploy"
+### 2. Configuration Setup
 
-### 4. Permissions
-Grant necessary permissions:
-- Google Sheets (read/write)
-- Google Drive (read questionnaires)
-- External services (for enhanced features)
+Update the configuration in `config.gs` or via PropertiesService:
 
-## 🎯 Key Improvements Over Previous Version
+```javascript
+// Required Configuration Values
+PropertiesService.getScriptProperties().setProperties({
+  'CALENDLY_LINK': 'https://calendly.com/your-link',
+  'LEAD_TRACKER_SHEET_ID': 'your-google-sheet-id',
+  'YOUR_EMAIL': 'your-email@gmail.com',
+  'FOLDER_ID': 'your-drive-folder-id',
+  'CALENDAR_ID': 'your-calendar-id', // Optional
+  'OPENAI_API_KEY': 'your-openai-key' // Optional, for AI features
+});
+```
 
-### UI/UX Enhancements
-- ✅ **Professional Design**: Complete visual overhaul with modern aesthetics
-- ✅ **Responsive Layout**: Mobile-first design that works on all devices
-- ✅ **Intuitive Navigation**: Clear sidebar navigation with active states
-- ✅ **Enhanced Typography**: Professional fonts and text hierarchy
-- ✅ **Color-coded Status**: Visual status indicators throughout
+### 3. Google Sheets Setup
 
-### Functionality Improvements
-- ✅ **Advanced Filtering**: Multi-criteria filtering with real-time updates
-- ✅ **Bulk Operations**: Select and manage multiple leads at once
-- ✅ **Enhanced Analytics**: Comprehensive metrics and insights
-- ✅ **Data Export**: Professional CSV export with filtering
-- ✅ **Auto-refresh**: Configurable automatic data updates
-
-### Technical Enhancements
-- ✅ **Modern JavaScript**: ES6+ features with proper error handling
-- ✅ **Performance Optimization**: Efficient data processing and caching
-- ✅ **Code Organization**: Modular, maintainable code structure
-- ✅ **Error Handling**: Comprehensive error management
-- ✅ **Loading States**: Professional loading indicators
-
-### User Experience
-- ✅ **Smooth Animations**: Subtle transitions and micro-interactions
-- ✅ **Toast Notifications**: Non-intrusive user feedback
-- ✅ **Keyboard Navigation**: Accessibility improvements
-- ✅ **Progressive Loading**: Smart data loading strategies
-- ✅ **Offline Resilience**: Better handling of connectivity issues
-
-## 📊 Data Structure
-
-The dashboard works with the following Google Sheets columns:
+Create a Google Sheet with the following structure:
 
 | Column | Field | Type | Description |
 |--------|-------|------|-------------|
@@ -124,160 +119,299 @@ The dashboard works with the following Google Sheets columns:
 | E | Preferred Time | String | Preferred consultation time |
 | F | Appointment Types | String | Services requested (comma-separated) |
 | G | Message | String | Original inquiry message |
-| H | Timestamp | Date | When lead was received |
-| I | Followed Up | Boolean | Whether follow-up was sent |
-| J | Reminder Sent At | Date | When reminder was sent |
-| K | Thread ID | String | Gmail thread ID |
-| L | Event ID | String | Calendar event ID |
-| M | Match Method | String | How response was detected |
-| N | Response Received | Boolean | Whether client responded |
+| H | Timestamp | DateTime | When lead was received |
+| I | Reminder Sent At | DateTime | When reminder was sent |
+| J | Thread ID | String | Gmail thread ID |
+| K | Event ID | String | Calendar event ID |
+| L | Match Method | String | How response was detected |
+| M | Response Received | Boolean | Whether client responded |
+| N | Followed Up | Boolean | Whether follow-up was sent |
 | O | Executive Summary | String | AI-generated summary |
 | P | Questionnaire Responses | String | Raw questionnaire responses |
 | Q | Questionnaire Parsed | String | Parsed questionnaire data |
+| R | Calendar Scheduled At | DateTime | When appointment was scheduled |
+| S | Calendar Event Id | String | Calendar event identifier |
+| T | Completion Status | String | Lead completion status |
 
-## 🚀 Deployment as Google Web App
+### 4. Permissions & Authorization
 
-### Step-by-Step Deployment
+Grant the following permissions when prompted:
+- **Gmail API**: Read/write access for email processing
+- **Google Sheets API**: Full access to lead tracker spreadsheet
+- **Google Drive API**: Read access to questionnaire folder
+- **Google Calendar API**: Read/write access for appointment scheduling
+- **Properties Service**: Access to script properties
 
-1. **Prepare the Script**
-   - Ensure all files are uploaded to Google Apps Script
-   - Test functionality in the script editor
-   - Verify all configurations are correct
+### 5. Deployment
 
-2. **Deploy as Web App**
-   ```
-   1. Click "Deploy" → "New deployment"
-   2. Type: Web app
-   3. Description: "Lead Management Dashboard v1.2"
-   4. Execute as: Me (your-email@gmail.com)
-   5. Who has access: Anyone
-   6. Click "Deploy"
-   ```
+```bash
+# Deploy to production
+clasp deploy
 
-3. **Configure Permissions**
-   - Review and authorize required permissions
-   - Test the deployed web app URL
-   - Verify all features work correctly
+# Or create new deployment
+clasp deployments
+```
 
-4. **Custom Domain (Optional)**
-   - Use Google Sites to embed the web app
-   - Configure custom domain if needed
-   - Set up SSL certificate for security
+## 🧪 Testing Framework
 
-## 🔒 Security Considerations
+### Running Tests
 
-- **Data Privacy**: All data remains in your Google account
-- **Access Control**: Configure appropriate access permissions
-- **HTTPS**: Always deploy with HTTPS enabled
-- **Regular Backups**: Implement regular data backup procedures
-- **Permission Reviews**: Regularly review and update permissions
+```javascript
+// Run comprehensive test suite
+runComprehensiveTests();
 
-## 🎨 Customization Options
+// Run quick tests (subset)
+runQuickTests();
 
-### Branding
-- Update company name and logo in header
-- Modify color scheme in CSS variables
-- Customize fonts and typography
-- Add custom favicon and branding
+// Debug configuration
+debugConfiguration();
 
-### Features
-- Enable/disable specific dashboard sections
-- Customize metric calculations
-- Add custom charts and visualizations
-- Implement additional export formats
+// Debug sheet contents
+debugSheetContents();
 
-### Integration
-- Connect with external CRM systems
-- Integrate with email marketing platforms
-- Add webhook notifications
-- Implement advanced reporting
+// Debug metrics
+debugMetricsCalculation();
+
+// Run all debug functions
+runComprehensiveDebug();
+```
+
+### Test Coverage
+
+The testing framework includes 25+ automated tests:
+
+#### 🔧 Configuration Tests
+- Required configuration values validation
+- Configuration format verification
+- Questionnaire files access testing
+
+#### 📊 Sheet Access Tests
+- Basic spreadsheet connectivity
+- Sheet structure validation
+- CRUD operations testing
+
+#### 📧 Email Processing Tests
+- Basic email parsing validation
+- Multiple email format support
+- Email validation and sanitization
+
+#### 📈 Dashboard Tests
+- Metrics calculation accuracy
+- Data retrieval functionality
+- Web interface element validation
+
+#### 🤖 AI Parser Tests
+- Name extraction accuracy
+- Content summarization quality
+- AI service integration
+
+#### 📋 Integration Tests
+- End-to-end workflow validation
+- Cross-module functionality
+- Performance benchmarking
+
+## 🎯 Key Improvements
+
+### Technical Enhancements
+- ✅ **Modular Architecture**: Clean separation of concerns with dedicated modules
+- ✅ **Comprehensive Testing**: Enterprise-grade test coverage with debugging tools
+- ✅ **Error Resilience**: Robust error handling and recovery mechanisms
+- ✅ **Performance Optimization**: Efficient data processing and caching strategies
+- ✅ **Configuration Management**: Centralized configuration with validation
+
+### Feature Enhancements
+- ✅ **AI-Powered Processing**: Intelligent email parsing and summarization
+- ✅ **Automated Workflows**: Smart follow-up and archiving systems
+- ✅ **Advanced Analytics**: Comprehensive reporting and insights
+- ✅ **Bulk Operations**: Efficient management of multiple leads
+- ✅ **Real-time Updates**: Live data synchronization and refresh
+
+### User Experience
+- ✅ **Professional UI**: Modern, responsive design with accessibility features
+- ✅ **Intuitive Navigation**: Clear information hierarchy and workflow
+- ✅ **Mobile Optimization**: Full responsive design for all devices
+- ✅ **Performance Monitoring**: Real-time system health and performance metrics
+
+## 📊 Usage Guide
+
+### Daily Operations
+
+1. **Monitor Dashboard**: Check real-time metrics and recent leads
+2. **Process New Leads**: Review and categorize incoming inquiries
+3. **Send Follow-ups**: Use automated follow-up system for engagement
+4. **Schedule Appointments**: Integrate with Calendly for booking
+5. **Track Progress**: Monitor conversion rates and team performance
+
+### Weekly Maintenance
+
+1. **Run Test Suite**: Execute comprehensive tests to ensure system health
+2. **Review Analytics**: Analyze weekly performance and identify trends
+3. **Clean Archives**: Archive completed leads and optimize storage
+4. **Update Configuration**: Review and update system settings as needed
+
+### Monthly Reporting
+
+1. **Generate Reports**: Export comprehensive analytics and metrics
+2. **Performance Review**: Analyze team performance and conversion rates
+3. **System Optimization**: Review and optimize based on usage patterns
+4. **Backup Verification**: Ensure all data is properly backed up
+
+## 🔧 Troubleshooting
+
+### Common Issues & Solutions
+
+#### Configuration Problems
+```javascript
+// Check configuration values
+debugConfiguration();
+
+// Verify sheet access
+debugSheetContents();
+```
+
+#### Email Processing Issues
+```javascript
+// Test email parsing
+testBasicEmailParsing();
+
+// Check Gmail permissions
+testGmailAccess();
+```
+
+#### Dashboard Problems
+```javascript
+// Test metrics calculation
+debugMetricsCalculation();
+
+// Check web interface
+testWebInterface();
+```
+
+#### Performance Issues
+```javascript
+// Run performance tests
+runPerformanceTests();
+
+// Check system resources
+getSystemInfo();
+```
+
+### Debug Commands
+
+```javascript
+// Comprehensive debugging
+runComprehensiveDebug();
+
+// Individual component tests
+runConfigurationTests();
+runSheetAccessTests();
+runEmailProcessingTests();
+runDashboardTests();
+```
 
 ## 📈 Performance Optimization
 
-- **Caching**: Implement smart data caching
-- **Lazy Loading**: Load data only when needed
-- **Compression**: Minimize file sizes
-- **CDN**: Use CDN for external libraries
-- **Monitoring**: Implement performance monitoring
+### System Performance
+- **Efficient Queries**: Optimized Google Sheets API calls
+- **Smart Caching**: Intelligent data caching and refresh strategies
+- **Batch Operations**: Bulk processing for improved performance
+- **Lazy Loading**: On-demand data loading for better responsiveness
 
-## 🐛 Troubleshooting
+### Monitoring & Maintenance
+- **Automated Testing**: Regular test execution for system validation
+- **Performance Benchmarking**: Built-in performance monitoring tools
+- **Error Tracking**: Comprehensive error logging and reporting
+- **Resource Optimization**: Automatic cleanup and optimization routines
 
-### Common Issues
+## 🔒 Security & Compliance
 
-1. **Data Not Loading**
-   - Check spreadsheet permissions
-   - Verify spreadsheet ID is correct
-   - Check Google Apps Script execution transcript
+### Data Security
+- **Google Security**: All data secured by Google's enterprise-grade infrastructure
+- **Access Control**: Granular permission management
+- **Audit Logging**: Comprehensive activity tracking
+- **Encryption**: Data encrypted in transit and at rest
 
-2. **Charts Not Displaying**
-   - Ensure Chart.js is loading
-   - Check console for JavaScript errors
-   - Verify data format is correct
+### Compliance Features
+- **Data Retention**: Configurable data retention policies
+- **Privacy Controls**: GDPR and privacy regulation compliance
+- **Access Logging**: Detailed audit trails for all operations
+- **Secure Configuration**: Protected configuration storage
 
-3. **Permissions Errors**
-   - Re-authorize Google Apps Script
-   - Check spreadsheet sharing settings
-   - Verify Drive folder permissions
+## 🚀 Advanced Features
 
-### Debug Mode
-Enable debug logging by adding to the script:
-```javascript
-console.log('Debug mode enabled');
-// Add debug statements throughout code
-```
+### AI Integration
+- **Intelligent Parsing**: AI-powered extraction of client information
+- **Smart Summarization**: Automatic generation of executive summaries
+- **Context Awareness**: Understanding of legal context and terminology
+- **Quality Assurance**: Automated validation of AI-generated content
 
-## 📞 Support
+### Workflow Automation
+- **Conditional Logic**: Smart decision-making based on lead characteristics
+- **Template System**: Dynamic email templates based on lead type
+- **Integration APIs**: Seamless integration with external services
+- **Custom Triggers**: Configurable automation triggers and actions
 
-For technical support or customization requests:
-- Check the troubleshooting section above
-- Review Google Apps Script documentation
-- Test with sample data first
-- Document any error messages
+### Analytics & Insights
+- **Predictive Analytics**: Forecasting based on historical data
+- **Custom Metrics**: Configurable KPI tracking and reporting
+- **Trend Analysis**: Long-term pattern recognition and insights
+- **Performance Benchmarking**: Comparative analysis and optimization
+
+## 📞 Support & Maintenance
+
+### Regular Maintenance Tasks
+- **Weekly Testing**: Run comprehensive test suite
+- **Monthly Analytics Review**: Analyze system performance and usage
+- **Quarterly Optimization**: Review and optimize based on usage patterns
+- **Annual Security Review**: Update security settings and permissions
+
+### Getting Help
+- **Built-in Diagnostics**: Use comprehensive debugging tools
+- **Test Framework**: Automated testing for issue identification
+- **Documentation**: Detailed troubleshooting guides
+- **Community Resources**: Access to Google Apps Script community
 
 ## 🔄 Version History
 
-### v1.2.0 (Current)
-- Complete UI/UX overhaul
-- Enhanced analytics and insights
+### v2.0.0 (Current)
+- Complete modular architecture overhaul
+- AI-powered email processing and parsing
+- Comprehensive testing framework (25+ tests)
+- Advanced analytics and reporting
+- Automated workflow management
+- Professional web interface redesign
+
+### v1.2.0
+- Enhanced dashboard with modern UI
+- Basic analytics and metrics
 - Improved mobile responsiveness
-- Advanced filtering and search
-- Professional data export
-- Bulk operations support
+- Advanced filtering capabilities
 
 ### v1.1.0
 - Basic dashboard functionality
 - Simple lead management
-- Basic charts and metrics
+- Basic email processing
 
 ### v1.0.0
 - Initial implementation
-- Basic lead display
-- Simple navigation
+- Basic lead tracking
+- Simple web interface
 
-## 📄 License
+## 📄 License & Attribution
 
-This project is designed for Guerra Law Firm's internal use. All rights reserved.
+This project is designed for professional legal practice management. Built with modern web technologies and Google Workspace integration for optimal performance and reliability.
 
 ---
 
-## 🎯 What Makes This Dashboard Professional
+## 🎯 Enterprise-Grade Solution
 
-### Visual Excellence
-- **Modern Design Language**: Follows current web design trends
-- **Consistent UI Patterns**: Unified design system throughout
-- **Professional Color Palette**: Carefully chosen colors for readability
-- **Micro-interactions**: Subtle animations that enhance UX
+This system represents a complete transformation from basic lead tracking to an enterprise-grade, AI-powered lead management and email automation platform. With comprehensive testing, modular architecture, and advanced analytics, it provides the reliability and scalability needed for professional legal practice operations.
 
-### Technical Excellence
-- **Clean Code**: Well-organized, commented, and maintainable
-- **Error Resilience**: Graceful handling of edge cases
-- **Performance Optimized**: Fast loading and smooth interactions
-- **Mobile-First**: Responsive design that works everywhere
-
-### Business Value
-- **Actionable Insights**: Metrics that drive business decisions
-- **Workflow Optimization**: Streamlined lead management process
-- **Professional Image**: Reflects well on your law firm's brand
-- **Scalable Solution**: Grows with your business needs
-
-This dashboard transformation elevates your lead management from basic functionality to a professional, enterprise-grade solution that will impress clients and streamline your operations.
+**Key Differentiators:**
+- 🤖 AI-powered intelligent processing
+- 🧪 Enterprise testing framework
+- 📊 Advanced analytics and insights
+- 🔄 Automated workflow management
+- 📱 Professional, responsive interface
+- 🏗️ Modular, maintainable architecture
+- 🔒 Enterprise-grade security and compliance
