@@ -14,7 +14,39 @@
 <meta content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" name="robots"/>
 <style>
    img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }
-  </style>
+</style>
+<style>
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.hero-section img, .hero-section .hero-content {
+  width: 100%;
+  max-width: 100%;
+}
+@media (max-width: 900px) {
+  .hero-section {
+    padding: 0 10px;
+  }
+  .hero-section .hero-content {
+    font-size: 1.2em;
+  }
+}
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 0 5px;
+  }
+  .hero-section .hero-content {
+    font-size: 1em;
+  }
+}
+</style>
 <!-- Google Tag Manager for WordPress by gtm4wp.com -->
 <script data-cfasync="false" data-pagespeed-no-defer="">
    var gtm4wp_datalayer_name = "dataLayer";

@@ -1,0 +1,71 @@
+/* fix-layout.css
+   Purpose: Override problematic 100vw / fixed-px widths that cause horizontal overflow
+   Load this file after the theme CSS (it's already an open tab in the project).
+*/
+
+:root { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+
+/* Prevent vw-based overflow on hero/full-width containers */
+.hero-section,
+.elementor-section,
+.elementor-container,
+.elementor-con,
+.premium-carousel-wrapper,
+.premium-carousel-inner,
+.premium-carousel-template,
+.slick-list,
+.slick-track,
+.elementor-sticky,
+.elementor-sticky__spacer,
+.elementor-nav-menu__container,
+.elementor-nav-menu--dropdown {
+  width: 100% !important;
+  max-width: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure carousels don't force a wider track */
+.premium-carousel-wrapper,
+.slick-list {
+  overflow: hidden !important;
+}
+
+.slick-track {
+  width: auto !important;
+  max-width: 100% !important;
+  transform: none !important;
+}
+
+/* Target inline-styled clones (Elementor sticky clones / nav dropdowns) */
+.elementor-sticky[style],
+.elementor-sticky__spacer[style],
+.elementor-nav-menu__container[style] {
+  width: 100% !important;
+  max-width: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+/* Revert any explicit 100vw usages to be constrained */
+[class*="hero"], [class*="carousel"], [class*="slick"], [style*="100vw"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Safety: prevent small residual horizontal scrolling */
+html, body {
+  overflow-x: hidden !important;
+}
+
+/* Keep images and hero content responsive */
+.hero-section img,
+.hero-section .hero-content,
+.elementor-image img,
+img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+}
