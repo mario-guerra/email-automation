@@ -860,6 +860,68 @@ Trusts & Estates • Probate • Small Business Consulting • Traffic & Crimina
 </div>
 </div>
 
+<!-- Responsive fix for premium carousel and hero typography -->
+<style id="hero-responsive-fix">
+  /* Keep carousel from causing horizontal scroll and ensure slides match viewport */
+  #premium-carousel-wrapper-77acedb,
+  #premium-carousel-77acedb,
+  #premium-carousel-77acedb .slick-list,
+  #premium-carousel-77acedb .slick-track,
+  #premium-carousel-77acedb .slick-slide {
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent site-wide 100vw issues from creating side gaps */
+  html, body { overflow-x: hidden; }
+
+  /* Hero typography adjustments */
+  .elementor-1792 .elementor-heading-title {
+    font-size: 2.2rem;
+    line-height: 1.05;
+    margin: 0 1rem;
+  }
+  .elementor-1792 .elementor-widget-text-editor p {
+    font-size: 1rem;
+    margin: 0.5rem 1rem 0;
+    opacity: 0.95;
+  }
+
+  /* Tighter on small screens */
+  @media (max-width: 900px) {
+    .elementor-1792 .elementor-heading-title { font-size: 1.6rem; }
+    .elementor-1792 .elementor-widget-text-editor p { font-size: 0.95rem; }
+  }
+  @media (max-width: 480px) {
+    .elementor-1792 .elementor-heading-title { font-size: 1.25rem; }
+    .elementor-1792 .elementor-widget-text-editor p { font-size: 0.9rem; }
+    #premium-carousel-77acedb .slick-slide { padding-left: 0.5rem; padding-right: 0.5rem; }
+  }
+</style>
+
+<script id="hero-responsive-fix-js">
+(function(){
+  function setSlideWidths(){
+    try{
+      var vw = window.innerWidth || document.documentElement.clientWidth;
+      var slides = document.querySelectorAll('#premium-carousel-77acedb .slick-slide');
+      slides.forEach(function(s){ s.style.width = vw + 'px'; s.style.maxWidth = '100%'; });
+      // If slick is initialized, ask it to recalc positions
+      if(window.jQuery && jQuery('#premium-carousel-77acedb').hasClass('slick-initialized')){
+        try{ jQuery('#premium-carousel-77acedb').slick('setPosition'); }catch(e){}
+      }
+    }catch(e){}
+  }
+  // Run after a short delay on load (allow images/fonts to settle)
+  window.addEventListener('load', function(){ setTimeout(setSlideWidths, 200); });
+  // Update on orientation change and resize
+  window.addEventListener('orientationchange', function(){ setTimeout(setSlideWidths,120); });
+  window.addEventListener('resize', function(){ setTimeout(setSlideWidths,120); });
+})();
+</script>
+
 </div>
 </div>
 

@@ -67,7 +67,15 @@ var QUESTIONNAIRE_FILES = {
 
 function processLeadEmails() {
   console.log('Script started: Searching for emails...');
-  var folder = DriveApp.getFolderById(FOLDER_ID);
+  console.log('Accessing questionnaire folder with FOLDER_ID=' + FOLDER_ID);
+  var folder;
+  try {
+    folder = DriveApp.getFolderById(FOLDER_ID);
+    console.log('Questionnaire folder name: ' + folder.getName());
+  } catch (e) {
+    console.log('Failed to access folder by ID ' + FOLDER_ID + ': ' + e);
+    throw e;
+  }
   var processedLabel = GmailApp.getUserLabelByName('Processed') || GmailApp.createLabel('Processed');
   var threads = GmailApp.search('subject:"New submission - Law Firm Contact Form" is:unread');
   console.log('Found ' + threads.length + ' matching threads.');
@@ -128,6 +136,9 @@ function processLeadEmails() {
             var files = folder.getFilesByName(fileName);
             if (files.hasNext()) {
               var file = files.next();
+              try {
+                console.log('Found questionnaire file: ' + fileName + ' (id=' + file.getId() + ', size=' + file.getSize() + ')');
+              } catch (logErr) { /* ignore logging errors */ }
               var content = file.getBlob().getDataAsString();
               questionnaireContents += type + ' Questionnaire\n\n' + content + '\n\n';
             } else {
@@ -508,10 +519,11 @@ function checkFollowUps() {
                 var fileName = QUESTIONNAIRE_FILES[t];
                 if (!fileName) continue;
                 try {
-                  var files = folder.getFilesByName(fileName);
-                  if (files.hasNext()) {
-                    var f = files.next();
-                    var qtext = f.getBlob().getDataAsString();
+                      var files = folder.getFilesByName(fileName);
+                      if (files.hasNext()) {
+                        var f = files.next();
+                        try { console.log('parseReplyWithRegex: found template ' + fileName + ' (id=' + f.getId() + ')'); } catch (le) {}
+                        var qtext = f.getBlob().getDataAsString();
                     var qlines = qtext.split(/\r?\n/);
                     for (var ql = 0; ql < qlines.length; ql++) {
                       var qltrim = qlines[ql].trim();
