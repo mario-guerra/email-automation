@@ -423,10 +423,10 @@ gtag("config", "G-P6G5RQJ5NB");
 					}
 				}
   </style>
-<link href="https://harborviewlegal.com/wp-content/uploads/2020/07/harborview-favicon-150x150.png" rel="icon" sizes="32x32"/>
-<link href="https://harborviewlegal.com/wp-content/uploads/2020/07/harborview-favicon.png" rel="icon" sizes="192x192"/>
-<link href="https://harborviewlegal.com/wp-content/uploads/2020/07/harborview-favicon.png" rel="apple-touch-icon"/>
-<meta content="https://harborviewlegal.com/wp-content/uploads/2020/07/harborview-favicon.png" name="msapplication-TileImage"/>
+<link href="HarborViewLegalGroup_favicon.png" rel="icon" sizes="32x32"/>
+<link href="HarborViewLegalGroup_favicon.png" rel="icon" sizes="192x192"/>
+<link href="HarborViewLegalGroup_favicon.png" rel="apple-touch-icon"/>
+<meta content="HarborViewLegalGroup_favicon.png" name="msapplication-TileImage"/>
 <style id="wp-custom-css">
    .noclick{
 	cursor:pointer
@@ -2555,6 +2555,26 @@ jQuery(document).ready(function(){
 		.et_pb_newsletter_form .trumani_con { 
 			margin-bottom:10px; 
 		}
+		
+		/* Legal Areas Validation Styles */
+		#legalAreaError {
+			background-color: #fef2f2;
+			border: 1px solid #fecaca;
+			border-radius: 4px;
+			padding: 8px 12px;
+			margin-top: 8px;
+			font-size: 14px;
+			line-height: 1.4;
+		}
+		
+		.gfield_error .gfield_checkbox {
+			border-left: 4px solid #d93025;
+			padding-left: 12px;
+		}
+		
+		.gfield_error .gfield_label {
+			color: #d93025;
+		}
   </style>
 <link href="e-animation-grow.min.css" id="e-animation-grow-css" media="all" rel="stylesheet"/>
 <link href="basic.min.css" id="gform_basic-css" media="all" rel="stylesheet"/>
@@ -2739,6 +2759,105 @@ var uael_login_form_script = {"ajax_url":"https:\/\/themckaylawfirm.com\/wp-admi
        // Remove GF button click handlers that might interfere
        $('#gform_submit_button_1, #gform_submit_button_3').off('click');
    });
+</script>
+<script>
+// Legal Areas Validation for Contact Form
+document.addEventListener('DOMContentLoaded', function() {
+    // Get form elements
+    const form = document.getElementById('gform_1');
+    const submitButton = document.getElementById('gform_submit_button_1');
+    const legalAreaCheckboxes = document.querySelectorAll('input[name="appointment_types[]"]');
+    
+    // Create error message element
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'legalAreaError';
+    errorDiv.className = 'gfield_description validation_message gfield_validation_message';
+    errorDiv.style.color = '#d93025';
+    errorDiv.style.fontSize = '14px';
+    errorDiv.style.marginTop = '8px';
+    errorDiv.style.display = 'none';
+    errorDiv.textContent = 'Please select at least one area of legal review.';
+    
+    // Insert error message after the fieldset
+    const fieldset = document.getElementById('field_1_9');
+    if (fieldset) {
+        fieldset.appendChild(errorDiv);
+    }
+    
+    // Validation function
+    function validateLegalAreas() {
+        const checkedBoxes = document.querySelectorAll('input[name="appointment_types[]"]:checked');
+        const hasSelection = checkedBoxes.length > 0;
+        
+        if (!hasSelection) {
+            errorDiv.style.display = 'block';
+            // Add error styling to fieldset
+            fieldset.classList.add('gfield_error');
+            return false;
+        } else {
+            errorDiv.style.display = 'none';
+            // Remove error styling from fieldset
+            fieldset.classList.remove('gfield_error');
+            return true;
+        }
+    }
+    
+    // Add form submit handler
+    if (submitButton) {
+        // Store the original onclick handler
+        const originalOnClick = submitButton.onclick;
+
+        // Override the onclick handler to include our validation
+        submitButton.onclick = function(e) {
+            // First, run our validation
+            if (!validateLegalAreas()) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Scroll to error message
+                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Focus on first checkbox
+                if (legalAreaCheckboxes.length > 0) {
+                    legalAreaCheckboxes[0].focus();
+                }
+
+                return false;
+            }
+
+            // If validation passes, run Gravity Forms' original onclick handler
+            if (originalOnClick) {
+                return originalOnClick.call(this, e);
+            }
+
+            // Fallback: allow default behavior
+            return true;
+        };
+    }
+    
+    // Add real-time validation - hide error when user selects a checkbox
+    legalAreaCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const checkedBoxes = document.querySelectorAll('input[name="appointment_types[]"]:checked');
+            if (checkedBoxes.length > 0) {
+                errorDiv.style.display = 'none';
+                fieldset.classList.remove('gfield_error');
+            }
+        });
+    });
+    
+    // Also validate on form submit (backup) - but don't prevent default if validation passes
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!validateLegalAreas()) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            // If validation passes, allow the form to submit normally
+        });
+    }
+});
 </script>
 <script id="elementor-pro-webpack-runtime-js" src="webpack-pro.runtime.min.js">
 </script>
