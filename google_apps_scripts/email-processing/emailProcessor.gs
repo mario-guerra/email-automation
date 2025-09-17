@@ -25,8 +25,28 @@ var QUESTIONNAIRE_FILES = {
 };
 
 /**
- * Main function to process incoming lead emails
+ * Test function to verify email parsing works with different formats
  */
+function testEmailParsing() {
+  console.log('=== EMAIL PARSING TESTS ===');
+
+  // Test 1: Original format
+  var testEmail1 = 'name: Sarah Thompson\nemail: sarah@example.com\nphone: 512-555-1234\npreferred_day: Tuesday\npreferred_time: Morning\nappointment_types: ["Estate Planning"]\nmessage: Looking to set up a trust';
+  console.log('Test 1 - Original format:');
+  console.log('Input:', testEmail1);
+
+  // Test 2: Formspark format
+  var testEmail2 = 'Name: Michael Rodriguez\nEmail: michael@example.com\nPhone: 512-555-5678\nPreferred Day: Wednesday\nPreferred Time: Afternoon\nAppointment Types: Probate\nMessage: Need help with father\'s estate';
+  console.log('Test 2 - Formspark format:');
+  console.log('Input:', testEmail2);
+
+  // Test 3: Simple format
+  var testEmail3 = 'email john@example.com\nappointment_types Estate Planning, Probate\nname John Doe\nphone 512-555-9999';
+  console.log('Test 3 - Simple format:');
+  console.log('Input:', testEmail3);
+
+  console.log('=== TESTS COMPLETED ===');
+}
 function processLeadEmails() {
   console.log('Script started: Searching for emails...');
   console.log('Accessing questionnaire folder with FOLDER_ID=' + FOLDER_ID);
@@ -57,20 +77,136 @@ function processLeadEmails() {
       var body = message.getPlainBody();
       console.log('Message body: ' + body);
 
-      // Parse fields
+      // Parse fields - handle multiple email formats
       var fields = {};
       var lines = body.split('\n');
-      for (var k = 0; k < lines.length; k++) {
-        var line = lines[k].trim();
-        if (line.includes(':')) {
-          var parts = line.split(':');
-          var key = parts[0].trim();
-          var value = parts.slice(1).join(':').trim();
-          if (key === 'appointment_types') {
-            value = value.replace(/[\[\]"]/g, '').split(',').map(item => item.trim());
+      console.log('Parsing email body with ' + lines.length + ' lines');
+
+      // Try different parsing strategies
+      var parsedSuccessfully = false;
+
+      // Strategy 1: Original format (key: value)
+      if (!parsedSuccessfully) {
+        console.log('Trying original parsing format...');
+        for (var k = 0; k < lines.length; k++) {
+          var line = lines[k].trim();
+          if (line.includes(':')) {
+            var parts = line.split(':');
+            var key = parts[0].trim();
+            var value = parts.slice(1).join(':').trim();
+            if (key === 'appointment_types') {
+              // Handle both array format ["Estate Planning"] and comma-separated "Estate Planning, Probate"
+              if (value.startsWith('[') && value.endsWith(']')) {
+                value = value.replace(/[\[\]"]/g, '').split(',').map(item => item.trim());
+              } else {
+                value = value.split(',').map(item => item.trim());
+              }
+            }
+            fields[key] = value;
           }
-          fields[key] = value;
         }
+        // Check if we got essential fields
+        if (fields['email'] && (fields['appointment_types'] || fields['name'])) {
+          parsedSuccessfully = true;
+          console.log('Successfully parsed using original format');
+        }
+      }
+
+      // Strategy 2: Formspark format (Name: value, Email: value, etc.)
+      if (!parsedSuccessfully) {
+        console.log('Trying Formspark-style parsing...');
+        for (var k = 0; k < lines.length; k++) {
+          var line = lines[k].trim();
+          // Look for patterns like "Name: Sarah Thompson" or "Email: test@example.com"
+          var colonIndex = line.indexOf(':');
+          if (colonIndex > 0) {
+            var key = line.substring(0, colonIndex).trim().toLowerCase();
+            var value = line.substring(colonIndex + 1).trim();
+
+            // Map common Formspark field names to our expected keys
+            if (key === 'name' || key === 'full name') {
+              fields['name'] = value;
+            } else if (key === 'email' || key === 'email address') {
+              fields['email'] = value;
+            } else if (key === 'phone' || key === 'phone number' || key === 'telephone') {
+              fields['phone'] = value;
+            } else if (key === 'preferred day' || key === 'preferred_day') {
+              fields['preferred_day'] = value;
+            } else if (key === 'preferred time' || key === 'preferred_time') {
+              fields['preferred_time'] = value;
+            } else if (key === 'appointment types' || key === 'appointment_types' || key === 'legal area' || key === 'service type') {
+              // Handle various formats for appointment types
+              if (value.startsWith('[') && value.endsWith(']')) {
+                value = value.replace(/[\[\]"]/g, '').split(',').map(item => item.trim());
+              } else {
+                value = value.split(',').map(item => item.trim());
+              }
+              fields['appointment_types'] = value;
+            } else if (key === 'message' || key === 'comments' || key === 'additional information') {
+              fields['message'] = value;
+            }
+          }
+        }
+        if (fields['email']) {
+          parsedSuccessfully = true;
+          console.log('Successfully parsed using Formspark format');
+        }
+      }
+
+      // Strategy 3: JSON-like format (fallback)
+      if (!parsedSuccessfully) {
+        console.log('Trying JSON-like parsing...');
+        try {
+          // Look for JSON-like content in the email
+          var jsonMatch = body.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            var jsonData = JSON.parse(jsonMatch[0]);
+            fields = jsonData;
+            if (jsonData.appointment_types && Array.isArray(jsonData.appointment_types)) {
+              fields['appointment_types'] = jsonData.appointment_types;
+            }
+            parsedSuccessfully = true;
+            console.log('Successfully parsed using JSON format');
+          }
+        } catch (e) {
+          console.log('JSON parsing failed: ' + e);
+        }
+      }
+
+      // Strategy 4: Key-value pairs without colons (simple format)
+      if (!parsedSuccessfully) {
+        console.log('Trying simple key-value parsing...');
+        for (var k = 0; k < lines.length; k++) {
+          var line = lines[k].trim();
+          // Skip empty lines and headers
+          if (!line || line.length < 3 || line.toUpperCase() === line) continue;
+
+          // Look for patterns like "appointment_types Estate Planning"
+          var words = line.split(/\s+/);
+          if (words.length >= 2) {
+            var possibleKey = words[0].toLowerCase();
+            var possibleValue = words.slice(1).join(' ');
+
+            if (possibleKey === 'appointment_types' || possibleKey === 'appointment' || possibleKey === 'service') {
+              fields['appointment_types'] = possibleValue.split(',').map(item => item.trim());
+            } else if (possibleKey === 'email') {
+              fields['email'] = possibleValue;
+            } else if (possibleKey === 'name') {
+              fields['name'] = possibleValue;
+            } else if (possibleKey === 'phone') {
+              fields['phone'] = possibleValue;
+            }
+          }
+        }
+        if (fields['email']) {
+          parsedSuccessfully = true;
+          console.log('Successfully parsed using simple format');
+        }
+      }
+
+      if (!parsedSuccessfully) {
+        console.log('Failed to parse email with any strategy. Email body: ' + body);
+        continue;
       }
 
       var name = fields['name'] || 'Unknown';
@@ -81,7 +217,15 @@ function processLeadEmails() {
       var appointmentTypes = fields['appointment_types'] || [];
       var userMessage = fields['message'] || '';
 
-      console.log('Parsed fields: ' + JSON.stringify(fields));
+      console.log('=== PARSED FIELDS ===');
+      console.log('Name:', name);
+      console.log('Email:', email);
+      console.log('Phone:', phone);
+      console.log('Preferred Day:', preferredDay);
+      console.log('Preferred Time:', preferredTime);
+      console.log('Appointment Types:', JSON.stringify(appointmentTypes));
+      console.log('Message:', userMessage);
+      console.log('=====================');
 
       if (!email) {
         console.log('No email found in message, skipping: ' + body);
@@ -119,7 +263,7 @@ function processLeadEmails() {
       }
 
       // Send welcome email
-      var subject = 'Welcome to Guerra Law Firm - Next Steps for Your Inquiry';
+      var subject = 'Welcome to Harborview Legal Group - Next Steps for Your Inquiry';
       var welcomeBody = 'Dear ' + name + ',\n\n' +
                         'Thank you for contacting us! We\'ve received your inquiry about: ' + appointmentTypes.join(', ') + '.\n' +
                         'Your preferred day and time: ' + preferredDay + ' ' + preferredTime + '.\n' +
@@ -128,7 +272,7 @@ function processLeadEmails() {
                         questionnaireContents +
                         'To schedule your consultation, please use this link: ' + CALENDLY_LINK + '\n\n' +
                         'Reply with your answers or contact us with any questions.\n\n' +
-                        'Best regards,\nMario Guerra\nGuerra Law Firm\n' + YOUR_EMAIL;
+                        'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
 
       console.log('Attempting to send email to: ' + email);
       try {

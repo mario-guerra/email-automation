@@ -235,11 +235,11 @@ function checkFollowUps() {
           }
 
           // Send thank you email
-          var thankYouSubject = 'Thank You for Your Response - Guerra Law Firm';
+          var thankYouSubject = 'Thank You for Your Response - Harborview Legal Group';
           var thankYouBody = 'Dear ' + name + ',\n\n' +
                              'Thank you for taking the time to respond to our questionnaire. We appreciate your cooperation and look forward to assisting you with your legal needs.\n\n' +
                              'We will review your responses and prepare for our consultation. If you have any additional questions or need to update your information, please reply to this email.\n\n' +
-                             'Best regards,\nMario Guerra\nGuerra Law Firm\n' + YOUR_EMAIL;
+                             'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
           try {
             GmailApp.sendEmail(email, thankYouSubject, thankYouBody, { from: YOUR_EMAIL });
             console.log('Row ' + (row + 1) + ': Thank you email sent to ' + email);
@@ -279,28 +279,28 @@ function checkFollowUps() {
           // Send targeted reminder based on what action is missing
           if (hasResponded && !hasScheduled) {
             // They responded but haven't scheduled - remind them to schedule
-            reminderSubject = 'Next Step: Schedule Your Consultation - Guerra Law Firm';
+            reminderSubject = 'Next Step: Schedule Your Consultation - Harborview Legal Group';
             reminderBody = 'Dear ' + name + ',\n\n' +
                            'Thank you for completing our questionnaire. We\'ve received your responses and are ready to proceed.\n\n' +
                            'The next step is to schedule your consultation. Please use this link to choose a convenient time: ' + CALENDLY_LINK + '.\n\n' +
                            'We look forward to speaking with you soon.\n\n' +
-                           'Best regards,\nMario Guerra\nGuerra Law Firm\n' + YOUR_EMAIL;
+                           'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
           } else if (hasScheduled && !hasResponded) {
             // They scheduled but haven't responded - remind them to complete questionnaire
-            reminderSubject = 'Please Complete Your Questionnaire - Guerra Law Firm';
+            reminderSubject = 'Please Complete Your Questionnaire - Harborview Legal Group';
             reminderBody = 'Dear ' + name + ',\n\n' +
                            'We noticed you\'ve scheduled a consultation with us, which is great! To help us prepare effectively for our meeting, please take a few minutes to complete the questionnaire we sent earlier.\n\n' +
                            'You should have received an email with the questionnaire. If you need it resent or have any questions, please reply to this email.\n\n' +
                            'Thank you for your cooperation.\n\n' +
-                           'Best regards,\nMario Guerra\nGuerra Law Firm\n' + YOUR_EMAIL;
+                           'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
           } else {
             // Neither action completed - send general reminder
-            reminderSubject = 'Gentle Reminder: Follow Up on Your Inquiry with Guerra Law Firm';
+            reminderSubject = 'Gentle Reminder: Follow Up on Your Inquiry with Harborview Legal Group';
             reminderBody = 'Dear ' + name + ',\n\n' +
-                           'This is a gentle reminder about your recent inquiry with Guerra Law Firm.\n\n' +
+                           'This is a gentle reminder about your recent inquiry with Harborview Legal Group.\n\n' +
                            'To help us prepare for your consultation, please take a moment to answer the questions we sent in our previous email and schedule a convenient time using this link: ' + CALENDLY_LINK + '.\n\n' +
                            'We look forward to hearing from you soon.\n\n' +
-                           'Best regards,\nMario Guerra\nGuerra Law Firm\n' + YOUR_EMAIL;
+                           'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
           }
 
           try {

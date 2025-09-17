@@ -9,7 +9,7 @@
 function doGet() {
   return HtmlService.createTemplateFromFile('Index')
     .evaluate()
-    .setTitle('Lead Management Dashboard - Guerra Law Firm')
+    .setTitle('Lead Management Dashboard - Harborview Legal Group')
     .setFaviconUrl('https://www.gstatic.com/images/branding/product/1x/gsheets_24dp.png')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);

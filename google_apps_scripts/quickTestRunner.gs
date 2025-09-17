@@ -1005,7 +1005,7 @@ function testDriveAccess() {
  */
 function testCalendarAccess() {
   try {
-    const calendars = CalendarApp.getCalendarsByName('Guerra Law Firm');
+    const calendars = CalendarApp.getCalendarsByName('Harborview Legal Group');
     return {
       success: true,
       message: `Calendar API accessible. Found ${calendars.length} calendars`
