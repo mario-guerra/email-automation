@@ -87,7 +87,7 @@
         body: bodyString,
         credentials: 'omit'
       }).then(function(resp){
-        if(resp.ok){
+        if(resp.status < 400){
           var modalEl = form.closest('.ays-pb-modal') || form.closest('.ays_content_box') || form.closest('.ays-pb-modals') || form.parentElement || form;
           if(!modalEl) modalEl = form;
 
@@ -136,6 +136,7 @@
           return resp.text().then(function(txt){ throw new Error(txt || ('HTTP ' + resp.status)); });
         }
       }).catch(function(err){
+          console.error('Fetch error:', err);
           var container = form.closest('.ays_content_box') || form.parentElement || form;
         // Allow per-form custom error message via data-error attribute
         var errMsg = form.getAttribute('data-error') || 'Submission failed — please try again.';
