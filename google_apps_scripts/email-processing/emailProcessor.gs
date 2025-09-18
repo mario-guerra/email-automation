@@ -397,20 +397,12 @@ function doPost(e) {
   try {
     var payload = _parsePostEvent(e);
     if (!payload || !payload.email) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Missing required field: email' })).setMimeType(ContentService.MimeType.JSON).setHeaders({
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST",
-        "Access-Control-Allow-Headers": "Content-Type"
-      });
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Missing required field: email' })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // Basic rate limiting (global) to reduce abuse: max 300 submissions per hour
     if (!_checkRateLimit(300, 60 * 60 * 1000)) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Rate limit exceeded' })).setMimeType(ContentService.MimeType.JSON).setHeaders({
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST",
-        "Access-Control-Allow-Headers": "Content-Type"
-      });
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Rate limit exceeded' })).setMimeType(ContentService.MimeType.JSON);
     }
 
     var fields = _normalizeFields(payload);
@@ -462,11 +454,7 @@ function doPost(e) {
     try {
       GmailApp.sendEmail(email, subject, welcomeBody, { replyTo: YOUR_EMAIL });
     } catch (e1) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Failed to send email' })).setMimeType(ContentService.MimeType.JSON).setHeaders({
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST",
-        "Access-Control-Allow-Headers": "Content-Type"
-      });
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Failed to send email' })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // Log to Google Sheet (best-effort)
@@ -502,17 +490,9 @@ function doPost(e) {
       // ignore admin email errors in response
     }
 
-    return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON).setHeaders({
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST",
-      "Access-Control-Allow-Headers": "Content-Type"
-    });
+    return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Unhandled error' })).setMimeType(ContentService.MimeType.JSON).setHeaders({
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST",
-      "Access-Control-Allow-Headers": "Content-Type"
-    });
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Unhandled error' })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -527,10 +507,5 @@ function doGet(e) {
  */
 function doOptions(e) {
   return ContentService.createTextOutput("")
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeaders({
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type"
-    });
+    .setMimeType(ContentService.MimeType.JSON);
 }
