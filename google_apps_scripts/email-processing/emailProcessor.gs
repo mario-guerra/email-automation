@@ -276,7 +276,8 @@ function processLeadEmails() {
 
       console.log('Attempting to send email to: ' + email);
       try {
-        GmailApp.sendEmail(email, subject, welcomeBody, { from: YOUR_EMAIL });
+        // Send from the script owner's account; direct replies to YOUR_EMAIL
+        GmailApp.sendEmail(email, subject, welcomeBody, { replyTo: YOUR_EMAIL });
         console.log('Email sent successfully to: ' + email);
       } catch (e) {
         console.log('Failed to send email to ' + email + ': ' + e);
@@ -308,109 +309,9 @@ function processLeadEmails() {
       }
 
       // Mark email as processed
-      try {
-        message.markRead();
-        threads[i].addLabel(processedLabel);
-        console.log('Email marked as processed: ' + email);
-      } catch (e) {
-        console.log('Failed to mark email as processed for ' + email + ': ' + e);
-      }
+      message.markRead();
+      threads[i].addLabel(processedLabel);
     }
-  }
-}
-
-/**
- * Web entrypoint: handle direct POSTs from site forms.
- * Accepts application/json or application/x-www-form-urlencoded.
- */
-function doPost(e) {
-  try {
-    var payload = _parsePostEvent(e);
-    if (!payload || !payload.email) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Missing required field: email' })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // Basic rate limiting (global) to reduce abuse: max 300 submissions per hour
-    if (!_checkRateLimit(300, 60 * 60 * 1000)) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Rate limit exceeded' })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // Map fields into the same shapes used by the existing processor
-    var fields = _normalizeFields(payload);
-
-    // Reuse questionnaire lookup
-    var folder = null;
-    try { folder = DriveApp.getFolderById(FOLDER_ID); } catch (err) { folder = null; }
-
-    var questionnaireContents = '';
-    var appointmentTypes = fields.appointment_types || [];
-    for (var m = 0; m < appointmentTypes.length; m++) {
-      var type = appointmentTypes[m].trim();
-      var fileName = QUESTIONNAIRE_FILES[type];
-      if (fileName && folder) {
-        try {
-          var files = folder.getFilesByName(fileName);
-          if (files.hasNext()) {
-            var file = files.next();
-            var content = file.getBlob().getDataAsString();
-            questionnaireContents += type + ' Questionnaire\n\n' + content + '\n\n';
-          } else {
-            questionnaireContents += type + ' Questionnaire\n\nNo questionnaire available.\n\n';
-          }
-        } catch (e) {
-          questionnaireContents += type + ' Questionnaire\n\nError retrieving questionnaire.\n\n';
-        }
-      }
-    }
-    if (!questionnaireContents) questionnaireContents = 'No specific questionnaire available. Please reply for more details.\n\n';
-
-    var name = fields.name || 'Unknown';
-    var phone = fields.phone || '';
-    var email = fields.email || '';
-    var preferredDay = fields.preferred_day || 'Any';
-    var preferredTime = fields.preferred_time || 'Any';
-    var userMessage = fields.message || '';
-
-    var subject = 'Welcome to Harborview Legal Group - Next Steps for Your Inquiry';
-    var welcomeBody = 'Dear ' + name + ',\n\n' +
-                      'Thank you for contacting us! We\'ve received your inquiry about: ' + appointmentTypes.join(', ') + '.\n' +
-                      'Your preferred day and time: ' + preferredDay + ' ' + preferredTime + '.\n' +
-                      'Your message: ' + userMessage + '\n\n' +
-                      'Please answer the following questions to help us prepare for your consultation:\n\n' +
-                      questionnaireContents +
-                      'To schedule your consultation, please use this link: ' + CALENDLY_LINK + '\n\n' +
-                      'Reply with your answers or contact us with any questions.\n\n' +
-                      'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
-
-    // Send the email
-    try {
-      GmailApp.sendEmail(email, subject, welcomeBody, { from: YOUR_EMAIL });
-    } catch (e) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Failed to send email: ' + e.message })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // Log to sheet
-    try {
-      var ss = SpreadsheetApp.openById(LEAD_TRACKER_SHEET_ID);
-      var sheet = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
-      if (sheet.getLastRow() === 0) {
-        sheet.appendRow(['Email', 'Name', 'Phone', 'Preferred Day', 'Preferred Time', 'Appointment Types', 'Message', 'Timestamp', 'Followed Up', 'ReminderSentAt', 'ThreadId', 'EventId', 'MatchMethod', 'ResponseReceived', 'ExecutiveSummary', 'QuestionnaireResponses', 'QuestionnaireParsed', 'Source']);
-      } else {
-        if (sheet.getLastColumn() < 18) {
-          try { sheet.getRange(1, 18).setValue('Source'); } catch (e) { /* ignore */ }
-        }
-      }
-      var timestamp = new Date();
-      sheet.appendRow([email, name, phone, preferredDay, preferredTime, (appointmentTypes || []).join(', '), userMessage, timestamp, false, '', '', '', '', false, '', questionnaireContents, false, 'Direct POST']);
-    } catch (e) {
-      // Continue; still return success since email was sent
-      console.log('Failed to log to sheet: ' + e);
-    }
-
-    return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    console.log('doPost error: ' + err);
-    return ContentService.createTextOutput(JSON.stringify({ success: false, error: String(err) })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -489,5 +390,108 @@ function _checkRateLimit(maxCount, windowMs) {
     // On error, fail open (allow) but log
     console.log('Rate limiter error: ' + e);
     return true;
+  }
+}
+
+function doPost(e) {
+  try {
+    var payload = _parsePostEvent(e);
+    if (!payload || !payload.email) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Missing required field: email' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Basic rate limiting (global) to reduce abuse: max 300 submissions per hour
+    if (!_checkRateLimit(300, 60 * 60 * 1000)) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Rate limit exceeded' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var fields = _normalizeFields(payload);
+
+    // Build questionnaire contents (best-effort)
+    var questionnaireContents = '';
+    var appointmentTypes = fields.appointment_types || [];
+    var folder = null;
+    try { folder = DriveApp.getFolderById(FOLDER_ID); } catch (err) { folder = null; }
+    for (var m = 0; m < appointmentTypes.length; m++) {
+      var type = appointmentTypes[m].trim();
+      var fileName = QUESTIONNAIRE_FILES[type];
+      if (fileName && folder) {
+        try {
+          var files = folder.getFilesByName(fileName);
+          if (files.hasNext()) {
+            var file = files.next();
+            var content = file.getBlob().getDataAsString();
+            questionnaireContents += type + ' Questionnaire\n\n' + content + '\n\n';
+          } else {
+            questionnaireContents += type + ' Questionnaire\n\nNo questionnaire available.\n\n';
+          }
+        } catch (e2) {
+          questionnaireContents += type + ' Questionnaire\n\nError retrieving questionnaire.\n\n';
+        }
+      }
+    }
+    if (!questionnaireContents) questionnaireContents = 'No specific questionnaire available. Please reply for more details.\n\n';
+
+    var name = fields.name || 'Unknown';
+    var phone = fields.phone || '';
+    var email = fields.email || '';
+    var preferredDay = fields.preferred_day || 'Any';
+    var preferredTime = fields.preferred_time || 'Any';
+    var userMessage = fields.message || '';
+
+    var subject = 'Welcome to Harborview Legal Group - Next Steps for Your Inquiry';
+    var welcomeBody = 'Dear ' + name + ',\n\n' +
+                      'Thank you for contacting us! We\'ve received your inquiry about: ' + appointmentTypes.join(', ') + '.\n' +
+                      'Your preferred day and time: ' + preferredDay + ' ' + preferredTime + '.\n' +
+                      'Your message: ' + userMessage + '\n\n' +
+                      'Please answer the following questions to help us prepare for your consultation:\n\n' +
+                      questionnaireContents +
+                      'To schedule your consultation, please use this link: ' + CALENDLY_LINK + '\n\n' +
+                      'Reply with your answers or contact us with any questions.\n\n' +
+                      'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
+
+    // Send welcome email (fail fast)
+    try {
+      GmailApp.sendEmail(email, subject, welcomeBody, { replyTo: YOUR_EMAIL });
+    } catch (e1) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Failed to send email' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Log to Google Sheet (best-effort)
+    try {
+      var ss = SpreadsheetApp.openById(LEAD_TRACKER_SHEET_ID);
+      var sheet = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(['Email', 'Name', 'Phone', 'Preferred Day', 'Preferred Time', 'Appointment Types', 'Message', 'Timestamp', 'Followed Up', 'ReminderSentAt', 'ThreadId', 'EventId', 'MatchMethod', 'ResponseReceived', 'ExecutiveSummary', 'QuestionnaireResponses', 'QuestionnaireParsed', 'Source']);
+      } else {
+        if (sheet.getLastColumn() < 18) {
+          try { sheet.getRange(1, 18).setValue('Source'); } catch (e3) { /* ignore */ }
+        }
+      }
+      var timestamp = new Date();
+      sheet.appendRow([email, name, phone, preferredDay, preferredTime, (appointmentTypes || []).join(', '), userMessage, timestamp, false, '', '', '', '', false, '', questionnaireContents, false, 'Direct POST']);
+    } catch (e4) {
+      // ignore sheet errors in response
+    }
+
+    // Admin notification (best-effort)
+    try {
+      var adminSubject = 'New contact form submission for Harborview Legal Group';
+      var adminBody = 'A new lead was received via Direct POST:\n\n' +
+                      'Email: ' + email + '\n' +
+                      'Name: ' + name + '\n' +
+                      'Phone: ' + phone + '\n' +
+                      'Appointment Types: ' + (appointmentTypes || []).join(', ') + '\n' +
+                      'Preferred: ' + preferredDay + ' ' + preferredTime + '\n' +
+                      'Message: ' + userMessage + '\n\n' +
+                      'This notification was sent by the automated Apps Script endpoint.';
+      GmailApp.sendEmail(YOUR_EMAIL, adminSubject, adminBody, { replyTo: YOUR_EMAIL });
+    } catch (e5) {
+      // ignore admin email errors in response
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Unhandled error' })).setMimeType(ContentService.MimeType.JSON);
   }
 }
