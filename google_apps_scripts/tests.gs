@@ -118,7 +118,8 @@ function testAiParser() {
 function testSheetManager() {
   try {
     // Test basic sheet access
-    const ss = SpreadsheetApp.openById('1tqjF1eUxzF3Hk6iCcJxv2fA4h-BFHf20rtgWHBADdkg');
+    const LEAD_SHEET_ID = PropertiesService.getScriptProperties().getProperty('LEAD_TRACKER_SHEET_ID');
+    const ss = SpreadsheetApp.openById(LEAD_SHEET_ID);
     const sheet = ss.getSheetByName('Leads');
     const sheetExists = sheet !== null;
 

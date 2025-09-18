@@ -539,6 +539,18 @@ function checkFollowUps() {
           var hoursSince = (new Date().getTime() - timestamp.getTime()) / (1000 * 60 * 60);
           console.log('Row ' + (row + 1) + ': Hours since contact: ' + hoursSince.toFixed(2));
 
+          // Prevent sending more than one reminder: check if a reminder timestamp already exists
+          try {
+            var reminderCell = data[row].length > (REMINDER_AT_COL - 1) ? data[row][REMINDER_AT_COL - 1] : null;
+            if (reminderCell && reminderCell !== '') {
+              console.log('Row ' + (row + 1) + ': Reminder already sent at ' + reminderCell + ' — skipping further reminders.');
+              continue;
+            }
+          } catch (remCheckErr) {
+            // If anything goes wrong reading the cell, proceed cautiously (do not send duplicate reminders without timestamp)
+            console.log('Row ' + (row + 1) + ': Error checking reminder cell: ' + remCheckErr + ' — proceeding with reminder checks.');
+          }
+
           if (hoursSince < 24) {
             console.log('Row ' + (row + 1) + ': Too recent (<24h), skipping reminder.');
             continue;
@@ -576,13 +588,18 @@ function checkFollowUps() {
           }
 
           try {
-            GmailApp.sendEmail(email, reminderSubject, reminderBody, { from: YOUR_EMAIL });
+            // Atomic write: record reminder timestamp and mark as followed-up BEFORE sending.
+            // This prevents duplicate reminders if a subsequent sheet write fails.
+            var now = new Date();
+            sheet.getRange(row + 1, REMINDER_AT_COL).setValue(now);
             sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
-            sheet.getRange(row + 1, REMINDER_AT_COL).setValue(new Date());
+
+            GmailApp.sendEmail(email, reminderSubject, reminderBody, { from: YOUR_EMAIL });
             console.log('Row ' + (row + 1) + ': Targeted reminder sent to lead: ' + email);
           } catch (e) {
             console.log('Row ' + (row + 1) + ': Failed to send reminder to lead ' + email + ': ' + e);
-            // Fallback: notify the owner
+            // Notify the owner about the failure. Leave ReminderSentAt set to avoid duplicate sends;
+            // manual intervention is preferred if delivery repeatedly fails.
             try {
               var fallbackSubject = 'Reminder Failed: ' + name + ' (' + email + ')';
               var fallbackBody = 'Failed to send reminder to lead ' + name + ' (' + email + '). Error: ' + e;
@@ -591,9 +608,6 @@ function checkFollowUps() {
             } catch (fallbackErr) {
               console.log('Row ' + (row + 1) + ': Failed to send fallback notification: ' + fallbackErr);
             }
-            // Still mark as followed up to prevent retries
-            sheet.getRange(row + 1, FOLLOWED_UP_COL).setValue(true);
-            sheet.getRange(row + 1, REMINDER_AT_COL).setValue(new Date());
           }
         } else {
           console.log('Row ' + (row + 1) + ': Reply found, no reminder sent.');

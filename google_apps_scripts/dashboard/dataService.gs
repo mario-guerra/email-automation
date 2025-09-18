@@ -8,7 +8,8 @@
  */
 function getLeads() {
   try {
-    const sheet = SpreadsheetApp.openById('1tqjF1eUxzF3Hk6iCcJxv2fA4h-BFHf20rtgWHBADdkg').getSheetByName('Leads');
+    const LEAD_SHEET_ID = PropertiesService.getScriptProperties().getProperty('LEAD_TRACKER_SHEET_ID');
+    const sheet = SpreadsheetApp.openById(LEAD_SHEET_ID).getSheetByName('Leads');
     const data = sheet.getDataRange().getValues();
 
     if (data.length <= 1) {
@@ -218,8 +219,9 @@ function filterLeadsByDateRange(leads, startDate, endDate) {
 function getSystemInfo() {
   try {
     const leads = getLeads();
-    const sheet = SpreadsheetApp.openById('1tqjF1eUxzF3Hk6iCcJxv2fA4h-BFHf20rtgWHBADdkg');
-    const lastModified = DriveApp.getFileById('1tqjF1eUxzF3Hk6iCcJxv2fA4h-BFHf20rtgWHBADdkg').getLastUpdated();
+    const LEAD_SHEET_ID = PropertiesService.getScriptProperties().getProperty('LEAD_TRACKER_SHEET_ID');
+    const sheet = SpreadsheetApp.openById(LEAD_SHEET_ID);
+    const lastModified = DriveApp.getFileById(LEAD_SHEET_ID).getLastUpdated();
 
     return {
       version: '1.2.0',

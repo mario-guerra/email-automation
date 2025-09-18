@@ -497,9 +497,72 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ message: "GET method not supported, use POST" }))
-    .setMimeType(ContentService.MimeType.JSON);
+  // Router: support API queries and a simple health/status endpoint.
+  try {
+    // 1) API-style JSON probe (legacy): ?api=1 or ?format=json
+    if (e && e.parameter && (e.parameter.api === '1' || e.parameter.format === 'json')) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ message: "GET method not supported, use POST" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2) Health/status endpoint: ?api=status or ?status=1
+    if (e && e.parameter && (e.parameter.api === 'status' || e.parameter.status === '1')) {
+      var status = {
+        ok: true,
+        version: '1.2.0',
+        timestamp: new Date().toISOString(),
+        props: {},
+        sheetAccessible: false,
+        sheetName: null,
+        notes: []
+      };
+      try {
+        // Check script properties
+        var props = PropertiesService.getScriptProperties().getProperties() || {};
+        status.props = {
+          LEAD_TRACKER_SHEET_ID: !!props.LEAD_TRACKER_SHEET_ID,
+          CALENDLY_LINK: !!props.CALENDLY_LINK,
+          YOUR_EMAIL: !!props.YOUR_EMAIL,
+          FOLDER_ID: !!props.FOLDER_ID
+        };
+      } catch (propErr) {
+        status.ok = false;
+        status.notes.push('Failed to read Script Properties: ' + String(propErr));
+      }
+
+      try {
+        if (typeof LEAD_TRACKER_SHEET_ID === 'string' && LEAD_TRACKER_SHEET_ID) {
+          var ss = SpreadsheetApp.openById(LEAD_TRACKER_SHEET_ID);
+          status.sheetAccessible = true;
+          var sheet = ss.getSheetByName('Leads');
+          status.sheetName = sheet ? 'Leads' : null;
+        } else {
+          status.notes.push('LEAD_TRACKER_SHEET_ID not configured.');
+        }
+      } catch (sheetErr) {
+        status.sheetAccessible = false;
+        status.notes.push('Failed to open Leads sheet: ' + String(sheetErr));
+      }
+
+      return ContentService
+        .createTextOutput(JSON.stringify(status))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 3) Default: serve dashboard HTML by rendering the Index template.
+    return HtmlService.createTemplateFromFile('Index')
+      .evaluate()
+      .setTitle('Lead Management Dashboard - Harborview Legal Group')
+      .setFaviconUrl('https://www.gstatic.com/images/branding/product/1x/gsheets_24dp.png')
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } catch (err) {
+    // If rendering the dashboard fails for any reason, fall back to a JSON error response
+    return ContentService
+      .createTextOutput(JSON.stringify({ message: "GET method not supported, use POST", error: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 /**

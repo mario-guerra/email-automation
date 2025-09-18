@@ -8,7 +8,8 @@
  */
 function deleteLead(email) {
   try {
-    const sheet = SpreadsheetApp.openById('1tqjF1eUxzF3Hk6iCcJxv2fA4h-BFHf20rtgWHBADdkg').getSheetByName('Leads');
+    const LEAD_SHEET_ID = PropertiesService.getScriptProperties().getProperty('LEAD_TRACKER_SHEET_ID');
+    const sheet = SpreadsheetApp.openById(LEAD_SHEET_ID).getSheetByName('Leads');
     const data = sheet.getDataRange().getValues();
 
     for (let i = 1; i < data.length; i++) {
@@ -30,7 +31,8 @@ function deleteLead(email) {
  */
 function updateLeadFollowUpStatus(email, followedUp = true) {
   try {
-    const sheet = SpreadsheetApp.openById('1tqjF1eUxzF3Hk6iCcJxv2fA4h-BFHf20rtgWHBADdkg').getSheetByName('Leads');
+    const LEAD_SHEET_ID = PropertiesService.getScriptProperties().getProperty('LEAD_TRACKER_SHEET_ID');
+    const sheet = SpreadsheetApp.openById(LEAD_SHEET_ID).getSheetByName('Leads');
     const data = sheet.getDataRange().getValues();
 
     for (let i = 1; i < data.length; i++) {
@@ -55,7 +57,8 @@ function updateLeadFollowUpStatus(email, followedUp = true) {
  */
 function bulkUpdateFollowUpStatus(emails) {
   try {
-    const sheet = SpreadsheetApp.openById('1tqjF1eUxzF3Hk6iCcJxv2fA4h-BFHf20rtgWHBADdkg').getSheetByName('Leads');
+    const LEAD_SHEET_ID = PropertiesService.getScriptProperties().getProperty('LEAD_TRACKER_SHEET_ID');
+    const sheet = SpreadsheetApp.openById(LEAD_SHEET_ID).getSheetByName('Leads');
     const data = sheet.getDataRange().getValues();
     let updatedCount = 0;
 
