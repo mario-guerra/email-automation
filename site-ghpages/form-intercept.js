@@ -49,7 +49,7 @@
     form.addEventListener('submit', function(evt){
       if(!supportsFetch()) return;
 
-      var action = (form.getAttribute('action') || '').toLowerCase();
+      var action = (form.getAttribute('action') || '');
       // Only intercept Apps Script endpoint (script.google.com/macros) or other same-origin endpoints
       if(!(action.indexOf('script.google.com/macros') !== -1 || action.indexOf(window.location.origin) !== -1)) return;
 
@@ -152,7 +152,7 @@
   function init(){
     var forms = Array.prototype.slice.call(document.querySelectorAll('form'));
     forms.forEach(function(f){
-      var action = (f.getAttribute('action') || '').toLowerCase();
+      var action = (f.getAttribute('action') || '');
       if(action.indexOf('script.google.com/macros') !== -1 || action.indexOf(window.location.origin) !== -1){
         interceptForm(f);
       }
@@ -166,7 +166,7 @@
       var origSubmit = HTMLFormElement.prototype.submit;
       HTMLFormElement.prototype.submit = function(){
         try{
-          var action = (this.getAttribute && (this.getAttribute('action') || '') || '').toLowerCase();
+          var action = (this.getAttribute && (this.getAttribute('action') || '') || '');
           if(action.indexOf('script.google.com/macros') !== -1 || action.indexOf(window.location.origin) !== -1){
             // If our intercept hasn't been bound yet, bind and trigger submit event so our handler runs.
             if(!this.__app_bound) interceptForm(this);

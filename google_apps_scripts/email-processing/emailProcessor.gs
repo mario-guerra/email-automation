@@ -519,10 +519,18 @@ function doPost(e) {
 function doGet(e) {
   return ContentService
     .createTextOutput(JSON.stringify({ message: "GET method not supported, use POST" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Handle CORS preflight OPTIONS requests
+ */
+function doOptions(e) {
+  return ContentService.createTextOutput("")
     .setMimeType(ContentService.MimeType.JSON)
     .setHeaders({
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type"
     });
 }
