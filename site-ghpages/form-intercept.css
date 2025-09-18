@@ -1,0 +1,18 @@
+.form-intercept-notice{
+  margin-top:10px;
+  padding:10px 14px;
+  border-radius:6px;
+  font-weight:600;
+  color:#fff;
+  max-width:100%;
+  box-sizing:border-box;
+  transition:opacity 240ms ease-in-out, transform 240ms ease-in-out;
+}
+.form-intercept-success{ background: #28A745; }
+.form-intercept-error{ background: #D9534F; }
+
+/* Optional positioning for modal containers */
+.form-intercept-modal-pos{ position: absolute; top: 16px; left: 16px; right: 16px; z-index: 9999; }
+
+/* Fade-out helper */
+.form-intercept-fade{ opacity: 0; transform: translateY(-6px); }

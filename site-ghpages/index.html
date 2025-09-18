@@ -1321,7 +1321,7 @@ Harbor City, CA 90210
 <script type="speculationrules">
    {"prefetch":[{"source":"document","where":{"and":[{"href_matches":"\/*"},{"not":{"href_matches":["\/wp-*.php","\/wp-admin\/*","\/wp-content\/uploads\/*","\/wp-content\/*","\/wp-content\/plugins\/*","\/wp-content\/themes\/hotlava-theme\/*","\/wp-content\/themes\/hello-elementor\/*","\/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
   </script>
-<script src="formspark-intercept.js"></script>
+<!-- formspark intercept removed: posting directly to Apps Script endpoint -->
 <style id="elementor-post-1740">
    .elementor-1740 .elementor-element.elementor-element-7bc268e{--display:flex;--flex-direction:column;--container-widget-width:100%;--container-widget-height:initial;--container-widget-flex-grow:0;--container-widget-align-self:initial;--flex-wrap-mobile:wrap;--margin-top:0em;--margin-bottom:0em;--margin-left:0em;--margin-right:0em;}.elementor-1740 .elementor-element.elementor-element-f83c68d{--display:flex;--padding-top:2em;--padding-bottom:2em;--padding-left:2em;--padding-right:2em;}.elementor-1740 .elementor-element.elementor-element-f83c68d:not(.elementor-motion-effects-element-type-background), .elementor-1740 .elementor-element.elementor-element-f83c68d > .elementor-motion-effects-container > .elementor-motion-effects-layer{background-image:url("mckay-parchmentbg.jpg");background-size:cover;}.elementor-1740 .elementor-element.elementor-element-eac2b41 img{width:277px;}.elementor-1740 .elementor-element.elementor-element-e973fd1{text-align:center;}.elementor-1740 .elementor-element.elementor-element-e973fd1 .elementor-heading-title{font-size:28px;color:var( --e-global-color-ae5f6d9 );}.elementor-1740 .elementor-element.elementor-element-04c598f .gform-theme.gform-theme--framework.gform_wrapper .gform-theme-button:where(:not(.gform-theme-no-framework):not(.gform-theme__disable):not(.gform-theme__disable *):not(.gform-theme__disable-framework):not(.gform-theme__disable-framework *)),
 				.elementor-1740 .elementor-element.elementor-element-04c598f .gform-theme.gform-theme--framework.gform_wrapper .button:where(:not(.gform-theme-no-framework):not(.gform-theme__disable):not(.gform-theme__disable *):not(.gform-theme__disable-framework):not(.gform-theme__disable-framework *)),
@@ -1499,7 +1499,7 @@ Harbor City, CA 90210
 <div class="elementor-widget-container">
 <div class="uael-gf-style uael-gf-check-style elementor-clickable">
 <div class="gf_browser_unknown gform_wrapper gravity-theme gform-theme--no-framework" data-form-index="0" data-form-theme="gravity-theme" id="gform_wrapper_1">
-<form action="https://submit-form.com/CYfZeVuMy" data-formid="1" data-gform-ajax="false" enctype="application/x-www-form-urlencoded" id="gform_1" method="POST" novalidate=""><input autocomplete="off" id="_hp" name="_hp" style="display:none!important" tabindex="-1" type="text"/>
+<form action="https://script.google.com/macros/s/AKfycbxVnZHq6bgTj2HO2YAyqMQXlF0_bbu7B-5IrwGV5wYaKdQDXVUoCUTAnf0Zz1xL67AXrA/exec" data-formid="1" data-gform-ajax="false" enctype="application/x-www-form-urlencoded" id="gform_1" method="POST" novalidate=""><input autocomplete="off" id="_hp" name="_hp" style="display:none!important" tabindex="-1" type="text"/>
 <div class="gform-body gform_body">
 <div class="gform_fields top_label form_sublabel_below description_below validation_below" id="gform_fields_1">
 <div class="gfield gfield--type-text field_sublabel_below gfield--no-description field_description_below hidden_label field_validation_below gfield_visibility_visible" data-js-reload="field_1_1" id="field_1_1">
@@ -2883,5 +2883,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <iframe style="display: none;">
 </iframe>
 </div>
+<!-- Client-side form interceptor to post to Apps Script and show ephemeral success notices -->
+<script src="/form-intercept.js"></script>
 </body>
 </html>

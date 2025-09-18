@@ -123,7 +123,9 @@ function checkFollowUps() {
         // Check if we have calendar scheduled data
         var calendarScheduledAt = null;
         try {
-          var calSchedIdx = header.indexOf('CalendarScheduledAt');
+          // Get header row to find CalendarScheduledAt column
+          var headerRow = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+          var calSchedIdx = headerRow.indexOf('CalendarScheduledAt');
           if (calSchedIdx !== -1 && data[row].length > calSchedIdx) {
             var calSchedRaw = data[row][calSchedIdx];
             if (calSchedRaw && calSchedRaw !== '') {
@@ -163,8 +165,278 @@ function checkFollowUps() {
         var matchedEventStart = null; // Date extracted from ICS or event.start
         var replyContent = '';
 
-        // [Rest of the follow-up detection logic would go here - truncated for brevity]
-        // This includes Calendar API checks, Gmail searches, ICS parsing, Calendly detection, etc.
+        // [Rest of the follow-up detection logic - IMPLEMENTED]
+        // This includes Gmail search for reply detection
+
+        // Method 1: Gmail reply detection - search for replies from the lead
+        try {
+          console.log('Row ' + (row + 1) + ': Checking for Gmail replies from ' + email);
+
+          // Search for emails from this lead in the last 30 days
+          var searchQuery = 'from:' + email + ' newer_than:30d';
+          var replyThreads = GmailApp.search(searchQuery);
+
+          console.log('Row ' + (row + 1) + ': Found ' + replyThreads.length + ' threads from ' + email);
+
+          for (var t = 0; t < replyThreads.length && !replyFound; t++) {
+            var thread = replyThreads[t];
+            var messages = thread.getMessages();
+
+            // Check if this thread is related to our original email (by checking thread ID if available)
+            var threadMatches = false;
+            var threadPriority = 'low'; // low, medium, high priority for processing
+
+            if (threadIdCell && threadIdCell !== '') {
+              // If we have the original thread ID, this is highest priority
+              if (thread.getId() === threadIdCell) {
+                threadMatches = true;
+                threadPriority = 'high';
+                console.log('Row ' + (row + 1) + ': Found matching thread by ID: ' + threadIdCell);
+              }
+            }
+
+            // If we don't have a thread ID match, check subject for questionnaire-related keywords
+            if (!threadMatches) {
+              var subject = thread.getFirstMessageSubject().toLowerCase();
+              if (subject.includes('harborview') || subject.includes('questionnaire') ||
+                  subject.includes('consultation') || subject.includes('legal') ||
+                  subject.includes('re:') || subject.includes('fwd:')) {
+                threadMatches = true;
+                threadPriority = 'medium';
+                console.log('Row ' + (row + 1) + ': Found potential matching thread by subject: ' + subject);
+              }
+            }
+
+            // If still no match, check if this thread contains any recent messages from the lead
+            // This catches replies in threads we might not have anticipated
+            if (!threadMatches) {
+              var hasRecentMessage = false;
+              for (var m = 0; m < messages.length; m++) {
+                var msgDate = messages[m].getDate();
+                if (msgDate > timestamp) {
+                  hasRecentMessage = true;
+                  break;
+                }
+              }
+              if (hasRecentMessage) {
+                threadMatches = true;
+                threadPriority = 'low';
+                console.log('Row ' + (row + 1) + ': Found thread with recent messages from lead');
+              }
+            }
+
+            if (threadMatches) {
+              console.log('Row ' + (row + 1) + ': Processing thread (priority: ' + threadPriority + ') with ' + messages.length + ' messages');
+
+              // Look for the most recent message in this thread (likely the reply)
+              for (var m = messages.length - 1; m >= 0 && !replyFound; m--) {
+                var message = messages[m];
+                var messageDate = message.getDate();
+
+                // Only consider messages after the lead was contacted
+                if (messageDate > timestamp) {
+                  var plainBody = message.getPlainBody();
+                  console.log('Row ' + (row + 1) + ': Checking message dated ' + messageDate + ', body length: ' + (plainBody ? plainBody.length : 0));
+
+                  if (plainBody && plainBody.trim().length > 10) { // Ignore very short messages
+                    // Additional check: look for questionnaire-like content
+                    var bodyLower = plainBody.toLowerCase();
+                    var hasQuestionnaireContent = false;
+
+                    // Check for common questionnaire response patterns
+                    if (bodyLower.includes('questionnaire') ||
+                        bodyLower.includes('answers') ||
+                        bodyLower.includes('response') ||
+                        bodyLower.includes('information') ||
+                        bodyLower.includes('details') ||
+                        bodyLower.includes('form') ||
+                        bodyLower.includes('completed') ||
+                        bodyLower.includes('submitted') ||
+                        // Check for question-answer patterns
+                        (bodyLower.includes('?') && bodyLower.includes(':')) ||
+                        // Check for numbered responses
+                        /\d+\./.test(bodyLower) ||
+                        // Check for common legal terms that might appear in responses
+                        (bodyLower.includes('estate') || bodyLower.includes('probate') ||
+                         bodyLower.includes('business') || bodyLower.includes('traffic') ||
+                         bodyLower.includes('criminal') || bodyLower.includes('legal'))) {
+                      hasQuestionnaireContent = true;
+                    }
+
+                    // For high priority threads, be less strict about content
+                    // For medium/low priority threads, require questionnaire-like content
+                    if (threadPriority === 'high' || hasQuestionnaireContent) {
+                      console.log('Row ' + (row + 1) + ': Found reply message dated ' + messageDate + ' (priority: ' + threadPriority + ', hasContent: ' + hasQuestionnaireContent + ')');
+                      replyFound = true;
+                      matchedMethod = 'gmail_reply';
+                      replyContent = plainBody.trim();
+                      break;
+                    } else {
+                      // Special case: if message is very recent (within 3 days) and substantial,
+                      // accept it even without questionnaire patterns as a fallback
+                      var daysSinceMessage = (new Date().getTime() - messageDate.getTime()) / (1000 * 60 * 60 * 24);
+                      if (daysSinceMessage <= 3 && plainBody.trim().length > 50) {
+                        console.log('Row ' + (row + 1) + ': Found recent substantial message (fallback), dated ' + messageDate + ' (' + daysSinceMessage.toFixed(1) + ' days ago)');
+                        replyFound = true;
+                        matchedMethod = 'gmail_reply_fallback';
+                        replyContent = plainBody.trim();
+                        break;
+                      } else {
+                        console.log('Row ' + (row + 1) + ': Message has content but no questionnaire patterns, skipping');
+                      }
+                    }
+                  } else {
+                    console.log('Row ' + (row + 1) + ': Message too short or empty, skipping');
+                  }
+                } else {
+                  console.log('Row ' + (row + 1) + ': Message predates contact (' + messageDate + ' vs ' + timestamp + '), skipping');
+                }
+              }
+            } else {
+              console.log('Row ' + (row + 1) + ': Thread does not match criteria, skipping');
+            }
+          }
+
+          if (replyFound) {
+            console.log('Row ' + (row + 1) + ': Reply detected via Gmail search, content length: ' + replyContent.length);
+          } else {
+            console.log('Row ' + (row + 1) + ': No Gmail replies found for ' + email);
+          }
+
+        } catch (gmailErr) {
+          console.log('Row ' + (row + 1) + ': Error during Gmail reply detection: ' + gmailErr);
+        }
+
+        // Method 2: Calendar API detection - check for scheduled appointments
+        if (!replyFound) {
+          try {
+            console.log('Row ' + (row + 1) + ': Checking Calendar API for appointments from ' + email);
+
+            // Search for calendar events in the next 90 days that might be related to this lead
+            var calendar = CalendarApp.getDefaultCalendar();
+            var now = new Date();
+            var futureDate = new Date(now.getTime() + (90 * 24 * 60 * 60 * 1000)); // 90 days from now
+
+            var events = calendar.getEvents(now, futureDate);
+
+            console.log('Row ' + (row + 1) + ': Found ' + events.length + ' upcoming calendar events');
+
+            for (var e = 0; e < events.length && !replyFound; e++) {
+              var event = events[e];
+              var eventTitle = event.getTitle().toLowerCase();
+              var eventDescription = (event.getDescription() || '').toLowerCase();
+              var guestList = event.getGuestList();
+
+              // Check if this event is related to the lead
+              var eventMatchesLead = false;
+
+              // Check guest list for the lead's email
+              for (var g = 0; g < guestList.length; g++) {
+                if (guestList[g].getEmail().toLowerCase() === email.toLowerCase()) {
+                  eventMatchesLead = true;
+                  console.log('Row ' + (row + 1) + ': Found calendar event with lead as guest: ' + event.getTitle());
+                  break;
+                }
+              }
+
+              // Also check event title and description for lead's name or email
+              if (!eventMatchesLead) {
+                if (eventTitle.includes(name.toLowerCase()) ||
+                    eventDescription.includes(email.toLowerCase()) ||
+                    eventDescription.includes(name.toLowerCase())) {
+                  eventMatchesLead = true;
+                  console.log('Row ' + (row + 1) + ': Found calendar event mentioning lead in title/description: ' + event.getTitle());
+                }
+              }
+
+              // Check if event is legal/consultation related
+              var isLegalEvent = false;
+              if (eventTitle.includes('legal') || eventTitle.includes('consultation') ||
+                  eventTitle.includes('meeting') || eventTitle.includes('harborview') ||
+                  eventDescription.includes('legal') || eventDescription.includes('consultation')) {
+                isLegalEvent = true;
+              }
+
+              if (eventMatchesLead && isLegalEvent) {
+                console.log('Row ' + (row + 1) + ': Found matching legal consultation event: ' + event.getTitle() + ' at ' + event.getStartTime());
+                replyFound = true;
+                matchedMethod = 'calendar_api';
+                matchedEvent = event;
+                matchedEventId = event.getId();
+                matchedEventStart = event.getStartTime();
+
+                // For calendar events, we don't have reply content, but we can create a summary
+                replyContent = 'Calendar appointment scheduled: ' + event.getTitle() + ' on ' + matchedEventStart.toLocaleDateString() + ' at ' + matchedEventStart.toLocaleTimeString();
+                break;
+              }
+            }
+
+            if (!replyFound) {
+              console.log('Row ' + (row + 1) + ': No matching calendar events found for ' + email);
+            }
+
+          } catch (calErr) {
+            console.log('Row ' + (row + 1) + ': Error during Calendar API detection: ' + calErr);
+          }
+        }
+
+        // Method 3: ICS attachment parsing - check for calendar invites in emails
+        if (!replyFound) {
+          try {
+            console.log('Row ' + (row + 1) + ': Checking for ICS attachments from ' + email);
+
+            // Search for emails with ICS attachments from this lead
+            var icsQuery = 'from:' + email + ' filename:ics newer_than:30d';
+            var icsThreads = GmailApp.search(icsQuery);
+
+            console.log('Row ' + (row + 1) + ': Found ' + icsThreads.length + ' threads with ICS attachments from ' + email);
+
+            for (var t = 0; t < icsThreads.length && !replyFound; t++) {
+              var thread = icsThreads[t];
+              var messages = thread.getMessages();
+
+              for (var m = messages.length - 1; m >= 0 && !replyFound; m--) {
+                var message = messages[m];
+                var messageDate = message.getDate();
+
+                // Only consider messages after the lead was contacted
+                if (messageDate > timestamp) {
+                  var attachments = message.getAttachments();
+
+                  for (var a = 0; a < attachments.length && !replyFound; a++) {
+                    var attachment = attachments[a];
+                    if (attachment.getName().toLowerCase().endsWith('.ics')) {
+                      console.log('Row ' + (row + 1) + ': Found ICS attachment: ' + attachment.getName());
+
+                      try {
+                        var icsContent = attachment.getDataAsString();
+                        var eventStart = parseICSEventStart(icsContent);
+
+                        if (eventStart) {
+                          console.log('Row ' + (row + 1) + ': Successfully parsed ICS event start: ' + eventStart);
+                          replyFound = true;
+                          matchedMethod = 'ics_attachment';
+                          matchedEventStart = eventStart;
+                          replyContent = 'Calendar invite received via ICS attachment for ' + eventStart.toLocaleDateString() + ' at ' + eventStart.toLocaleTimeString();
+                          break;
+                        }
+                      } catch (icsParseErr) {
+                        console.log('Row ' + (row + 1) + ': Error parsing ICS attachment: ' + icsParseErr);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            if (!replyFound) {
+              console.log('Row ' + (row + 1) + ': No valid ICS attachments found for ' + email);
+            }
+
+          } catch (icsErr) {
+            console.log('Row ' + (row + 1) + ': Error during ICS attachment detection: ' + icsErr);
+          }
+        }
 
         // If reply found and not already processed, generate executive summary
         if (replyFound && !responseReceived && replyContent) {
@@ -337,5 +609,93 @@ function checkFollowUps() {
   } finally {
     try { lock.releaseLock(); } catch (releaseErr) { /* ignore */ }
     console.log('Follow-up check completed.');
+  }
+}
+
+/**
+ * Parse ICS content to extract event start time
+ * @param {string} icsContent - The ICS file content
+ * @returns {Date|null} - The event start date/time or null if parsing fails
+ */
+function parseICSEventStart(icsContent) {
+  try {
+    if (!icsContent || typeof icsContent !== 'string') {
+      return null;
+    }
+
+    // Look for DTSTART line in ICS content
+    var lines = icsContent.split('\n');
+    var dtStart = null;
+
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      if (line.toUpperCase().startsWith('DTSTART')) {
+        // Extract the date/time value
+        var colonIndex = line.indexOf(':');
+        if (colonIndex > 0) {
+          dtStart = line.substring(colonIndex + 1).trim();
+          break;
+        }
+      }
+    }
+
+    if (!dtStart) {
+      console.log('No DTSTART found in ICS content');
+      return null;
+    }
+
+    console.log('Found DTSTART in ICS: ' + dtStart);
+
+    // Parse different ICS date formats
+    var eventDate = null;
+
+    // Format: 20231201T100000Z (UTC)
+    if (dtStart.length === 16 && dtStart.endsWith('Z')) {
+      var year = dtStart.substring(0, 4);
+      var month = dtStart.substring(4, 6);
+      var day = dtStart.substring(6, 8);
+      var hour = dtStart.substring(9, 11);
+      var minute = dtStart.substring(11, 13);
+      var second = dtStart.substring(13, 15);
+
+      eventDate = new Date(Date.UTC(
+        parseInt(year), parseInt(month) - 1, parseInt(day),
+        parseInt(hour), parseInt(minute), parseInt(second)
+      ));
+    }
+    // Format: 20231201T100000 (local time, assume UTC for simplicity)
+    else if (dtStart.length === 15) {
+      var year = dtStart.substring(0, 4);
+      var month = dtStart.substring(4, 6);
+      var day = dtStart.substring(6, 8);
+      var hour = dtStart.substring(9, 11);
+      var minute = dtStart.substring(11, 13);
+      var second = dtStart.substring(13, 15);
+
+      eventDate = new Date(
+        parseInt(year), parseInt(month) - 1, parseInt(day),
+        parseInt(hour), parseInt(minute), parseInt(second)
+      );
+    }
+    // Format: 20231201 (date only)
+    else if (dtStart.length === 8) {
+      var year = dtStart.substring(0, 4);
+      var month = dtStart.substring(4, 6);
+      var day = dtStart.substring(6, 8);
+
+      eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+
+    if (eventDate && !isNaN(eventDate.getTime())) {
+      console.log('Successfully parsed ICS date: ' + eventDate.toISOString());
+      return eventDate;
+    } else {
+      console.log('Failed to parse ICS date: ' + dtStart);
+      return null;
+    }
+
+  } catch (e) {
+    console.log('Error parsing ICS content: ' + e);
+    return null;
   }
 }

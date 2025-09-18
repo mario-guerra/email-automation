@@ -318,3 +318,176 @@ function processLeadEmails() {
     }
   }
 }
+
+/**
+ * Web entrypoint: handle direct POSTs from site forms.
+ * Accepts application/json or application/x-www-form-urlencoded.
+ */
+function doPost(e) {
+  try {
+    var payload = _parsePostEvent(e);
+    if (!payload || !payload.email) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Missing required field: email' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Basic rate limiting (global) to reduce abuse: max 300 submissions per hour
+    if (!_checkRateLimit(300, 60 * 60 * 1000)) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Rate limit exceeded' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Map fields into the same shapes used by the existing processor
+    var fields = _normalizeFields(payload);
+
+    // Reuse questionnaire lookup
+    var folder = null;
+    try { folder = DriveApp.getFolderById(FOLDER_ID); } catch (err) { folder = null; }
+
+    var questionnaireContents = '';
+    var appointmentTypes = fields.appointment_types || [];
+    for (var m = 0; m < appointmentTypes.length; m++) {
+      var type = appointmentTypes[m].trim();
+      var fileName = QUESTIONNAIRE_FILES[type];
+      if (fileName && folder) {
+        try {
+          var files = folder.getFilesByName(fileName);
+          if (files.hasNext()) {
+            var file = files.next();
+            var content = file.getBlob().getDataAsString();
+            questionnaireContents += type + ' Questionnaire\n\n' + content + '\n\n';
+          } else {
+            questionnaireContents += type + ' Questionnaire\n\nNo questionnaire available.\n\n';
+          }
+        } catch (e) {
+          questionnaireContents += type + ' Questionnaire\n\nError retrieving questionnaire.\n\n';
+        }
+      }
+    }
+    if (!questionnaireContents) questionnaireContents = 'No specific questionnaire available. Please reply for more details.\n\n';
+
+    var name = fields.name || 'Unknown';
+    var phone = fields.phone || '';
+    var email = fields.email || '';
+    var preferredDay = fields.preferred_day || 'Any';
+    var preferredTime = fields.preferred_time || 'Any';
+    var userMessage = fields.message || '';
+
+    var subject = 'Welcome to Harborview Legal Group - Next Steps for Your Inquiry';
+    var welcomeBody = 'Dear ' + name + ',\n\n' +
+                      'Thank you for contacting us! We\'ve received your inquiry about: ' + appointmentTypes.join(', ') + '.\n' +
+                      'Your preferred day and time: ' + preferredDay + ' ' + preferredTime + '.\n' +
+                      'Your message: ' + userMessage + '\n\n' +
+                      'Please answer the following questions to help us prepare for your consultation:\n\n' +
+                      questionnaireContents +
+                      'To schedule your consultation, please use this link: ' + CALENDLY_LINK + '\n\n' +
+                      'Reply with your answers or contact us with any questions.\n\n' +
+                      'Best regards,\nMax Powers\nHarborview Legal Group\n' + YOUR_EMAIL;
+
+    // Send the email
+    try {
+      GmailApp.sendEmail(email, subject, welcomeBody, { from: YOUR_EMAIL });
+    } catch (e) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Failed to send email: ' + e.message })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Log to sheet
+    try {
+      var ss = SpreadsheetApp.openById(LEAD_TRACKER_SHEET_ID);
+      var sheet = ss.getSheetByName('Leads') || ss.insertSheet('Leads');
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(['Email', 'Name', 'Phone', 'Preferred Day', 'Preferred Time', 'Appointment Types', 'Message', 'Timestamp', 'Followed Up', 'ReminderSentAt', 'ThreadId', 'EventId', 'MatchMethod', 'ResponseReceived', 'ExecutiveSummary', 'QuestionnaireResponses', 'QuestionnaireParsed', 'Source']);
+      } else {
+        if (sheet.getLastColumn() < 18) {
+          try { sheet.getRange(1, 18).setValue('Source'); } catch (e) { /* ignore */ }
+        }
+      }
+      var timestamp = new Date();
+      sheet.appendRow([email, name, phone, preferredDay, preferredTime, (appointmentTypes || []).join(', '), userMessage, timestamp, false, '', '', '', '', false, '', questionnaireContents, false, 'Direct POST']);
+    } catch (e) {
+      // Continue; still return success since email was sent
+      console.log('Failed to log to sheet: ' + e);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    console.log('doPost error: ' + err);
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: String(err) })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Parse the incoming POST event payload into an object.
+ */
+function _parsePostEvent(e) {
+  // e.postData.contents contains raw body for JSON
+  try {
+    if (e.postData && e.postData.type && e.postData.type.indexOf('application/json') === 0) {
+      return JSON.parse(e.postData.contents || '{}');
+    }
+  } catch (e) { /* ignore JSON parse errors */ }
+
+  // If form-encoded, parameters will be in e.parameter
+  if (e.parameter) {
+    // Convert appointment_types from comma-separated string into array if present
+    var params = {};
+    for (var k in e.parameter) {
+      if (!e.parameter.hasOwnProperty(k)) continue;
+      var val = e.parameter[k];
+      if (k === 'appointment_types' && typeof val === 'string') {
+        params[k] = val.split(',').map(function(item) { return item.trim(); });
+      } else {
+        params[k] = val;
+      }
+    }
+    return params;
+  }
+
+  return null;
+}
+
+/**
+ * Normalize field names and types to those expected by the existing script.
+ */
+function _normalizeFields(payload) {
+  var out = {};
+  // normalize keys to lower-case snake_case equivalents used elsewhere
+  out.name = payload.name || payload.full_name || payload['Full Name'] || payload['Name'] || '';
+  out.email = payload.email || payload.email_address || payload['Email'] || '';
+  out.phone = payload.phone || payload.phone_number || payload['Phone'] || '';
+  out.preferred_day = payload.preferred_day || payload.preferredDay || payload['Preferred Day'] || '';
+  out.preferred_time = payload.preferred_time || payload.preferredTime || payload['Preferred Time'] || '';
+  var appts = payload.appointment_types || payload.appointmentTypes || payload['Appointment Types'] || payload.service || payload.services || '';
+  if (Array.isArray(appts)) out.appointment_types = appts;
+  else if (typeof appts === 'string' && appts.indexOf(',') !== -1) out.appointment_types = appts.split(',').map(function(i){return i.trim();});
+  else if (typeof appts === 'string' && appts) out.appointment_types = [appts];
+  else out.appointment_types = [];
+  out.message = payload.message || payload.comments || payload['Message'] || '';
+  return out;
+}
+
+/**
+ * Simple global rate limiter using PropertiesService. Count events in a sliding window.
+ * maxCount: maximum allowed events
+ * windowMs: window size in milliseconds
+ */
+function _checkRateLimit(maxCount, windowMs) {
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var key = 'submission_timestamps';
+    var raw = props.getProperty(key) || '';
+    var now = Date.now();
+    var arr = raw ? JSON.parse(raw) : [];
+    // filter to keep timestamps inside window
+    var windowStart = now - windowMs;
+    arr = arr.filter(function(ts){ return ts > windowStart; });
+    if (arr.length >= maxCount) {
+      return false;
+    }
+    arr.push(now);
+    props.setProperty(key, JSON.stringify(arr));
+    return true;
+  } catch (e) {
+    // On error, fail open (allow) but log
+    console.log('Rate limiter error: ' + e);
+    return true;
+  }
+}
