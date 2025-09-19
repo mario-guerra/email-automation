@@ -246,7 +246,7 @@ function processLeadEmails() {
                 console.log('Found questionnaire file: ' + fileName + ' (id=' + file.getId() + ', size=' + file.getSize() + ')');
               } catch (logErr) { /* ignore logging errors */ }
               var content = file.getBlob().getDataAsString();
-              questionnaireContents += type + ' Questionnaire\n\n' + content + '\n\n';
+              questionnaireContents += content + '\n\n';
             } else {
               console.log('File not found: ' + fileName);
               questionnaireContents += type + ' Questionnaire\n\nNo questionnaire available.\n\n';
